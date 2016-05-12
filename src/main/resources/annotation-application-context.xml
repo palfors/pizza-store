@@ -16,4 +16,14 @@
         <property name="toppings" value="Pepperoni"/>
     </bean>
 
+    <bean id="moe-customer" class="com.alforsconsulting.pizzastore.customer.Customer"
+          scope="prototype">
+        <property name="name" value="moe"/>
+    </bean>
+
+    <bean id="curly-customer" class="com.alforsconsulting.pizzastore.customer.Customer"
+          scope="prototype">
+        <property name="name" value="curly"/>
+    </bean>
+
 </beans>

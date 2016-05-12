@@ -28,7 +28,6 @@ public class PizzaStoreSpringAnnotationTest {
 
         Order order = (Order) context.getBean("order");
         Customer customer = order.getCustomer();
-        customer.setName("jim");
 
         Pizza pizza1 = (Pizza) context.getBean("pizza");
         pizza1.setToppings("Sausage");
