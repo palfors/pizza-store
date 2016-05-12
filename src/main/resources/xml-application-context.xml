@@ -6,6 +6,7 @@
             http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <bean id="store" class="com.alforsconsulting.pizzastore.PizzaStore"/>
+    <bean id="order" class="com.alforsconsulting.pizzastore.order.Order"/>
     <bean id="pizza" class="com.alforsconsulting.pizzastore.menu.pizza.Pizza"
           scope="prototype"/>
     <bean id="sausage-pizza" class="com.alforsconsulting.pizzastore.menu.pizza.Pizza"

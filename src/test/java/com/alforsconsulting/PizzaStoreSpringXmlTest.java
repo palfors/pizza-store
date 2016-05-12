@@ -17,19 +17,20 @@ public class PizzaStoreSpringXmlTest extends PizzaStoreTest {
         ApplicationContext context = new ClassPathXmlApplicationContext("xml-application-context.xml");
         PizzaStore pizzaStore = (PizzaStore) context.getBean("store");
 
-        Order order = pizzaStore.createOrder();
+        Order order = (Order) context.getBean("order");
         Pizza pizza1 = (Pizza) context.getBean("pizza");
         pizza1.setToppings("Sausage");
         order.addItem(pizza1, 2);
         Pizza pizza2 = (Pizza) context.getBean("sausage-pizza");
         order.addItem(pizza2, 2);
-        pizzaStore.placeOrder(order);
+        pizzaStore.addOrder(order);
 
-        Order order2 = pizzaStore.createOrder();
+        Order order2 = (Order) context.getBean("order");
         Pizza pizza3 = (Pizza) context.getBean("pepperoni-pizza");
         order2.addItem(pizza3, 2);
         BreadSticks breadsticks = (BreadSticks) context.getBean("breadsticks");
         order2.addItem(breadsticks, 2);
+        pizzaStore.addOrder(order2);
 
         pizzaStore.showOrders();
     }

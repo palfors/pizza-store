@@ -17,14 +17,15 @@ public class PizzaStoreTest {
     }
 
     protected static void mainImpl(PizzaStore pizzaStore) {
-        Order order = pizzaStore.createOrder();
+        Order order = new Order();
         order.addItem(new Pizza("Sausage"), 2);
         order.addItem(new Pizza("Sausage,Onion"), 1);
-        pizzaStore.placeOrder(order);
+        pizzaStore.addOrder(order);
 
-        Order order2 = pizzaStore.createOrder();
+        Order order2 = new Order();
         order2.addItem(new Pizza("Pepperoni"), 2);
         order2.addItem(new BreadSticks(), 2);
+        pizzaStore.addOrder(order2);
 
         pizzaStore.showOrders();
     }

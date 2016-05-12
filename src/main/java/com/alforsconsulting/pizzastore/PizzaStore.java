@@ -1,8 +1,6 @@
 package com.alforsconsulting.pizzastore;
 
-import com.alforsconsulting.pizzastore.menu.MenuItem;
 import com.alforsconsulting.pizzastore.order.Order;
-import com.alforsconsulting.pizzastore.order.OrderStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -23,11 +21,9 @@ public class PizzaStore {
         storeId = StoreIdGenerator.getInstance().generateId();
     }
 
-    public Order createOrder() {
-        Order order = new Order(storeId);
+    public void addOrder(Order order) {
+        order.placeOrder();
         orders.add(order);
-
-        return order;
     }
 
     public long getStoreId() {
@@ -36,15 +32,6 @@ public class PizzaStore {
 
     public void setStoreId(long storeId) {
         this.storeId = storeId;
-    }
-
-    public void placeOrder(Order order) {
-
-        order.placeOrder();
-    }
-
-    public void cancelOrder(Order order) {
-        order.cancelOrder();
     }
 
     public void showOrders() {
