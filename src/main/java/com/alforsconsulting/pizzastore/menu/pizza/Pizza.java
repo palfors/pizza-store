@@ -13,7 +13,14 @@ public class Pizza implements MenuItem {
 
     private String toppings = null;
 
+    public Pizza() {
+    }
+
     public Pizza(String toppings) {
+        this.toppings = toppings;
+    }
+
+    public void setToppings(String toppings) {
         this.toppings = toppings;
     }
 
