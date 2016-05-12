@@ -11,9 +11,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Created by palfors on 5/8/16.
  */
-public class PizzaStoreSpringComponentTest extends PizzaStoreTest {
+public class PizzaStoreSpringComponentTest {
 
-    @Autowired
     protected static PizzaStore pizzaStore;
 
     public static void main(String[] args) {
