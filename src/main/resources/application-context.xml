@@ -22,7 +22,7 @@
 
     <!-- Definition for studentJDBCTemplate bean -->
     <bean id="orderJDBCTemplate"
-          class="com.alforsconsulting.pizzastore.dao.OrderJDBCTemplate">
+          class="com.alforsconsulting.pizzastore.order.dao.OrderJDBCTemplate">
         <property name="dataSource"  ref="dataSource" />
     </bean>
 

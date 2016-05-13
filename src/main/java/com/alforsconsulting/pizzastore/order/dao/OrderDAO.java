@@ -1,4 +1,4 @@
-package com.alforsconsulting.pizzastore.dao;
+package com.alforsconsulting.pizzastore.order.dao;
 
 import com.alforsconsulting.pizzastore.order.Order;
 
