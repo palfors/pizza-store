@@ -9,14 +9,20 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class Customer {
-    private String name = "bob";
+    private long customerId;
+    private String name = "<unknown>";
+
+    public Customer() {
+        this.customerId = CustomerIdGenerator.getInstance().generateId();
+    }
 
     public Customer (String name) {
         this.name = name;
+        this.customerId = CustomerIdGenerator.getInstance().generateId();
     }
 
-    public Customer() {
-
+    public long getCustomerId() {
+        return customerId;
     }
 
     public String getName() {

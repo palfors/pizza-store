@@ -1,5 +1,6 @@
-package com.alforsconsulting;
+package com.alforsconsulting.pizzastore.spring;
 
+import com.alforsconsulting.PizzaStoreTest;
 import com.alforsconsulting.pizzastore.PizzaStore;
 import com.alforsconsulting.pizzastore.menu.pizza.Pizza;
 import com.alforsconsulting.pizzastore.menu.sides.BreadSticks;

@@ -24,12 +24,11 @@ public class Order {
 
     private Customer customer = new Customer("joe");
 
-    public Order() {
-        this.orderId = OrderIdGenerator.getInstance().generateId();
+    public Order(long orderId) {
+        this.orderId = orderId;
     }
 
-    public Order(long storeId) {
-        this.storeId = storeId;
+    public Order() {
         this.orderId = OrderIdGenerator.getInstance().generateId();
     }
 
@@ -52,6 +51,10 @@ public class Order {
 
     protected void updateStatus(OrderStatus orderStatus) {
         status = orderStatus;
+    }
+
+    public long getOrderId() {
+        return this.orderId;
     }
 
     public long getStoreId() {

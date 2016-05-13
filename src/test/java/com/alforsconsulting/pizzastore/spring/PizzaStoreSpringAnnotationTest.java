@@ -1,13 +1,11 @@
-package com.alforsconsulting;
+package com.alforsconsulting.pizzastore.spring;
 
 import com.alforsconsulting.pizzastore.PizzaStore;
 import com.alforsconsulting.pizzastore.customer.Customer;
 import com.alforsconsulting.pizzastore.menu.pizza.Pizza;
 import com.alforsconsulting.pizzastore.menu.sides.BreadSticks;
 import com.alforsconsulting.pizzastore.order.Order;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
