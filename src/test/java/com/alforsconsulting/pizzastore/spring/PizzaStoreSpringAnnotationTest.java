@@ -7,6 +7,7 @@ import com.alforsconsulting.pizzastore.menu.sides.BreadSticks;
 import com.alforsconsulting.pizzastore.order.Order;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
  * Created by palfors on 5/8/16.
@@ -20,7 +21,8 @@ public class PizzaStoreSpringAnnotationTest {
     }
 
     public void run() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("annotation-application-context.xml");
+        ApplicationContext context = new FileSystemXmlApplicationContext("src/test/resources/annotation-application-context.xml");
+//        ApplicationContext context = new ClassPathXmlApplicationContext("src/test/resources/annotation-application-context.xml");
 //        ApplicationContext context = new AnnotationConfigApplicationContext("com.alforsconsulting");
         PizzaStore pizzaStore = (PizzaStore) context.getBean("pizzaStore");
 

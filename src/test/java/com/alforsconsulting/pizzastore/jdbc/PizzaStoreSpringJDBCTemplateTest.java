@@ -6,7 +6,7 @@ import com.alforsconsulting.pizzastore.dao.OrderJDBCTemplate;
 import com.alforsconsulting.pizzastore.menu.pizza.Pizza;
 import com.alforsconsulting.pizzastore.order.Order;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import java.util.List;
 
@@ -22,8 +22,7 @@ public class PizzaStoreSpringJDBCTemplateTest {
     }
 
     public void run() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("annotation-application-context.xml");
-//        ApplicationContext context = new AnnotationConfigApplicationContext("com.alforsconsulting");
+        ApplicationContext context = new FileSystemXmlApplicationContext("src/test/resources/annotation-application-context.xml");
 
         // get the Order JDBC Template
         OrderJDBCTemplate orderJDBCTemplate =
