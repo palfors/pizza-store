@@ -19,7 +19,7 @@ public class OrderLine {
     }
 
     public String toString() {
-        return new StringBuilder().append("\t[").append(
+        return new StringBuilder().append("[").append(
                 menuItem).append("][").append(quantity).append("]").toString();
     }
 }

@@ -34,6 +34,7 @@ public class Order {
     }
 
     public void addItem(MenuItem item, int quantity) {
+
         orderLines.add(new OrderLine(item, quantity));
     }
 
@@ -78,7 +79,7 @@ public class Order {
     }
 
     @Autowired
-    @Qualifier("moe-customer")
+//    @Qualifier("moe-customer")
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }

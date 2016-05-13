@@ -12,7 +12,7 @@
 
     <bean id="pepperoni-pizza" class="com.alforsconsulting.pizzastore.menu.pizza.Pizza"
           scope="prototype">
-        <property name="toppings" value="Pepperoni"/>
+        <property name="topping" value="Pepperoni"/>
     </bean>
 
 </beans>

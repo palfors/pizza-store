@@ -19,8 +19,10 @@ public class PizzaStoreSpringXmlTest extends PizzaStoreTest {
 
         Order order = (Order) context.getBean("order");
         Pizza pizza1 = (Pizza) context.getBean("pizza");
-        pizza1.setToppings("Sausage");
+        pizza1.addTopping("Sausage");
+        pizza1.addTopping("Onion");
         order.addItem(pizza1, 2);
+
         Pizza pizza2 = (Pizza) context.getBean("sausage-pizza");
         order.addItem(pizza2, 2);
         pizzaStore.addOrder(order);
@@ -28,6 +30,7 @@ public class PizzaStoreSpringXmlTest extends PizzaStoreTest {
         Order order2 = (Order) context.getBean("order");
         Pizza pizza3 = (Pizza) context.getBean("pepperoni-pizza");
         order2.addItem(pizza3, 2);
+
         BreadSticks breadsticks = (BreadSticks) context.getBean("breadsticks");
         order2.addItem(breadsticks, 2);
         pizzaStore.addOrder(order2);

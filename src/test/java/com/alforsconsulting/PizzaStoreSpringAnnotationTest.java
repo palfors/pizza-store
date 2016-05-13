@@ -30,20 +30,23 @@ public class PizzaStoreSpringAnnotationTest {
         Customer customer = order.getCustomer();
 
         Pizza pizza1 = (Pizza) context.getBean("pizza");
-        pizza1.setToppings("Sausage");
+        pizza1.addTopping("Sausage");
         order.addItem(pizza1, 2);
 
         Pizza pizza2 = (Pizza) context.getBean("pizza");
-        pizza2.setToppings("Veggie");
+        pizza2.addTopping("Onion");
         order.addItem(pizza2, 2);
 
+        pizzaStore.addOrder(order);
+
+        Order order2 = (Order) context.getBean("order");
         Pizza pizza3 = (Pizza) context.getBean("pepperoni-pizza");
-        order.addItem(pizza3, 2);
+        order2.addItem(pizza3, 2);
 
         BreadSticks breadsticks = (BreadSticks) context.getBean("breadSticks");
-        order.addItem(breadsticks, 2);
+        order2.addItem(breadsticks, 2);
 
-        pizzaStore.addOrder(order);
+        pizzaStore.addOrder(order2);
 
         pizzaStore.showOrders();
     }
