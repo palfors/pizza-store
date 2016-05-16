@@ -7,6 +7,8 @@ import com.alforsconsulting.pizzastore.menu.MenuItem;
 import com.alforsconsulting.pizzastore.menu.dao.MenuItemJDBCTemplate;
 import com.alforsconsulting.pizzastore.menu.pizza.Pizza;
 import com.alforsconsulting.pizzastore.menu.sides.BreadSticks;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.*;
 import org.springframework.context.ApplicationContext;
 
@@ -18,6 +20,8 @@ import static org.junit.Assert.*;
  * Created by palfors on 5/15/16.
  */
 public class MenuJDBCTemplateTest {
+    private static final Logger logger = LogManager.getLogger();
+
     private static ApplicationContext context = null;
     private static MenuItemJDBCTemplate jdbcTemplate = null;
     private static MenuItem pizza = null;
@@ -25,6 +29,7 @@ public class MenuJDBCTemplateTest {
 
     @BeforeClass
     public static void setupClass() {
+        logger.debug("setupClass entry");
         context = AppContext.getInstance().getContext();
         jdbcTemplate = (MenuItemJDBCTemplate)context.getBean("menuItemJDBCTemplate");
 
@@ -39,6 +44,7 @@ public class MenuJDBCTemplateTest {
 
     @AfterClass
     public static void teardownClass() {
+        logger.debug("teardownClass entry");
         jdbcTemplate.delete(pizza.getMenuItemId());
         jdbcTemplate.delete(breadsticks.getMenuItemId());
     }

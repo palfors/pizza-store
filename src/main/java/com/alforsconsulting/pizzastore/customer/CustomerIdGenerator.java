@@ -24,7 +24,6 @@ public class CustomerIdGenerator {
     }
 
     private long getCurrentMaxId() {
-        logger.debug("getCurrentMaxId entry");
         CustomerJDBCTemplate jdbcTemplate = (CustomerJDBCTemplate) AppContext.getInstance(
             ).getContext().getBean("customerJDBCTemplate");
         return jdbcTemplate.getMaxId();
@@ -36,6 +35,7 @@ public class CustomerIdGenerator {
 
     public synchronized long generateId() {
         incrementId();
+        logger.debug("Generated next customerId [{}]", customerId);
         return customerId;
     }
 }

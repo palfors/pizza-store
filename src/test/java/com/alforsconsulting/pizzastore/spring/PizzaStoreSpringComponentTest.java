@@ -37,7 +37,7 @@ public class PizzaStoreSpringComponentTest {
 
         pizzaStore.addOrder(order2);
 
-        pizzaStore.showOrders();
+        pizzaStore.listOrders();
     }
 
 }

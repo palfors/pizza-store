@@ -36,7 +36,7 @@ public class PizzaStoreSpringXmlTest extends PizzaStoreTest {
         order2.addItem(breadsticks, 2);
         pizzaStore.addOrder(order2);
 
-        pizzaStore.showOrders();
+        pizzaStore.listOrders();
     }
 
 

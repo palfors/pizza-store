@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class Customer {
+
     private long customerId;
     private String name = "<unknown>";
 

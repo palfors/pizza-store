@@ -1,6 +1,8 @@
 package com.alforsconsulting.pizzastore;
 
 import com.alforsconsulting.pizzastore.order.Order;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +15,9 @@ import java.util.List;
 @Component
 @Scope("prototype")
 public class PizzaStore {
+    private static final Logger logger = LogManager.getLogger();
 
     private long storeId = 0;
-
     private List<Order> orders = new ArrayList<Order>();
     protected String name = "PizzaStore";
 
@@ -55,10 +57,10 @@ public class PizzaStore {
         orders.add(order);
     }
 
-    public void showOrders() {
-        System.out.println("Store: " + storeId + " Orders:");
+    public void listOrders() {
+        logger.debug("Listing PizzaStore orders");
         for (Order order : orders) {
-            System.out.println(order.toString());
+            logger.debug("[{}]", order);
         }
     }
 

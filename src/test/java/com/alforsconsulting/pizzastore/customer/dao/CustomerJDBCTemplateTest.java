@@ -2,6 +2,8 @@ package com.alforsconsulting.pizzastore.customer.dao;
 
 import com.alforsconsulting.pizzastore.AppContext;
 import com.alforsconsulting.pizzastore.customer.Customer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.*;
 import org.springframework.context.ApplicationContext;
 
@@ -13,12 +15,15 @@ import static org.junit.Assert.*;
  * Created by palfors on 5/15/16.
  */
 public class CustomerJDBCTemplateTest {
+    private static final Logger logger = LogManager.getLogger();
+
     private static ApplicationContext context = null;
     private static CustomerJDBCTemplate jdbcTemplate = null;
     private static Customer customer = null;
 
     @BeforeClass
     public static void setupClass() {
+        logger.debug("setupClass entry");
         context = AppContext.getInstance().getContext();
         jdbcTemplate = (CustomerJDBCTemplate)context.getBean("customerJDBCTemplate");
 
@@ -28,6 +33,8 @@ public class CustomerJDBCTemplateTest {
 
     @AfterClass
     public static void teardownClass() {
+        logger.debug("teardownClass entry");
+
         jdbcTemplate.delete(customer);
     }
 

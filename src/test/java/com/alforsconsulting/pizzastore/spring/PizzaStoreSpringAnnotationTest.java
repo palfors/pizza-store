@@ -48,7 +48,7 @@ public class PizzaStoreSpringAnnotationTest {
 
         pizzaStore.addOrder(order2);
 
-        pizzaStore.showOrders();
+        pizzaStore.listOrders();
     }
 
 }

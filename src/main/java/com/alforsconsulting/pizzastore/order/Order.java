@@ -4,8 +4,6 @@ import com.alforsconsulting.pizzastore.AppContext;
 import com.alforsconsulting.pizzastore.customer.Customer;
 import com.alforsconsulting.pizzastore.menu.MenuItem;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

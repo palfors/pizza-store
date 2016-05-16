@@ -39,6 +39,7 @@ public class OrderJDBCTemplateTest {
 
     @BeforeClass
     public static void setupClass() {
+        logger.debug("setupClass entry");
         context = AppContext.getInstance().getContext();
 
         pizzaStore = (PizzaStore) context.getBean("pizzaStore");

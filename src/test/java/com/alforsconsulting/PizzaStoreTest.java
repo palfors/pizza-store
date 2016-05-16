@@ -44,7 +44,7 @@ public class PizzaStoreTest {
         order2.addItem(new BreadSticks(), 2);
         pizzaStore.addOrder(order2);
 
-        pizzaStore.showOrders();
+        pizzaStore.listOrders();
     }
 
 }

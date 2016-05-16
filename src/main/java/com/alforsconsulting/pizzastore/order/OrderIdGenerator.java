@@ -2,11 +2,14 @@ package com.alforsconsulting.pizzastore.order;
 
 import com.alforsconsulting.pizzastore.AppContext;
 import com.alforsconsulting.pizzastore.order.dao.OrderJDBCTemplate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Created by palfors on 5/12/16.
  */
 public class OrderIdGenerator {
+    private static final Logger logger = LogManager.getLogger();
 
     private long orderId = 0;
 
@@ -32,6 +35,7 @@ public class OrderIdGenerator {
 
     public synchronized long generateId() {
         incrementId();
+        logger.debug("Generated next orderId [{}]", orderId);
         return orderId;
     }
 }

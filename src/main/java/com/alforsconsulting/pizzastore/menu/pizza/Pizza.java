@@ -1,10 +1,8 @@
 package com.alforsconsulting.pizzastore.menu.pizza;
 
 import com.alforsconsulting.pizzastore.menu.AbstractMenuItem;
-import com.alforsconsulting.pizzastore.menu.MenuItem;
 import com.alforsconsulting.pizzastore.menu.MenuItemIdGenerator;
 import com.alforsconsulting.pizzastore.menu.MenuItemType;
-import com.alforsconsulting.pizzastore.menu.pizza.crust.Crust;
 import com.alforsconsulting.pizzastore.menu.pizza.crust.CrustType;
 import com.alforsconsulting.pizzastore.menu.pizza.toppings.*;
 import org.springframework.context.annotation.Scope;
@@ -19,7 +17,6 @@ import java.util.List;
 @Component
 @Scope("prototype")
 public class Pizza extends AbstractMenuItem {
-
     private List<Topping> toppings = new ArrayList<Topping>();
     private CrustType crustType = CrustType.THIN;
 

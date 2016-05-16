@@ -2,12 +2,14 @@ package com.alforsconsulting.pizzastore.order;
 
 import com.alforsconsulting.pizzastore.AppContext;
 import com.alforsconsulting.pizzastore.order.dao.OrderLineJDBCTemplate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Created by palfors on 5/12/16.
  */
 public class OrderLineIdGenerator {
-
+    private static final Logger logger = LogManager.getLogger();
     private long orderLineId = 0;
 
     private static OrderLineIdGenerator ourInstance = new OrderLineIdGenerator();
@@ -32,6 +34,7 @@ public class OrderLineIdGenerator {
 
     public synchronized long generateId() {
         incrementId();
+        logger.debug("Generated next orderId [{}]", orderLineId);
         return orderLineId;
     }
 }

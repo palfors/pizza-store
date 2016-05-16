@@ -114,3 +114,388 @@ deleting customer: Customer: JUnit-Customer
 deleting pizzaStore: PizzaStore: 
 - id [4]
 - name [JUnit-Store]
+getCurrentMaxId entry
+getMaxId entry
+Creating customer [1] [JUnit-Customer]
+Creating customer [2] [deleteMe]
+Creating customer [3] [JUnit-Customer]
+created order: Order: 4.1 (NEW)
+- price: 12.35
+- Customer: JUnit-Customer
+
+deleteOrderLines entry
+teardownClass entry
+deleting orderlines for order: Order: 4.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+- [Thin Pizza: [] (5.0)][1]
+
+deleteOrderLines entry
+deleting orderline: [Thin Pizza: [] (5.0)][1]
+deleting menuItem: 10
+deleting order: Order: 4.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+- [Thin Pizza: [] (5.0)][1]
+
+deleting customer: Customer: JUnit-Customer
+deleting pizzaStore: PizzaStore: 
+- id [4]
+- name [JUnit-Store]
+Found max customerId [0]
+Generated next customerId [1]
+Creating customer [Customer: JUnit-Customer]
+Creating customer [1] [JUnit-Customer]
+Retrieving customer [1]
+Mapped customer [Customer: JUnit-Customer]
+Generated next customerId [2]
+Creating customer [Customer: deleteMe]
+Creating customer [2] [deleteMe]
+Retrieving customer [2]
+Mapped customer [Customer: deleteMe]
+Deleting customer [Customer: deleteMe]
+Deleting customer [2]
+Retrieving customer [2]
+Customer [2] does not exist
+Updating customer [Customer: JUnit-updated-customer]
+Updating customer [1] [JUnit-updated-customer]
+Retrieving customer [1]
+Mapped customer [Customer: JUnit-updated-customer]
+Retrieving all customers 
+Mapped customer [Customer: JUnit-updated-customer]
+Deleting customer [Customer: JUnit-updated-customer]
+Deleting customer [1]
+Retrieved max pizzaStoreId [1]
+Creating pizzaStore [PizzaStore: 
+- id [2]
+- name [JUnit-Store]]
+Creating pizzaStore [2] [JUnit-Store]
+Retrieving pizzaStore [2]
+Mapped pizzaStore [PizzaStore: 
+- id [2]
+- name [JUnit-Store]]
+Creating pizzaStore [PizzaStore: 
+- id [3]
+- name [deleteStore]]
+Creating pizzaStore [3] [deleteStore]
+Retrieving pizzaStore [3]
+Mapped pizzaStore [PizzaStore: 
+- id [3]
+- name [deleteStore]]
+Deleting pizzaStore [PizzaStore: 
+- id [3]
+- name [deleteStore]]
+Deleting pizzaStore [3]
+Retrieving pizzaStore [3]
+PizzaStore [3] does not exist
+Updating pizzaStore [PizzaStore: 
+- id [2]
+- name [JUnit-updated-store]]
+Updating pizzaStore [2] [JUnit-updated-store]
+Retrieving pizzaStore [2]
+Mapped pizzaStore [PizzaStore: 
+- id [2]
+- name [JUnit-updated-store]]
+Mapped pizzaStore [PizzaStore: 
+- id [1]
+- name [Pizzeria Pete]]
+Mapped pizzaStore [PizzaStore: 
+- id [2]
+- name [JUnit-updated-store]]
+Retrieving [2] PizzaStores
+Deleting pizzaStore [PizzaStore: 
+- id [2]
+- name [JUnit-updated-store]]
+Deleting pizzaStore [2]
+Creating pizzaStore [PizzaStore: 
+- id [4]
+- name [JUnit-Store]]
+Creating pizzaStore [4] [JUnit-Store]
+Generated next customerId [3]
+Creating customer [Customer: JUnit-Customer]
+Creating customer [3] [JUnit-Customer]
+Generated next customerId [4]
+created order: Order: 4.1 (NEW)
+- price: 12.35
+- Customer: JUnit-Customer
+
+Retrieving customer [3]
+Mapped customer [Customer: JUnit-Customer]
+Generated next customerId [5]
+Retrieving customer [3]
+Mapped customer [Customer: JUnit-Customer]
+deleteOrderLines entry
+Retrieving customer [3]
+Mapped customer [Customer: JUnit-Customer]
+Retrieving customer [3]
+Mapped customer [Customer: JUnit-Customer]
+teardownClass entry
+deleting orderlines for order: Order: 4.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+- [Thin Pizza: [] (5.0)][1]
+
+deleteOrderLines entry
+deleting orderline: [Thin Pizza: [] (5.0)][1]
+deleting menuItem: 10
+deleting order: Order: 4.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+- [Thin Pizza: [] (5.0)][1]
+
+deleting customer: Customer: JUnit-Customer
+Deleting customer [Customer: JUnit-Customer]
+Deleting customer [3]
+deleting pizzaStore: PizzaStore: 
+- id [4]
+- name [JUnit-Store]
+Deleting pizzaStore [PizzaStore: 
+- id [4]
+- name [JUnit-Store]]
+Deleting pizzaStore [4]
+setupClass entry
+Found max customerId [0]
+Generated next customerId [1]
+Creating customer [Customer: JUnit-Customer]
+Creating customer [1] [JUnit-Customer]
+Retrieving customer [1]
+Mapped customer [Customer: JUnit-Customer]
+Found customer [Customer: JUnit-Customer]
+Generated next customerId [2]
+Creating customer [Customer: deleteMe]
+Creating customer [2] [deleteMe]
+Retrieving customer [2]
+Mapped customer [Customer: deleteMe]
+Found customer [Customer: deleteMe]
+Deleting customer [Customer: deleteMe]
+Deleting customer [2]
+Retrieving customer [2]
+Customer [2] does not exist
+Updating customer [Customer: JUnit-updated-customer]
+Updating customer [1] [JUnit-updated-customer]
+Retrieving customer [1]
+Mapped customer [Customer: JUnit-updated-customer]
+Found customer [Customer: JUnit-updated-customer]
+Retrieving all customers 
+Mapped customer [Customer: JUnit-updated-customer]
+teardownClass entry
+Deleting customer [Customer: JUnit-updated-customer]
+Deleting customer [1]
+Retrieved max pizzaStoreId [1]
+Generated next storeId [2]
+Creating pizzaStore [PizzaStore: 
+- id [2]
+- name [JUnit-Store]]
+Creating pizzaStore [2] [JUnit-Store]
+Retrieving pizzaStore [2]
+Mapped pizzaStore [PizzaStore: 
+- id [2]
+- name [JUnit-Store]]
+Found pizzaStore [PizzaStore: 
+- id [2]
+- name [JUnit-Store]]
+Generated next storeId [3]
+Creating pizzaStore [PizzaStore: 
+- id [3]
+- name [deleteStore]]
+Creating pizzaStore [3] [deleteStore]
+Retrieving pizzaStore [3]
+Mapped pizzaStore [PizzaStore: 
+- id [3]
+- name [deleteStore]]
+Found pizzaStore [PizzaStore: 
+- id [3]
+- name [deleteStore]]
+Deleting pizzaStore [PizzaStore: 
+- id [3]
+- name [deleteStore]]
+Deleting pizzaStore [3]
+Retrieving pizzaStore [3]
+PizzaStore [3] does not exist
+Updating pizzaStore [PizzaStore: 
+- id [2]
+- name [JUnit-updated-store]]
+Updating pizzaStore [2] [JUnit-updated-store]
+Retrieving pizzaStore [2]
+Mapped pizzaStore [PizzaStore: 
+- id [2]
+- name [JUnit-updated-store]]
+Found pizzaStore [PizzaStore: 
+- id [2]
+- name [JUnit-updated-store]]
+Mapped pizzaStore [PizzaStore: 
+- id [1]
+- name [Pizzeria Pete]]
+Mapped pizzaStore [PizzaStore: 
+- id [2]
+- name [JUnit-updated-store]]
+Retrieving [2] PizzaStores
+Deleting pizzaStore [PizzaStore: 
+- id [2]
+- name [JUnit-updated-store]]
+Deleting pizzaStore [2]
+setupClass entry
+Found max menuItemId [0]
+Generated next customerId [1]
+Generated next customerId [2]
+Creating menuItem [Thin Pizza: [] (5.0)]
+Creating menuItem [1] [pizza] [JUnit-Pizza] [5.0]
+Retrieving menuItem [1]
+Generated next customerId [3]
+Found menuItem [Thin Pizza: [] (5.0)]
+Creating menuItem [BreadSticks (2.0)]
+Creating menuItem [2] [breadSticks] [JUnit-Breadsticks] [2.0]
+Retrieving menuItem [2]
+Generated next customerId [4]
+Found menuItem [BreadSticks (2.0)]
+Generated next customerId [5]
+Creating menuItem [Thin Pizza: [] (5.0)]
+Creating menuItem [5] [pizza] [deleteItem] [5.0]
+Retrieving menuItem [5]
+Generated next customerId [6]
+Found menuItem [Thin Pizza: [] (5.0)]
+Deleting menuItem [5]
+Retrieving menuItem [5]
+MenuItem [5] does not exist
+Updating menuItem [Thin Pizza: [] (5.0)]
+Deleting menuItem [1][JUnit-updated-pizza][5.0]
+Retrieving menuItem [1]
+Generated next customerId [7]
+Found menuItem [Thin Pizza: [] (5.0)]
+Retrieving all menuItems
+Generated next customerId [8]
+Generated next customerId [9]
+Found [2] menuItems
+teardownClass entry
+Deleting menuItem [1]
+Deleting menuItem [2]
+setupClass entry
+Generated next storeId [4]
+Creating pizzaStore [PizzaStore: 
+- id [4]
+- name [JUnit-Store]]
+Creating pizzaStore [4] [JUnit-Store]
+Generated next customerId [3]
+Creating customer [Customer: JUnit-Customer]
+Creating customer [3] [JUnit-Customer]
+Found max orderId [0]
+Generated next orderId [1]
+Generated next customerId [4]
+Creating order [Order: 4.1 (NEW)
+- price: 12.35
+- Customer: JUnit-Customer
+]
+Creating order [1][4][3][12.35]
+created order: Order: 4.1 (NEW)
+- price: 12.35
+- Customer: JUnit-Customer
+
+Retrieving order [1]
+Retrieving customer [3]
+Mapped customer [Customer: JUnit-Customer]
+Found customer [Customer: JUnit-Customer]
+Mapped orderLine [Order: 4.1 (NEW)
+- price: 12.35
+- Customer: JUnit-Customer
+]
+Found order [Order: 4.1 (NEW)
+- price: 12.35
+- Customer: JUnit-Customer
+]
+Generated next customerId [10]
+Creating menuItem [Thin Pizza: [] (5.0)]
+Creating menuItem [10] [pizza] [JUnit-Pizza] [5.0]
+Found max orderLineId [0]
+Generated next orderId [1]
+Creating orderLine [[Thin Pizza: [] (5.0)][1]]
+Creating orderLine [1][1][10][1][5.0]
+Retrieving orderLine [1]
+Mapped orderLine [[null][1]]
+Found OrderLine [[null][1]]
+Generated next orderId [2]
+Generated next customerId [5]
+Creating order [Order: 4.2 (NEW)
+- price: 13.45
+- Customer: JUnit-Customer
+]
+Creating order [2][4][3][13.45]
+Retrieving order [2]
+Retrieving customer [3]
+Mapped customer [Customer: JUnit-Customer]
+Found customer [Customer: JUnit-Customer]
+Mapped orderLine [Order: 4.2 (NEW)
+- price: 13.45
+- Customer: JUnit-Customer
+]
+Found order [Order: 4.2 (NEW)
+- price: 13.45
+- Customer: JUnit-Customer
+]
+deleteOrderLines entry
+Deleting order [Order: 4.2 (NEW)
+- price: 13.45
+- Customer: JUnit-Customer
+]
+Deleting order [2]
+Retrieving order [2]
+Order [2] does not exist
+Updating order [Order: 4.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+- [Thin Pizza: [] (5.0)][1]
+]
+Updating order [1][4][3][15.75]
+Retrieving order [1]
+Retrieving customer [3]
+Mapped customer [Customer: JUnit-Customer]
+Found customer [Customer: JUnit-Customer]
+Mapped orderLine [Order: 4.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+]
+Found order [Order: 4.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+]
+Retrieving all orders
+Retrieving customer [3]
+Mapped customer [Customer: JUnit-Customer]
+Found customer [Customer: JUnit-Customer]
+Mapped orderLine [Order: 4.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+]
+Found [1] orders
+teardownClass entry
+deleting orderlines for order: Order: 4.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+- [Thin Pizza: [] (5.0)][1]
+
+deleteOrderLines entry
+deleting orderline: [Thin Pizza: [] (5.0)][1]
+Deleting OrderLine [[Thin Pizza: [] (5.0)][1]]
+Deleting OrderLine [1]
+deleting menuItem: 10
+Deleting menuItem [10]
+deleting order: Order: 4.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+- [Thin Pizza: [] (5.0)][1]
+
+Deleting order [Order: 4.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+- [Thin Pizza: [] (5.0)][1]
+]
+Deleting order [1]
+deleting customer: Customer: JUnit-Customer
+Deleting customer [Customer: JUnit-Customer]
+Deleting customer [3]
+deleting pizzaStore: PizzaStore: 
+- id [4]
+- name [JUnit-Store]
+Deleting pizzaStore [PizzaStore: 
+- id [4]
+- name [JUnit-Store]]
+Deleting pizzaStore [4]
