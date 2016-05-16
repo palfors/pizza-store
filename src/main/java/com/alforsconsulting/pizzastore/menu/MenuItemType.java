@@ -5,6 +5,17 @@ package com.alforsconsulting.pizzastore.menu;
  */
 public enum MenuItemType {
 
-    PIZZA, BREADSTICKS
+    PIZZA ("pizza"),
+    BREADSTICKS ("breadSticks");
+
+    private final String beanName;
+
+    MenuItemType(String beanName) {
+        this.beanName = beanName;
+    }
+
+    public String getBeanName() {
+        return this.beanName;
+    }
 
 }

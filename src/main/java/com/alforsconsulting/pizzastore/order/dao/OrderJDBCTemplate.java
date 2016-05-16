@@ -1,6 +1,7 @@
 package com.alforsconsulting.pizzastore.order.dao;
 
 import com.alforsconsulting.pizzastore.order.Order;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -18,26 +19,43 @@ public class OrderJDBCTemplate implements OrderDAO {
         this.jdbcTemplateObject = new JdbcTemplate(dataSource);
     }
 
-    public void create(long orderId, long storeId, long customerId) {
-        String SQL = "insert into STORE_ORDER (orderId, storeId, customerId) values (?, ?, ?)";
+    public void create(Order order) {
+        create(order.getOrderId(),
+                order.getStoreId(),
+                order.getCustomer().getCustomerId(),
+                order.getPrice());
+    }
 
-        jdbcTemplateObject.update(SQL, orderId, storeId, customerId);
+    public void create(long orderId, long storeId, long customerId, double price) {
+        String SQL = "insert into STORE_ORDER (orderId, storeId, customerId, price) values (?, ?, ?, ?)";
+
+        jdbcTemplateObject.update(SQL, orderId, storeId, customerId, price);
         System.out.println("Created Record orderId = " + orderId + " storeId = " +
                 storeId + " customerId = " + customerId);
     }
 
     public Order getOrder(long orderId) {
         String SQL = "select * from STORE_ORDER where orderId = ?";
-        Order order = jdbcTemplateObject.queryForObject(SQL,
+        Order order = null;
+        try {
+            order = jdbcTemplateObject.queryForObject(SQL,
                 new Object[]{orderId}, new OrderMapper());
+        } catch (EmptyResultDataAccessException e) {
+            // allow 0 results and return null
+        }
+
         return order;
     }
 
-    public List<Order> listOrders() {
+    public List<Order> list() {
         String SQL = "select * from STORE_ORDER";
         List<Order> orders = jdbcTemplateObject.query(SQL,
                 new OrderMapper());
         return orders;
+    }
+
+    public void delete(Order order) {
+        delete(order.getOrderId());
     }
 
     public void delete(long orderId) {
@@ -46,9 +64,17 @@ public class OrderJDBCTemplate implements OrderDAO {
         System.out.println("Deleted Record with ID = " + orderId );
     }
 
-    public void update(long orderId, long storeId, long customerId) {
-        String SQL = "update STORE_ORDER set storeId = ?, customerId = ? where orderId = ?";
-        jdbcTemplateObject.update(SQL, storeId, customerId, orderId);
+    public void update(Order order) {
+        update(order.getOrderId(),
+                order.getStoreId(),
+                order.getCustomer().getCustomerId(),
+                order.getPrice());
+    }
+
+    public void update(long orderId, long storeId, long customerId, double price) {
+        String SQL = "update STORE_ORDER set storeId = ?, customerId = ?, price = ? where orderId = ?";
+
+        jdbcTemplateObject.update(SQL, storeId, customerId, price, orderId);
         System.out.println("Updated Record with ID = " + orderId );
     }
 

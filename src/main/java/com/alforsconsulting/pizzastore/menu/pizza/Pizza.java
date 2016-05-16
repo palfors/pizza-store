@@ -1,6 +1,8 @@
 package com.alforsconsulting.pizzastore.menu.pizza;
 
+import com.alforsconsulting.pizzastore.menu.AbstractMenuItem;
 import com.alforsconsulting.pizzastore.menu.MenuItem;
+import com.alforsconsulting.pizzastore.menu.MenuItemIdGenerator;
 import com.alforsconsulting.pizzastore.menu.MenuItemType;
 import com.alforsconsulting.pizzastore.menu.pizza.crust.Crust;
 import com.alforsconsulting.pizzastore.menu.pizza.crust.CrustType;
@@ -16,12 +18,17 @@ import java.util.List;
  */
 @Component
 @Scope("prototype")
-public class Pizza implements MenuItem {
+public class Pizza extends AbstractMenuItem {
 
     private List<Topping> toppings = new ArrayList<Topping>();
     private CrustType crustType = CrustType.THIN;
 
     public Pizza() {
+        this.setMenuItemId(MenuItemIdGenerator.getInstance().generateId());
+    }
+
+    public Pizza(long menuItemId) {
+        this.setMenuItemId(menuItemId);
     }
 
     public Pizza(CrustType crust) {
@@ -88,10 +95,12 @@ public class Pizza implements MenuItem {
         toppings.add(topping);
     }
 
-    public String getItemType() {
-        return MenuItemType.PIZZA.name();
+    @Override
+    public MenuItemType getMenuItemType() {
+        return MenuItemType.PIZZA;
     }
 
+    @Override
     public double getPrice() {
         // base price:
         double price = 5.00;

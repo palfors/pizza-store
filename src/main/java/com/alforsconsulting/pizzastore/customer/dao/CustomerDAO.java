@@ -1,6 +1,6 @@
-package com.alforsconsulting.pizzastore.order.dao;
+package com.alforsconsulting.pizzastore.customer.dao;
 
-import com.alforsconsulting.pizzastore.order.Order;
+import com.alforsconsulting.pizzastore.customer.Customer;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by palfors on 5/13/16.
  */
-public interface OrderDAO {
+public interface CustomerDAO {
     /**
      * This is the method to be used to initialize
      * database resources ie. connection.
@@ -18,43 +18,43 @@ public interface OrderDAO {
      * This is the method to be used to create
      * a record in the table.
      */
-    public void create(Order order);
+    public void create(Customer customer);
     /**
      * This is the method to be used to create
      * a record in the table.
      */
-    public void create(long orderId, long storeId, long customerId, double price);
+    public void create(long id, String name);
     /**
      * This is the method to be used to list down
      * a record from the table corresponding
      * to a passed id.
      */
-    public Order getOrder(long orderId);
+    public Customer getCustomer(long customerId);
     /**
      * This is the method to be used to list down
      * all the records from the table.
      */
-    public List<Order> list();
+    public List<Customer> list();
     /**
      * This is the method to be used to delete
      * a record from the table corresponding
-     * to a passed order id.
+     * to a passed id.
      */
-    public void delete(Order order);
+    public void delete(Customer customer);
     /**
      * This is the method to be used to delete
      * a record from the table corresponding
-     * to a passed order id.
+     * to a passed id.
      */
-    public void delete(long orderId);
+    public void delete(long id);
     /**
      * This is the method to be used to update
      * a record in the table.
      */
-    public void update(Order order);
+    public void update(Customer customer);
     /**
      * This is the method to be used to update
      * a record in the table.
      */
-    public void update(long orderId, long storeId, long customerId, double price);
+    public void update(long id, String name);
 }

@@ -1,6 +1,7 @@
 package com.alforsconsulting.pizzastore.order.dao;
 
 import com.alforsconsulting.pizzastore.order.Order;
+import com.alforsconsulting.pizzastore.order.OrderLine;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * Created by palfors on 5/13/16.
  */
-public interface OrderDAO {
+public interface OrderLineDAO {
     /**
      * This is the method to be used to initialize
      * database resources ie. connection.
@@ -18,43 +19,43 @@ public interface OrderDAO {
      * This is the method to be used to create
      * a record in the table.
      */
-    public void create(Order order);
+    public void create(OrderLine orderLine);
     /**
      * This is the method to be used to create
      * a record in the table.
      */
-    public void create(long orderId, long storeId, long customerId, double price);
+    public void create(long orderLineId, long orderId, long menuItemId, int quantity, double price);
     /**
      * This is the method to be used to list down
      * a record from the table corresponding
      * to a passed id.
      */
-    public Order getOrder(long orderId);
+    public OrderLine getOrderLine(long orderLineId);
     /**
      * This is the method to be used to list down
      * all the records from the table.
      */
-    public List<Order> list();
+    public List<OrderLine> list();
     /**
      * This is the method to be used to delete
      * a record from the table corresponding
      * to a passed order id.
      */
-    public void delete(Order order);
+    public void delete(OrderLine orderLine);
     /**
      * This is the method to be used to delete
      * a record from the table corresponding
      * to a passed order id.
      */
-    public void delete(long orderId);
+    public void delete(long orderLineId);
     /**
      * This is the method to be used to update
      * a record in the table.
      */
-    public void update(Order order);
+    public void update(OrderLine orderLine);
     /**
      * This is the method to be used to update
      * a record in the table.
      */
-    public void update(long orderId, long storeId, long customerId, double price);
+    public void update(long orderLineId, long orderId, long menuItemId, int quantity, double price);
 }

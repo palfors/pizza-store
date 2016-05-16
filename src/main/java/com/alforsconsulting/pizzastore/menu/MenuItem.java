@@ -5,7 +5,15 @@ package com.alforsconsulting.pizzastore.menu;
  */
 public interface MenuItem {
 
-    public String getItemType();
+    public long getMenuItemId();
+    public void setMenuItemId(long menuItemId);
+
+    public MenuItemType getMenuItemType();
+
+    public String getName();
+    public void setName(String name);
+
     public double getPrice();
+    public void setPrice(double price);
 
 }

@@ -16,6 +16,10 @@ public class Customer {
         this.customerId = CustomerIdGenerator.getInstance().generateId();
     }
 
+    public Customer(long customerId) {
+        this.customerId = customerId;
+    }
+
     public Customer (String name) {
         this.name = name;
         this.customerId = CustomerIdGenerator.getInstance().generateId();

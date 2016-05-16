@@ -20,9 +20,24 @@
         <property name="password" value="mysqlpwd1"/>
     </bean>
 
-    <!-- Definition for studentJDBCTemplate bean -->
+    <bean id="pizzaStoreJDBCTemplate"
+          class="com.alforsconsulting.pizzastore.dao.PizzaStoreJDBCTemplate">
+        <property name="dataSource"  ref="dataSource" />
+    </bean>
+    <bean id="customerJDBCTemplate"
+          class="com.alforsconsulting.pizzastore.customer.dao.CustomerJDBCTemplate">
+        <property name="dataSource"  ref="dataSource" />
+    </bean>
+    <bean id="menuItemJDBCTemplate"
+          class="com.alforsconsulting.pizzastore.menu.dao.MenuItemJDBCTemplate">
+        <property name="dataSource"  ref="dataSource" />
+    </bean>
     <bean id="orderJDBCTemplate"
           class="com.alforsconsulting.pizzastore.order.dao.OrderJDBCTemplate">
+        <property name="dataSource"  ref="dataSource" />
+    </bean>
+    <bean id="orderLineJDBCTemplate"
+          class="com.alforsconsulting.pizzastore.order.dao.OrderLineJDBCTemplate">
         <property name="dataSource"  ref="dataSource" />
     </bean>
 

@@ -1,5 +1,6 @@
 package com.alforsconsulting.pizzastore.order;
 
+import com.alforsconsulting.pizzastore.AppContext;
 import com.alforsconsulting.pizzastore.customer.Customer;
 import com.alforsconsulting.pizzastore.menu.MenuItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,12 @@ import java.util.List;
 @Component
 @Scope("prototype")
 public class Order {
-    private long storeId = 0;
-    private long orderId = 0;
+    private long storeId;
+    private long orderId;
     private OrderStatus status = OrderStatus.NEW;
     private List<OrderLine> orderLines = new ArrayList<OrderLine>();
-
-    private Customer customer = new Customer("joe");
+    private Customer customer = null;
+    private double price;
 
     public Order(long orderId) {
         this.orderId = orderId;
@@ -34,7 +35,17 @@ public class Order {
 
     public void addItem(MenuItem item, int quantity) {
 
-        orderLines.add(new OrderLine(item, quantity));
+        OrderLine orderLine = (OrderLine) AppContext.getInstance().getContext().getBean("orderLine");
+        orderLine.setOrderId(orderId);
+        orderLine.setMenuItem(item);
+        orderLine.setQuantity(quantity);
+        // TODO: handle the price
+
+        orderLines.add(orderLine);
+    }
+
+    public List<OrderLine> getOrderLines() {
+        return orderLines;
     }
 
     public void removeOrderLine(OrderLine line) {
@@ -69,6 +80,7 @@ public class Order {
         // loop through the order and list the items
         StringBuilder builder = new StringBuilder("Order: ").append(
                 storeId).append(".").append(orderId).append(" (").append(status).append(")\n");
+        builder.append("- price: ").append(getPrice()).append("\n");
         builder.append("- ").append(customer).append("\n");
         for (OrderLine line : orderLines) {
             builder.append("- ").append(line).append("\n");
@@ -82,8 +94,16 @@ public class Order {
     }
 
     @Autowired
-//    @Qualifier("moe-customer")
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
 }
