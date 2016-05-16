@@ -76,12 +76,11 @@ public class PizzaStoreJDBCTemplate implements PizzaStoreDAO {
     public long getMaxId() {
         long storeId = 0;
         String SQL = "select max(storeId) from STORE";
-        Long id = jdbcTemplateObject.queryForObject(SQL, Long.class);
-        if (id != null) {
-            storeId = id.longValue();
-        }
+        Long maxId = jdbcTemplateObject.queryForObject(SQL, Long.class);
+        if (maxId == null)
+            maxId = new Long(0);
 
-        return storeId;
+        return maxId;
     }
 
 }

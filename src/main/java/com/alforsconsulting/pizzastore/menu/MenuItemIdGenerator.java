@@ -21,10 +21,8 @@ public class MenuItemIdGenerator {
     }
 
     private long getCurrentMaxId() {
-System.out.println("getCurrentMaxId: entry");
         MenuItemJDBCTemplate jdbcTemplate = (MenuItemJDBCTemplate) AppContext.getInstance(
             ).getContext().getBean("menuItemJDBCTemplate");
-System.out.println("getCurrentMaxId: exit");
         return jdbcTemplate.getMaxId();
     }
 

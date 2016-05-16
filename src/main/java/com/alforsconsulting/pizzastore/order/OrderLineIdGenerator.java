@@ -1,5 +1,8 @@
 package com.alforsconsulting.pizzastore.order;
 
+import com.alforsconsulting.pizzastore.AppContext;
+import com.alforsconsulting.pizzastore.order.dao.OrderLineJDBCTemplate;
+
 /**
  * Created by palfors on 5/12/16.
  */
@@ -14,6 +17,13 @@ public class OrderLineIdGenerator {
     }
 
     private OrderLineIdGenerator() {
+        orderLineId = getCurrentMaxId();
+    }
+
+    private long getCurrentMaxId() {
+        OrderLineJDBCTemplate jdbcTemplate = (OrderLineJDBCTemplate) AppContext.getInstance(
+            ).getContext().getBean("orderLineJDBCTemplate");
+        return jdbcTemplate.getMaxId();
     }
 
     private void incrementId() {

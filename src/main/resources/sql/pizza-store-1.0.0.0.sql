@@ -45,9 +45,6 @@ create table MENUITEM(
     name VARCHAR(200),
     price DOUBLE
 );
--- default data
-insert into menuitem (menuItemId, menuItemType, name, price) values (1,'PIZZA', 'Pizza', 5.00);
-insert into menuitem (menuItemId, menuItemType, name, price) values (2,'SIDE', 'Breadsticks', 2.25);
 
 -- defines the available pizza details
 create table PIZZA_DETAIL(
@@ -56,21 +53,6 @@ create table PIZZA_DETAIL(
     name VARCHAR(200) NOT NULL,
     price DOUBLE NOT NULL
 );
--- default data
-insert into pizza_detail (pizzaDetailId, detailType, name, price)
-    values (1, 'CRUST', 'Thin Crust', 0.00);
-insert into pizza_detail (pizzaDetailId, detailType, name, price)
-    values (2, 'CRUST', 'Regular Crust', 0.50);
-insert into pizza_detail (pizzaDetailId, detailType, name, price)
-    values (3, 'CRUST', 'Pan Crust', 1.25);
-insert into pizza_detail (pizzaDetailId, detailType, name, price)
-    values (4, 'TOPPPING', 'Sausage', 0.75);
-insert into pizza_detail (pizzaDetailId, detailType, name, price)
-    values (5, 'TOPPPING', 'Pepperoni', 0.75);
-insert into pizza_detail (pizzaDetailId, detailType, name, price)
-    values (6, 'TOPPPING', 'Onion', 0.50);
-insert into pizza_detail (pizzaDetailId, detailType, name, price)
-    values (7, 'TOPPPING', 'Mushroom', 0.50);
 
 -- defines a given store order
 create table STORE_ORDER(

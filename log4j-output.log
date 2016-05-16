@@ -1,0 +1,116 @@
+created order: Order: 21.5 (NEW)
+- price: 12.35
+- Customer: JUnit-Customer
+
+created order: Order: 24.6 (NEW)
+- price: 12.35
+- Customer: JUnit-Customer
+
+teardownClass entry
+deleting orderlines for order: Order: 24.6 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+
+deleting order: Order: 24.6 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+
+created order: Order: 27.7 (NEW)
+- price: 12.35
+- Customer: JUnit-Customer
+
+deleteOrderLines entry
+teardownClass entry
+deleting orderlines for order: Order: 27.7 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+
+deleteOrderLines entry
+deleting order: Order: 27.7 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+
+created order: Order: 30.8 (NEW)
+- price: 12.35
+- Customer: JUnit-Customer
+
+deleteOrderLines entry
+teardownClass entry
+deleting orderlines for order: Order: 30.8 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+- [Thin Pizza: [] (5.0)][1]
+
+deleteOrderLines entry
+deleting orderline: [Thin Pizza: [] (5.0)][1]
+deleting menuItem: 108
+deleting order: Order: 30.8 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+- [Thin Pizza: [] (5.0)][1]
+
+deleting customer: Customer: JUnit-Customer
+deleting pizzaStore: PizzaStore: 
+- id [30]
+- name [JUnit-Store]
+teardownClass entry
+deleting orderlines for order: null
+deleteOrderLines entry
+teardownClass entry
+deleting orderlines for order: null
+deleteOrderLines entry
+getCurrentMaxId entry
+getMaxId entry
+teardownClass entry
+deleting orderlines for order: null
+deleteOrderLines entry
+getCurrentMaxId entry
+getMaxId entry
+created order: Order: 10.1 (NEW)
+- price: 12.35
+- Customer: JUnit-Customer
+
+deleteOrderLines entry
+teardownClass entry
+deleting orderlines for order: Order: 10.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+- [Thin Pizza: [] (5.0)][1]
+
+deleteOrderLines entry
+deleting orderline: [Thin Pizza: [] (5.0)][1]
+deleting menuItem: 10
+deleting order: Order: 10.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+- [Thin Pizza: [] (5.0)][1]
+
+deleting customer: Customer: JUnit-Customer
+deleting pizzaStore: PizzaStore: 
+- id [10]
+- name [JUnit-Store]
+getCurrentMaxId entry
+getMaxId entry
+created order: Order: 4.1 (NEW)
+- price: 12.35
+- Customer: JUnit-Customer
+
+deleteOrderLines entry
+teardownClass entry
+deleting orderlines for order: Order: 4.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+- [Thin Pizza: [] (5.0)][1]
+
+deleteOrderLines entry
+deleting orderline: [Thin Pizza: [] (5.0)][1]
+deleting menuItem: 10
+deleting order: Order: 4.1 (NEW)
+- price: 15.75
+- Customer: JUnit-Customer
+- [Thin Pizza: [] (5.0)][1]
+
+deleting customer: Customer: JUnit-Customer
+deleting pizzaStore: PizzaStore: 
+- id [4]
+- name [JUnit-Store]

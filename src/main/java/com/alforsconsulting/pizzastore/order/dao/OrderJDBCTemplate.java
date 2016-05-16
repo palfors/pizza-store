@@ -78,4 +78,13 @@ public class OrderJDBCTemplate implements OrderDAO {
         System.out.println("Updated Record with ID = " + orderId );
     }
 
+    public long getMaxId() {
+        String SQL = "select max(orderId) from STORE_ORDER";
+        Long maxId = jdbcTemplateObject.queryForObject(SQL, Long.class);
+        if (maxId == null)
+            maxId = new Long(0);
+
+        return maxId;
+    }
+
 }

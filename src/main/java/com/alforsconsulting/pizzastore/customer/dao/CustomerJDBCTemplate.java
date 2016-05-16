@@ -1,6 +1,8 @@
 package com.alforsconsulting.pizzastore.customer.dao;
 
 import com.alforsconsulting.pizzastore.customer.Customer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,8 @@ import java.util.List;
  */
 @Component
 public class CustomerJDBCTemplate implements CustomerDAO {
+    private static final Logger logger = LogManager.getLogger();
+
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplateObject;
 
@@ -73,7 +77,12 @@ public class CustomerJDBCTemplate implements CustomerDAO {
     }
 
     public long getMaxId() {
+        logger.debug("getMaxId entry");
         String SQL = "select max(customerId) from CUSTOMER";
-        return jdbcTemplateObject.queryForObject(SQL, Long.class);
+        Long maxId = jdbcTemplateObject.queryForObject(SQL, Long.class);
+        if (maxId == null)
+            maxId = new Long(0);
+
+        return maxId;
     }
 }

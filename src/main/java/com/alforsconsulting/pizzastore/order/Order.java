@@ -33,6 +33,10 @@ public class Order {
         this.orderId = OrderIdGenerator.getInstance().generateId();
     }
 
+    public void addLine(OrderLine line) {
+        orderLines.add(line);
+    }
+
     public void addItem(MenuItem item, int quantity) {
 
         OrderLine orderLine = (OrderLine) AppContext.getInstance().getContext().getBean("orderLine");

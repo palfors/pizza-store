@@ -4,7 +4,6 @@ import com.alforsconsulting.pizzastore.AppContext;
 import com.alforsconsulting.pizzastore.customer.Customer;
 import org.junit.*;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import java.util.List;
 

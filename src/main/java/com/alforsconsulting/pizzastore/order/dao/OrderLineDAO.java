@@ -58,4 +58,7 @@ public interface OrderLineDAO {
      * a record in the table.
      */
     public void update(long orderLineId, long orderId, long menuItemId, int quantity, double price);
+
+    public long getMaxId();
+
 }

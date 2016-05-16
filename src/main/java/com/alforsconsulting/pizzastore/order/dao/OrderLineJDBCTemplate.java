@@ -21,7 +21,11 @@ public class OrderLineJDBCTemplate implements OrderLineDAO {
 
     @Override
     public void create(OrderLine orderLine) {
-        create(orderLine);
+        create(orderLine.getOrderLineId(),
+                orderLine.getOrderId(),
+                orderLine.getMenuItem().getMenuItemId(),
+                orderLine.getQuantity(),
+                orderLine.getPrice());
     }
 
     public void create(long orderLineId, long orderId, long menuItemId, int quantity, double price) {
@@ -83,6 +87,15 @@ public class OrderLineJDBCTemplate implements OrderLineDAO {
         StringBuilder builder = new StringBuilder("Updated OrderLine [");
         builder.append(orderLineId).append("]\n");
         System.out.println(builder.toString());
+    }
+
+    public long getMaxId() {
+        String SQL = "select max(orderLineId) from ORDER_LINE";
+        Long maxId = jdbcTemplateObject.queryForObject(SQL, Long.class);
+        if (maxId == null)
+            maxId = new Long(0);
+
+        return maxId;
     }
 
 }
