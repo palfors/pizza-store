@@ -5,10 +5,18 @@ import com.alforsconsulting.pizzastore.PizzaStore;
 import com.alforsconsulting.pizzastore.customer.Customer;
 import com.alforsconsulting.pizzastore.customer.dao.CustomerJDBCTemplate;
 import com.alforsconsulting.pizzastore.dao.PizzaStoreJDBCTemplate;
+import com.alforsconsulting.pizzastore.menu.MenuItem;
+import com.alforsconsulting.pizzastore.menu.MenuItemType;
 import com.alforsconsulting.pizzastore.menu.dao.MenuItemJDBCTemplate;
+import com.alforsconsulting.pizzastore.menu.detail.MenuItemDetail;
+import com.alforsconsulting.pizzastore.menu.detail.dao.MenuItemDetailJDBCTemplate;
 import com.alforsconsulting.pizzastore.menu.pizza.Pizza;
+import com.alforsconsulting.pizzastore.menu.pizza.topping.ToppingPlacement;
 import com.alforsconsulting.pizzastore.order.Order;
-import com.alforsconsulting.pizzastore.order.OrderLine;
+import com.alforsconsulting.pizzastore.order.line.dao.OrderLineJDBCTemplate;
+import com.alforsconsulting.pizzastore.order.line.OrderLine;
+import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetail;
+import com.alforsconsulting.pizzastore.order.line.detail.dao.OrderLineDetailJDBCTemplate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.*;
@@ -29,7 +37,9 @@ public class OrderJDBCTemplateTest {
     private static Order order = null;
 
     private static OrderLineJDBCTemplate orderLineJDBCTemplate = null;
+    private static OrderLineDetailJDBCTemplate orderLineDetailJDBCTemplate = null;
     private static MenuItemJDBCTemplate menuItemJDBCTemplate = null;
+    private static MenuItemDetailJDBCTemplate menuItemDetailJDBCTemplate = null;
 
     private static CustomerJDBCTemplate customerJDBCTemplate = null;
     private static Customer customer = null;
@@ -54,7 +64,9 @@ public class OrderJDBCTemplateTest {
 
         jdbcTemplate = (OrderJDBCTemplate) context.getBean("orderJDBCTemplate");
         orderLineJDBCTemplate = (OrderLineJDBCTemplate) context.getBean("orderLineJDBCTemplate");
+        orderLineDetailJDBCTemplate = (OrderLineDetailJDBCTemplate) context.getBean("orderLineDetailJDBCTemplate");
         menuItemJDBCTemplate = (MenuItemJDBCTemplate) context.getBean("menuItemJDBCTemplate");
+        menuItemDetailJDBCTemplate = (MenuItemDetailJDBCTemplate) context.getBean("menuItemDetailJDBCTemplate");
     }
 
     @AfterClass
@@ -93,21 +105,29 @@ public class OrderJDBCTemplateTest {
         assertNotNull("Unable to find order [JUnit-Order] created in test!", junitOrder);
 
         // add lines
-        Pizza pizza = (Pizza) context.getBean("pizza");
-        pizza.setName("JUnit-Pizza");
-        menuItemJDBCTemplate.create(pizza);
+        MenuItem pizzaItem = menuItemJDBCTemplate.getMenuItem(MenuItemType.PIZZA.getBeanName());
+        // add a topping
+        MenuItemDetail topping = menuItemDetailJDBCTemplate.getMenuItemDetail(
+                pizzaItem.getMenuItemId(), "topping", "Sausage");
 
         OrderLine orderLine = (OrderLine) context.getBean("orderLine");
         orderLine.setOrderId(order.getOrderId());
-        orderLine.setMenuItem(pizza);
+        orderLine.setMenuItemId(pizzaItem.getMenuItemId());
         orderLine.setQuantity(1);
-        orderLine.setPrice(pizza.getPrice());
+        orderLine.setPrice(pizzaItem.getPrice());
+
         order.addLine(orderLine);
 
+        // add a line detail
+        OrderLineDetail orderLineDetail = (OrderLineDetail) context.getBean("orderLineDetail");
+        orderLineDetail.setOrderLineId(orderLine.getOrderLineId());
+        orderLineDetail.setMenuItemDetailId(topping.getMenuItemDetailId());
+        orderLineDetail.setPlacement(ToppingPlacement.WHOLE.name());
         orderLineJDBCTemplate.create(orderLine);
         OrderLine junitOrderLine =
                 orderLineJDBCTemplate.getOrderLine(orderLine.getOrderLineId());
         assertNotNull("Unable to find order line created in test!", junitOrderLine);
+
     }
 
     @Test
@@ -150,10 +170,13 @@ public class OrderJDBCTemplateTest {
     private static void deleteOrderLines(Order order) {
         logger.debug("deleteOrderLines entry");
         for (OrderLine line : order.getOrderLines()) {
-            logger.debug("deleting orderline: {}", line);
+            // delete any order line details
+            for (OrderLineDetail lineDetail : line.getOrderLineDetails()) {
+                logger.debug("deleting orderLineDetail: {}", line);
+                orderLineDetailJDBCTemplate.delete(lineDetail);
+            }
+            logger.debug("deleting orderLine: {}", line);
             orderLineJDBCTemplate.delete(line);
-            logger.debug("deleting menuItem: {}", line.getMenuItem().getMenuItemId());
-            menuItemJDBCTemplate.delete(line.getMenuItem().getMenuItemId());
         }
     }
 

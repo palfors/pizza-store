@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Scope("prototype")
-public class BreadSticks extends AbstractMenuItem {
-    public BreadSticks() {
+public class Breadsticks extends AbstractMenuItem {
+    public Breadsticks() {
         this.setMenuItemId(MenuItemIdGenerator.getInstance().generateId());
     }
 
-    public BreadSticks(long menuItemId) {
+    public Breadsticks(long menuItemId) {
         this.setMenuItemId(menuItemId);
     }
 

@@ -1,7 +1,6 @@
-package com.alforsconsulting.pizzastore.order.dao;
+package com.alforsconsulting.pizzastore.order.line.dao;
 
-import com.alforsconsulting.pizzastore.order.Order;
-import com.alforsconsulting.pizzastore.order.OrderLine;
+import com.alforsconsulting.pizzastore.order.line.OrderLine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -29,7 +28,7 @@ public class OrderLineJDBCTemplate implements OrderLineDAO {
         logger.debug("Creating orderLine [{}]", orderLine);
         create(orderLine.getOrderLineId(),
                 orderLine.getOrderId(),
-                orderLine.getMenuItem().getMenuItemId(),
+                orderLine.getMenuItemId(),
                 orderLine.getQuantity(),
                 orderLine.getPrice());
     }

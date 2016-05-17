@@ -1,8 +1,12 @@
-package com.alforsconsulting.pizzastore.order;
+package com.alforsconsulting.pizzastore.order.line;
 
 import com.alforsconsulting.pizzastore.menu.MenuItem;
+import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetail;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by palfors on 5/12/16.
@@ -10,12 +14,13 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class OrderLine {
-    private MenuItem menuItem = null;
     private long orderLineId;
     private long orderId;
     private long menuItemId;
     private int quantity;
     private double price;
+
+    private List<OrderLineDetail> orderLineDetails = new ArrayList<>();
 
     public OrderLine() {
         this.orderLineId = OrderLineIdGenerator.getInstance().generateId();
@@ -23,14 +28,6 @@ public class OrderLine {
 
     public OrderLine(long orderLineId) {
         this.orderLineId = orderLineId;
-    }
-
-    public MenuItem getMenuItem() {
-        return menuItem;
-    }
-
-    public void setMenuItem(MenuItem menuItem) {
-        this.menuItem = menuItem;
     }
 
     public long getOrderLineId() {
@@ -73,8 +70,26 @@ public class OrderLine {
         this.price = price;
     }
 
+    public void addOrderLineDetail(OrderLineDetail orderLineDetail) {
+        orderLineDetails.add(orderLineDetail);
+    }
+
+    public void removeOrderLineDetail(OrderLineDetail orderLineDetail) {
+        orderLineDetails.remove(orderLineDetail);
+    }
+
+    public List<OrderLineDetail> getOrderLineDetails() {
+        return orderLineDetails;
+    }
+
     public String toString() {
-        return new StringBuilder().append("[").append(
-                menuItem).append("][").append(quantity).append("]").toString();
+        StringBuilder builder = new StringBuilder().append("OrderLine: \n");
+        builder.append("- orderLineId: ").append(orderLineId).append("\n");
+        builder.append("- orderId: ").append(orderId).append("\n");
+        builder.append("- menuItemId: ").append(menuItemId).append("\n");
+        builder.append("- quantity: ").append(quantity).append("\n");
+        builder.append("- price: ").append(price);
+
+        return builder.toString();
     }
 }

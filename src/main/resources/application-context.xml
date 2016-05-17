@@ -32,12 +32,20 @@
           class="com.alforsconsulting.pizzastore.menu.dao.MenuItemJDBCTemplate">
         <property name="dataSource"  ref="dataSource" />
     </bean>
+    <bean id="menuItemDetailJDBCTemplate"
+          class="com.alforsconsulting.pizzastore.menu.detail.dao.MenuItemDetailJDBCTemplate">
+        <property name="dataSource"  ref="dataSource" />
+    </bean>
     <bean id="orderJDBCTemplate"
           class="com.alforsconsulting.pizzastore.order.dao.OrderJDBCTemplate">
         <property name="dataSource"  ref="dataSource" />
     </bean>
     <bean id="orderLineJDBCTemplate"
-          class="com.alforsconsulting.pizzastore.order.dao.OrderLineJDBCTemplate">
+          class="com.alforsconsulting.pizzastore.order.line.dao.OrderLineJDBCTemplate">
+        <property name="dataSource"  ref="dataSource" />
+    </bean>
+    <bean id="orderLineDetailJDBCTemplate"
+          class="com.alforsconsulting.pizzastore.order.line.detail.dao.OrderLineDetailJDBCTemplate">
         <property name="dataSource"  ref="dataSource" />
     </bean>
 

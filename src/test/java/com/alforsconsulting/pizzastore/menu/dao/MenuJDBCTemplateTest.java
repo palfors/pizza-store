@@ -1,12 +1,9 @@
 package com.alforsconsulting.pizzastore.menu.dao;
 
 import com.alforsconsulting.pizzastore.AppContext;
-import com.alforsconsulting.pizzastore.PizzaStore;
-import com.alforsconsulting.pizzastore.dao.PizzaStoreJDBCTemplate;
 import com.alforsconsulting.pizzastore.menu.MenuItem;
-import com.alforsconsulting.pizzastore.menu.dao.MenuItemJDBCTemplate;
 import com.alforsconsulting.pizzastore.menu.pizza.Pizza;
-import com.alforsconsulting.pizzastore.menu.sides.BreadSticks;
+import com.alforsconsulting.pizzastore.menu.sides.Breadsticks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.*;
@@ -37,7 +34,7 @@ public class MenuJDBCTemplateTest {
         pizza.setName("JUnit-Pizza");
         pizza.setPrice(7.25);
 
-        breadsticks = (BreadSticks) context.getBean("breadSticks");
+        breadsticks = (Breadsticks) context.getBean("breadsticks");
         breadsticks.setName("JUnit-Breadsticks");
         breadsticks.setPrice(2.75);
     }

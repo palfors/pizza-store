@@ -1,7 +1,7 @@
-package com.alforsconsulting.pizzastore.order;
+package com.alforsconsulting.pizzastore.order.line;
 
 import com.alforsconsulting.pizzastore.AppContext;
-import com.alforsconsulting.pizzastore.order.dao.OrderLineJDBCTemplate;
+import com.alforsconsulting.pizzastore.order.line.dao.OrderLineJDBCTemplate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,7 +34,7 @@ public class OrderLineIdGenerator {
 
     public synchronized long generateId() {
         incrementId();
-        logger.debug("Generated next orderId [{}]", orderLineId);
+        logger.debug("Generated next orderLineId [{}]", orderLineId);
         return orderLineId;
     }
 }

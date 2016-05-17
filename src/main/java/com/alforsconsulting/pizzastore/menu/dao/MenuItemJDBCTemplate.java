@@ -56,6 +56,23 @@ public class MenuItemJDBCTemplate implements MenuItemDAO {
         return menuItem;
     }
 
+    @Override
+    public MenuItem getMenuItem(String menuItemType) {
+        logger.debug("Retrieving menuItem [{}]", menuItemType);
+        String SQL = "select * from MENUITEM where menuItemType = ?";
+        MenuItem menuItem = null;
+        try {
+            menuItem = jdbcTemplateObject.queryForObject(SQL,
+                    new Object[]{menuItemType}, new MenuItemMapper());
+            logger.debug("Found menuItem [{}]", menuItem);
+        } catch (EmptyResultDataAccessException e) {
+            logger.debug("MenuItem [{}] does not exist", menuItemType);
+            // allow 0 results and return null
+        }
+
+        return menuItem;
+    }
+
     public List<MenuItem> list() {
         logger.debug("Retrieving all menuItems");
         String SQL = "select * from MENUITEM";

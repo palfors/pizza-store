@@ -1,16 +1,16 @@
-package com.alforsconsulting.pizzastore.menu;
+package com.alforsconsulting.pizzastore.menu.detail;
 
 /**
  * Created by palfors on 5/12/16.
  */
-public enum MenuItemType {
+public enum MenuItemDetailType {
 
-    PIZZA ("pizza"),
-    BREADSTICKS ("breadsticks");
+    CRUST ("crust"),
+    TOPPING ("topping");
 
     private final String beanName;
 
-    MenuItemType(String beanName) {
+    MenuItemDetailType(String beanName) {
         this.beanName = beanName;
     }
 

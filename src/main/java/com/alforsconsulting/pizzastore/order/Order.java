@@ -3,6 +3,7 @@ package com.alforsconsulting.pizzastore.order;
 import com.alforsconsulting.pizzastore.AppContext;
 import com.alforsconsulting.pizzastore.customer.Customer;
 import com.alforsconsulting.pizzastore.menu.MenuItem;
+import com.alforsconsulting.pizzastore.order.line.OrderLine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -39,7 +40,7 @@ public class Order {
 
         OrderLine orderLine = (OrderLine) AppContext.getInstance().getContext().getBean("orderLine");
         orderLine.setOrderId(orderId);
-        orderLine.setMenuItem(item);
+        orderLine.setMenuItemId(item.getMenuItemId());
         orderLine.setQuantity(quantity);
         // TODO: handle the price
 
@@ -80,8 +81,9 @@ public class Order {
 
     public String toString() {
         // loop through the order and list the items
-        StringBuilder builder = new StringBuilder("Order: ").append(
-                storeId).append(".").append(orderId).append(" (").append(status).append(")\n");
+        StringBuilder builder = new StringBuilder("Order: \n");
+        builder.append("- orderId: ").append(orderId).append("\n");
+        builder.append("- store: ").append(storeId).append("\n").append(orderId).append(" (").append(status).append(")\n");
         builder.append("- price: ").append(getPrice()).append("\n");
         builder.append("- ").append(customer).append("\n");
         for (OrderLine line : orderLines) {

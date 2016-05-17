@@ -1,7 +1,6 @@
-package com.alforsconsulting.pizzastore.order.dao;
+package com.alforsconsulting.pizzastore.order.line.dao;
 
-import com.alforsconsulting.pizzastore.order.Order;
-import com.alforsconsulting.pizzastore.order.OrderLine;
+import com.alforsconsulting.pizzastore.order.line.OrderLine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;

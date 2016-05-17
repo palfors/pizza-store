@@ -32,6 +32,12 @@ public interface MenuItemDAO {
     public MenuItem getMenuItem(long id);
     /**
      * This is the method to be used to list down
+     * a record from the table corresponding
+     * to a passed id.
+     */
+    public MenuItem getMenuItem(String menuItemType);
+    /**
+     * This is the method to be used to list down
      * all the records from the table.
      */
     public List<MenuItem> list();
