@@ -2,9 +2,10 @@ package com.alforsconsulting.pizzastore.dao;
 
 import com.alforsconsulting.pizzastore.AppContext;
 import com.alforsconsulting.pizzastore.PizzaStore;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.*;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import java.util.List;
 
@@ -14,6 +15,8 @@ import static org.junit.Assert.*;
  * Created by palfors on 5/15/16.
  */
 public class PizzaStoreJDBCTemplateTest {
+    private static final Logger logger = LogManager.getLogger();
+
     private static ApplicationContext context = null;
     private static PizzaStoreJDBCTemplate jdbcTemplate = null;
     private static PizzaStore pizzaStore = null;
@@ -21,14 +24,16 @@ public class PizzaStoreJDBCTemplateTest {
     @BeforeClass
     public static void setupClass() {
         context = AppContext.getInstance().getContext();
-        jdbcTemplate = (PizzaStoreJDBCTemplate)context.getBean("pizzaStoreJDBCTemplate");
+        jdbcTemplate = (PizzaStoreJDBCTemplate) context.getBean("pizzaStoreJDBCTemplate");
 
         pizzaStore = (PizzaStore) context.getBean("pizzaStore");
         pizzaStore.setName("JUnit-Store");
+        logger.debug("setupClass(): create pizzaStore [{}]", pizzaStore);
     }
 
     @AfterClass
     public static void teardownClass() {
+        logger.debug("teardownClass(): pizzaStore [{}]", pizzaStore);
         jdbcTemplate.delete(pizzaStore);
     }
 
@@ -42,6 +47,7 @@ public class PizzaStoreJDBCTemplateTest {
 
     @Test
     public void create() {
+        logger.debug("Creating pizzaStore [{}]", pizzaStore);
         jdbcTemplate.create(pizzaStore);
         // verify the store exists
         PizzaStore junitStore =
@@ -51,9 +57,11 @@ public class PizzaStoreJDBCTemplateTest {
 
     @Test
     public void update() {
+        logger.debug("Updating pizzaStore (orig) [{}]", pizzaStore);
         String newName = "JUnit-updated-store";
         pizzaStore.setName(newName);
         jdbcTemplate.update(pizzaStore);
+        logger.debug("Updated pizzaStore (updated) [{}]", pizzaStore);
 
         PizzaStore junitStore =
                 jdbcTemplate.getPizzaStore(pizzaStore.getStoreId());
@@ -70,7 +78,7 @@ public class PizzaStoreJDBCTemplateTest {
 
     @Test
     public void delete() {
-        PizzaStore deleteStore = new PizzaStore();
+        PizzaStore deleteStore = (PizzaStore) context.getBean("pizzaStore");
         deleteStore.setName("deleteStore");
 
         jdbcTemplate.create(deleteStore);

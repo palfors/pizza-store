@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 /**
  * Created by palfors on 5/13/16.
  */
+@Component
 public class OrderJDBCTemplate implements OrderDAO {
     private static final Logger logger = LogManager.getLogger();
 
