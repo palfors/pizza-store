@@ -23,7 +23,7 @@ public interface OrderDAO {
      * This is the method to be used to create
      * a record in the table.
      */
-    public void create(long orderId, long storeId, long customerId, double price);
+    public void create(long orderId, long storeId, String status, long customerId, double price);
     /**
      * This is the method to be used to list down
      * a record from the table corresponding
@@ -56,7 +56,7 @@ public interface OrderDAO {
      * This is the method to be used to update
      * a record in the table.
      */
-    public void update(long orderId, long storeId, long customerId, double price);
+    public void update(long orderId, long storeId, String status, long customerId, double price);
 
     public long getMaxId();
 

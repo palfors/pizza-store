@@ -20,15 +20,9 @@ public class OrderMapper implements RowMapper<Order> {
     public Order mapRow(ResultSet rs, int rowNum) throws SQLException {
         Order order = new Order(rs.getLong("orderId"));
         order.setStoreId(rs.getLong("storeId"));
+        order.setCustomerId(rs.getLong("customerId"));
+        order.setStatus(rs.getString("status"));
         order.setPrice(rs.getDouble("price"));
-
-        // customer
-        long customerId = rs.getLong("customerId");
-        CustomerJDBCTemplate customerJDBCTemplate =
-                (CustomerJDBCTemplate) AppContext.getInstance().getContext(
-                    ).getBean("customerJDBCTemplate");
-        Customer customer = customerJDBCTemplate.getCustomer(customerId);
-        order.setCustomer(customer);
 
         logger.debug("Mapped orderLine [{}]", order);
         return order;

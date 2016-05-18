@@ -29,15 +29,16 @@ public class OrderJDBCTemplate implements OrderDAO {
         logger.debug("Creating order [{}]", order);
         create(order.getOrderId(),
                 order.getStoreId(),
-                order.getCustomer().getCustomerId(),
+                order.getStatus(),
+                order.getCustomerId(),
                 order.getPrice());
     }
 
-    public void create(long orderId, long storeId, long customerId, double price) {
-        logger.debug("Creating order [{}][{}][{}][{}]", orderId, storeId, customerId, price);
-        String SQL = "insert into STORE_ORDER (orderId, storeId, customerId, price) values (?, ?, ?, ?)";
+    public void create(long orderId, long storeId, String status, long customerId, double price) {
+        logger.debug("Creating order [{}][{}][{}][{}][{}]", orderId, storeId, status, customerId, price);
+        String SQL = "insert into STORE_ORDER (orderId, storeId, status, customerId, price) values (?, ?, ?, ?, ?)";
 
-        jdbcTemplateObject.update(SQL, orderId, storeId, customerId, price);
+        jdbcTemplateObject.update(SQL, orderId, storeId, status, customerId, price);
     }
 
     public Order getOrder(long orderId) {
@@ -81,15 +82,16 @@ public class OrderJDBCTemplate implements OrderDAO {
         logger.debug("Updating order [{}]", order);
         update(order.getOrderId(),
                 order.getStoreId(),
-                order.getCustomer().getCustomerId(),
+                order.getStatus(),
+                order.getCustomerId(),
                 order.getPrice());
     }
 
-    public void update(long orderId, long storeId, long customerId, double price) {
-        logger.debug("Updating order [{}][{}][{}][{}]", orderId, storeId, customerId, price);
-        String SQL = "update STORE_ORDER set storeId = ?, customerId = ?, price = ? where orderId = ?";
+    public void update(long orderId, long storeId, String status, long customerId, double price) {
+        logger.debug("Updating order [{}][{}][{}][{}][{}]", orderId, storeId, status, customerId, price);
+        String SQL = "update STORE_ORDER set storeId = ?, status = ?, customerId = ?, price = ? where orderId = ?";
 
-        jdbcTemplateObject.update(SQL, storeId, customerId, price, orderId);
+        jdbcTemplateObject.update(SQL, storeId, status, customerId, price, orderId);
     }
 
     public long getMaxId() {

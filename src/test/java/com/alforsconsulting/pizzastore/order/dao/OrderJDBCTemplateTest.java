@@ -12,6 +12,7 @@ import com.alforsconsulting.pizzastore.menu.detail.MenuItemDetail;
 import com.alforsconsulting.pizzastore.menu.detail.dao.MenuItemDetailJDBCTemplate;
 import com.alforsconsulting.pizzastore.menu.pizza.topping.ToppingPlacement;
 import com.alforsconsulting.pizzastore.order.Order;
+import com.alforsconsulting.pizzastore.order.OrderStatus;
 import com.alforsconsulting.pizzastore.order.line.OrderLine;
 import com.alforsconsulting.pizzastore.order.line.dao.OrderLineJDBCTemplate;
 import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetail;
@@ -94,8 +95,9 @@ public class OrderJDBCTemplateTest {
     @Test
     public void create() {
         order = (Order) context.getBean("order");
+        order.generateId();
         order.setStoreId(pizzaStore.getStoreId());
-        order.setCustomer(customer);
+        order.setCustomerId(customer.getCustomerId());
         order.setPrice(12.35);
         jdbcTemplate.create(order);
 
@@ -154,7 +156,7 @@ public class OrderJDBCTemplateTest {
     public void delete() {
         Order deleteOrder = (Order) context.getBean("order");
         deleteOrder.setStoreId(pizzaStore.getStoreId());
-        deleteOrder.setCustomer(customer);
+        deleteOrder.setCustomerId(customer.getCustomerId());
         deleteOrder.setPrice(13.45);
 
         jdbcTemplate.create(deleteOrder);

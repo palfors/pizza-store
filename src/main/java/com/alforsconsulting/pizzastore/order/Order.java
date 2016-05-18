@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,20 +20,84 @@ import java.util.List;
  */
 @Component
 @Scope("prototype")
+@Entity
+@Table( name = "STORE_ORDER" )
 public class Order {
     private long storeId;
+
     private long orderId;
-    private OrderStatus status = OrderStatus.NEW;
+    private String status = OrderStatus.NEW.name();
     private List<OrderLine> orderLines = new ArrayList<OrderLine>();
-    private Customer customer = null;
+    private long customerId;
     private double price;
+
+    public Order() {
+    }
 
     public Order(long orderId) {
         this.orderId = orderId;
     }
 
-    public Order() {
+    @Id
+    public long getOrderId() {
+        return this.orderId;
+    }
+
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
+    }
+
+    public long getStoreId() {
+        return this.storeId;
+    }
+
+    public void setStoreId(long storeId) {
+        this.storeId = storeId;
+    }
+
+    public long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(long customerId) {
+        this.customerId = customerId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void generateId() {
         this.orderId = OrderIdGenerator.getInstance().generateId();
+    }
+
+    @Transient
+    public List<OrderLine> getOrderLines() {
+        return orderLines;
+    }
+
+    public void removeOrderLine(OrderLine line) {
+        orderLines.remove(line);
+    }
+
+    public void placeOrder() {
+        updateStatus(OrderStatus.PLACED);
+    }
+
+    public void cancelOrder() {
+        updateStatus(OrderStatus.CANCELLED);
     }
 
     public void addLine(OrderLine line) {
@@ -47,67 +115,24 @@ public class Order {
         orderLines.add(orderLine);
     }
 
-    public List<OrderLine> getOrderLines() {
-        return orderLines;
-    }
-
-    public void removeOrderLine(OrderLine line) {
-        orderLines.remove(line);
-    }
-
-    public void placeOrder() {
-        updateStatus(OrderStatus.PLACED);
-    }
-
-    public void cancelOrder() {
-        updateStatus(OrderStatus.CANCELLED);
-    }
-
     protected void updateStatus(OrderStatus orderStatus) {
-        status = orderStatus;
-    }
-
-    public long getOrderId() {
-        return this.orderId;
-    }
-
-    public long getStoreId() {
-        return this.storeId;
-    }
-
-    public void setStoreId(long storeId) {
-        this.storeId = storeId;
+        status = orderStatus.name();
     }
 
     public String toString() {
         // loop through the order and list the items
-        StringBuilder builder = new StringBuilder("Order: \n");
-        builder.append("- orderId: ").append(orderId).append("\n");
-        builder.append("- store: ").append(storeId).append("\n").append(orderId).append(" (").append(status).append(")\n");
-        builder.append("- price: ").append(getPrice()).append("\n");
-        builder.append("- ").append(customer).append("\n");
+        StringBuilder builder = new StringBuilder("Order:")
+            .append("[orderId: ").append(this.getOrderId()).append("]")
+            .append("[store: ").append(this.getStoreId()).append("]")
+            .append("[customer: ").append(this.getCustomerId()).append("]")
+            .append("[status: ").append(this.getStatus()).append("]")
+            .append("[price: ").append(this.getPrice()).append("]");
+
         for (OrderLine line : orderLines) {
-            builder.append("- ").append(line).append("\n");
+            builder.append("\n - ").append(line);
         }
 
         return builder.toString();
-    }
-
-    public Customer getCustomer() {
-        return this.customer;
-    }
-
-    @Autowired
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 
 }
