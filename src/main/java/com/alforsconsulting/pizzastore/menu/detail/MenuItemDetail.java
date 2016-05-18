@@ -1,11 +1,19 @@
 package com.alforsconsulting.pizzastore.menu.detail;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.stereotype.Component;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by palfors on 5/12/16.
  */
 @Component
+@Entity
+@Table (name = "MENUITEM_DETAIL")
 public class MenuItemDetail {
 
     private long menuItemDetailId;
@@ -21,6 +29,9 @@ public class MenuItemDetail {
         this.menuItemDetailId = menuItemDetailId;
     }
 
+    @Id
+    @GeneratedValue(generator="increment")
+    @GenericGenerator(name="increment", strategy = "increment")
     public long getMenuItemDetailId() {
         return menuItemDetailId;
     }
@@ -61,7 +72,16 @@ public class MenuItemDetail {
         this.price = price;
     }
 
-
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("MenuItemDetail ")
+            .append("[").append(this.getMenuItemDetailId()).append("]")
+            .append("[").append(this.getMenuItemId()).append("]")
+            .append("[").append(this.getDetailType()).append("]")
+            .append("[").append(this.getName()).append("]")
+            .append("[").append(this.getPrice()).append("]");
+        return builder.toString();
+    }
 
 
 }
