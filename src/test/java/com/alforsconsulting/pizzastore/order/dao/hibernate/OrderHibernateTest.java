@@ -73,7 +73,6 @@ public class OrderHibernateTest extends AbstractHibernateTest {
 
         // create the order
         Order order = (Order) applicationContext.getBean("order");
-        order.generateId();
         order.setStoreId(pizzaStore.getStoreId());
         order.setCustomerId(customer.getCustomerId());
         order.setPrice(23.45);

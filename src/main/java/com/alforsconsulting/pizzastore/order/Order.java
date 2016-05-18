@@ -4,14 +4,12 @@ import com.alforsconsulting.pizzastore.AppContext;
 import com.alforsconsulting.pizzastore.customer.Customer;
 import com.alforsconsulting.pizzastore.menu.MenuItem;
 import com.alforsconsulting.pizzastore.order.line.OrderLine;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +37,8 @@ public class Order {
     }
 
     @Id
+    @GeneratedValue(generator="increment")
+    @GenericGenerator(name="increment", strategy = "increment")
     public long getOrderId() {
         return this.orderId;
     }
