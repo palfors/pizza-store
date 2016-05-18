@@ -26,9 +26,13 @@ package com.alforsconsulting.pizzastore.order.dao.hibernate;
 import com.alforsconsulting.pizzastore.AbstractHibernateTest;
 import com.alforsconsulting.pizzastore.PizzaStore;
 import com.alforsconsulting.pizzastore.customer.Customer;
+import com.alforsconsulting.pizzastore.menu.detail.MenuItemDetail;
+import com.alforsconsulting.pizzastore.menu.detail.MenuItemDetailType;
 import com.alforsconsulting.pizzastore.menu.pizza.Pizza;
+import com.alforsconsulting.pizzastore.menu.pizza.topping.ToppingPlacement;
 import com.alforsconsulting.pizzastore.order.Order;
 import com.alforsconsulting.pizzastore.order.line.OrderLine;
+import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetail;
 import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Before;
@@ -94,8 +98,30 @@ public class OrderHibernateTest extends AbstractHibernateTest {
         orderLine.setMenuItemId(pizza.getMenuItemId());
         orderLine.setQuantity(2);
         orderLine.setPrice(23.45);
-        session.save(order);
-        logger.debug("Saved order [{}]", order);
+        session.save(orderLine);
+        logger.debug("Saved orderLine [{}]", orderLine);
+        // add the line to the order
+        order.addLine(orderLine);
+
+        // create a menu item detail for this order line
+        MenuItemDetail menuItemDetail =
+                (MenuItemDetail) applicationContext.getBean("menuItemDetail");
+        menuItemDetail.setMenuItemId(pizza.getMenuItemId());
+        menuItemDetail.setDetailType(MenuItemDetailType.TOPPING.getBeanName());
+        menuItemDetail.setName("hibernate-menuitemdetail");
+        menuItemDetail.setPrice(3.25);
+        session.save(menuItemDetail);
+        logger.debug("Saved menuItemDetail [{}]", menuItemDetail);
+
+        // create an order line detail
+        OrderLineDetail orderLineDetail = (OrderLineDetail) applicationContext.getBean("orderLineDetail");
+        orderLineDetail.setOrderLineId(orderLine.getOrderId());
+        orderLineDetail.setMenuItemDetailId(menuItemDetail.getMenuItemDetailId());
+        orderLineDetail.setPlacement(ToppingPlacement.WHOLE.name());
+        session.save(orderLineDetail);
+        logger.debug("Saved orderLineDetail [{}]", orderLineDetail);
+        // add the detail to the line
+        orderLine.addOrderLineDetail(orderLineDetail);
 
         // TODO: load the record from the DB
 
@@ -108,6 +134,8 @@ public class OrderHibernateTest extends AbstractHibernateTest {
 
         // delete the test records
         session.beginTransaction();
+        session.delete(orderLineDetail);
+        session.delete(menuItemDetail);
         session.delete(orderLine);
         session.delete(order);
         session.delete(pizza);

@@ -101,6 +101,10 @@ public class OrderLine {
         builder.append("[quantity: ").append(quantity).append("]");
         builder.append("[price: ").append(price).append("]");
 
+        for (OrderLineDetail detail : orderLineDetails) {
+            builder.append("\n - ").append(detail);
+        }
+
         return builder.toString();
     }
 }
