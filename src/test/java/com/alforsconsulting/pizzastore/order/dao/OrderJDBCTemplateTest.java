@@ -52,11 +52,13 @@ public class OrderJDBCTemplateTest {
         context = AppContext.getInstance().getContext();
 
         pizzaStore = (PizzaStore) context.getBean("pizzaStore");
+        pizzaStore.generateId();
         pizzaStore.setName("JUnit-Store");
         pizzaStoreJDBCTemplate = (PizzaStoreJDBCTemplate) context.getBean("pizzaStoreJDBCTemplate");
         pizzaStoreJDBCTemplate.create(pizzaStore);
 
         customer = (Customer) context.getBean("customer");
+        customer.generateId();
         customer.setName("JUnit-Customer");
         customerJDBCTemplate = (CustomerJDBCTemplate) context.getBean("customerJDBCTemplate");
         customerJDBCTemplate.create(customer);

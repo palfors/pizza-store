@@ -28,6 +28,7 @@ public class CustomerJDBCTemplateTest {
         jdbcTemplate = (CustomerJDBCTemplate)context.getBean("customerJDBCTemplate");
 
         customer = (Customer) context.getBean("customer");
+        customer.generateId();
         customer.setName("JUnit-Customer");
     }
 
@@ -78,6 +79,7 @@ public class CustomerJDBCTemplateTest {
     @Test
     public void delete() {
         Customer deleteCustomer = (Customer) context.getBean("customer");
+        deleteCustomer.generateId();
         deleteCustomer.setName("deleteMe");
 
         jdbcTemplate.create(deleteCustomer);

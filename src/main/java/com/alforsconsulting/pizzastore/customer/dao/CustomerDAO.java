@@ -1,6 +1,7 @@
 package com.alforsconsulting.pizzastore.customer.dao;
 
 import com.alforsconsulting.pizzastore.customer.Customer;
+import com.alforsconsulting.pizzastore.customer.CustomerIdGenerator;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -57,4 +58,5 @@ public interface CustomerDAO {
      * a record in the table.
      */
     public void update(long id, String name);
+
 }

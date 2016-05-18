@@ -27,6 +27,7 @@ public class PizzaStoreJDBCTemplateTest {
         jdbcTemplate = (PizzaStoreJDBCTemplate) context.getBean("pizzaStoreJDBCTemplate");
 
         pizzaStore = (PizzaStore) context.getBean("pizzaStore");
+        pizzaStore.generateId();
         pizzaStore.setName("JUnit-Store");
         logger.debug("setupClass(): create pizzaStore [{}]", pizzaStore);
     }
@@ -79,6 +80,7 @@ public class PizzaStoreJDBCTemplateTest {
     @Test
     public void delete() {
         PizzaStore deleteStore = (PizzaStore) context.getBean("pizzaStore");
+        deleteStore.generateId();
         deleteStore.setName("deleteStore");
 
         jdbcTemplate.create(deleteStore);

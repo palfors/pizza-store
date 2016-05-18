@@ -3,9 +3,11 @@ package com.alforsconsulting.pizzastore;
 import com.alforsconsulting.pizzastore.order.Order;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,8 @@ import java.util.List;
  */
 @Component
 @Scope("prototype")
+@Entity
+@Table( name = "STORE" )
 public class PizzaStore {
     private static final Logger logger = LogManager.getLogger();
 
@@ -22,12 +26,15 @@ public class PizzaStore {
     protected String name = "PizzaStore";
 
     public PizzaStore() {
-        storeId = StoreIdGenerator.getInstance().generateId();
     }
+
     public PizzaStore(long storeId) {
         this.storeId = storeId;
     }
 
+    @Id
+    @GeneratedValue(generator="increment")
+    @GenericGenerator(name="increment", strategy = "increment")
     public long getStoreId() {
         return storeId;
     }
@@ -44,6 +51,7 @@ public class PizzaStore {
         this.name = name;
     }
 
+    @Transient
     public List<Order> getOrders() {
         return orders;
     }
@@ -62,6 +70,10 @@ public class PizzaStore {
         for (Order order : orders) {
             logger.debug("[{}]", order);
         }
+    }
+
+    public void generateId() {
+        this.storeId = StoreIdGenerator.getInstance().generateId();
     }
 
     @Override
