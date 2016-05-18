@@ -31,10 +31,12 @@ public class MenuJDBCTemplateTest {
         jdbcTemplate = (MenuItemJDBCTemplate)context.getBean("menuItemJDBCTemplate");
 
         pizza = (Pizza) context.getBean("pizza");
+        pizza.generateId();
         pizza.setName("JUnit-Pizza");
         pizza.setPrice(7.25);
 
         breadsticks = (Breadsticks) context.getBean("breadsticks");
+        breadsticks.generateId();
         breadsticks.setName("JUnit-Breadsticks");
         breadsticks.setPrice(2.75);
     }
@@ -88,6 +90,7 @@ public class MenuJDBCTemplateTest {
     @Test
     public void delete() {
         MenuItem deleteItem = (Pizza) context.getBean("pizza");
+        deleteItem.generateId();
         deleteItem.setName("deleteItem");
 
         jdbcTemplate.create(deleteItem);

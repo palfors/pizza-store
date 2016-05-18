@@ -55,34 +55,33 @@ public class CustomerHibernateTest extends AbstractHibernateTest {
 		// create a couple of events...
 		Session session = sessionFactory.openSession();
 		session.beginTransaction();
-		// create customer to add
+
+		// create customers to add
 		Customer customer = (Customer) applicationContext.getBean("customer");
 		customer.setName("hibernate-customer");
 		session.save(customer);
         Customer customer2 = (Customer) applicationContext.getBean("customer");
         customer.setName("hibernate-customer2");
         session.save(customer2);
-		session.getTransaction().commit();
-		session.close();
 
         logger.debug("Saving customer [{}]", customer);
 
         // TODO: load the record from the DB
 
 		// list them
-		session = sessionFactory.openSession();
         List<Customer> customers = (List<Customer>) session.createQuery( "from Customer" ).list();
         logger.debug("Loading customers");
 		for ( Customer cust : customers ) {
             logger.debug(cust.getName());
 		}
-        session.close();
 
-        // delete the test record
-        session = sessionFactory.openSession();
+        // delete the test records
         session.beginTransaction();
         session.delete(customer);
+        session.delete(customer2);
+
         session.getTransaction().commit();
+        session.close();
 
         // TODO: verify record no longer exists
 	}

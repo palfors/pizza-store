@@ -21,10 +21,13 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package com.alforsconsulting.pizzastore.dao.hibernate;
+package com.alforsconsulting.pizzastore.menu.dao.hibernate;
 
 import com.alforsconsulting.pizzastore.AbstractHibernateTest;
 import com.alforsconsulting.pizzastore.PizzaStore;
+import com.alforsconsulting.pizzastore.menu.MenuItem;
+import com.alforsconsulting.pizzastore.menu.pizza.Pizza;
+import com.alforsconsulting.pizzastore.menu.sides.Breadsticks;
 import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Before;
@@ -33,7 +36,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class PizzaStoreHibernateTest extends AbstractHibernateTest {
+public class MenuItemHibernateTest extends AbstractHibernateTest {
 
     @BeforeClass
     public static void prepareClass() {
@@ -53,36 +56,35 @@ public class PizzaStoreHibernateTest extends AbstractHibernateTest {
 	@Test
 	public void testBasicUsage() {
         logger.debug("testBasicUsage entry");
-		// create a couple of stores...
+		// create a couple of events...
 		Session session = sessionFactory.openSession();
 		session.beginTransaction();
 
-		// create store to add
-		PizzaStore pizzaStore = (PizzaStore) applicationContext.getBean("pizzaStore");
-        pizzaStore.generateId();
-		pizzaStore.setName("hibernate-store");
-		session.save(pizzaStore);
-		logger.debug("Saving pizzaStore2 [{}]", pizzaStore);
+		// create pizza to add
+		Pizza pizza = (Pizza) applicationContext.getBean("pizza");
+        pizza.setName("hibernate-pizza");
+        pizza.setPrice(7.55);
+		session.save(pizza);
+		logger.debug("Saving pizza [{}]", pizza);
 
-		PizzaStore pizzaStore2 = (PizzaStore) applicationContext.getBean("pizzaStore");
-        pizzaStore2.generateId();
-		pizzaStore2.setName("hibernate-store2");
-        session.save(pizzaStore2);
-
-        logger.debug("Saving pizzaStore2 [{}]", pizzaStore2);
+        Breadsticks breadsticks = (Breadsticks) applicationContext.getBean("breadsticks");
+        breadsticks.setName("hibernate-breadsticks");
+        breadsticks.setPrice(1.33);
+        session.save(breadsticks);
+        logger.debug("Saving breadsticks [{}]", breadsticks);
 
         // TODO: load the record from the DB
 
 		// list them
-        List<PizzaStore> stores = (List<PizzaStore>) session.createQuery( "from PizzaStore" ).list();
-        logger.debug("Loading stores");
-		for ( PizzaStore store : stores ) {
-            logger.debug(store.getName());
+        List<MenuItem> menuItems = (List<MenuItem>) session.createQuery( "from GenericMenuItem" ).list();
+        logger.debug("Loading menuItems");
+		for ( MenuItem item : menuItems ) {
+            logger.debug(item);
 		}
 
         // delete the test records
-        session.delete(pizzaStore);
-		session.delete(pizzaStore2);
+        session.delete(pizza);
+        session.delete(breadsticks);
 
         session.getTransaction().commit();
         session.close();

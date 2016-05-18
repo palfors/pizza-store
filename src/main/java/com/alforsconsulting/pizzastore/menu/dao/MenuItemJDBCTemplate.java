@@ -30,7 +30,7 @@ public class MenuItemJDBCTemplate implements MenuItemDAO {
     public void create(MenuItem menuItem) {
         logger.debug("Creating menuItem [{}]", menuItem);
         create(menuItem.getMenuItemId(),
-                menuItem.getMenuItemType().getBeanName(),
+                menuItem.getMenuItemType(),
                 menuItem.getName(),
                 menuItem.getPrice());
     }

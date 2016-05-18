@@ -25,6 +25,9 @@
 
         <mapping class="com.alforsconsulting.pizzastore.customer.Customer"/>
         <mapping class="com.alforsconsulting.pizzastore.PizzaStore"/>
+        <mapping class="com.alforsconsulting.pizzastore.menu.GenericMenuItem"/>
+        <mapping class="com.alforsconsulting.pizzastore.menu.pizza.Pizza"/>
+        <mapping class="com.alforsconsulting.pizzastore.menu.sides.Breadsticks"/>
 
     </session-factory>
 
