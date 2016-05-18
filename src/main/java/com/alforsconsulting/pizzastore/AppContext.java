@@ -16,7 +16,7 @@ public class AppContext {
     }
 
     private AppContext() {
-        context = new ClassPathXmlApplicationContext("application-context.xml");
+        context = new ClassPathXmlApplicationContext("spring/application-context.xml");
     }
 
     public ApplicationContext getContext() {
