@@ -30,6 +30,7 @@
         <mapping class="com.alforsconsulting.pizzastore.menu.sides.Breadsticks"/>
         <mapping class="com.alforsconsulting.pizzastore.menu.detail.MenuItemDetail"/>
         <mapping class="com.alforsconsulting.pizzastore.order.Order"/>
+        <mapping class="com.alforsconsulting.pizzastore.order.line.OrderLine"/>
 
     </session-factory>
 

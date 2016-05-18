@@ -26,7 +26,9 @@ package com.alforsconsulting.pizzastore.order.dao.hibernate;
 import com.alforsconsulting.pizzastore.AbstractHibernateTest;
 import com.alforsconsulting.pizzastore.PizzaStore;
 import com.alforsconsulting.pizzastore.customer.Customer;
+import com.alforsconsulting.pizzastore.menu.pizza.Pizza;
 import com.alforsconsulting.pizzastore.order.Order;
+import com.alforsconsulting.pizzastore.order.line.OrderLine;
 import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Before;
@@ -79,6 +81,22 @@ public class OrderHibernateTest extends AbstractHibernateTest {
         session.save(order);
         logger.debug("Saved order [{}]", order);
 
+        // create a menuItem to add
+        Pizza pizza = (Pizza) applicationContext.getBean("pizza");
+        pizza.setName("hibernate-pizza");
+        pizza.setPrice(8.99);
+        session.save(pizza);
+        logger.debug("Saving pizza [{}]", pizza);
+
+        // create an order line
+        OrderLine orderLine = (OrderLine) applicationContext.getBean("orderLine");
+        orderLine.setOrderId(order.getOrderId());
+        orderLine.setMenuItemId(pizza.getMenuItemId());
+        orderLine.setQuantity(2);
+        orderLine.setPrice(23.45);
+        session.save(order);
+        logger.debug("Saved order [{}]", order);
+
         // TODO: load the record from the DB
 
 		// list them
@@ -90,7 +108,9 @@ public class OrderHibernateTest extends AbstractHibernateTest {
 
         // delete the test records
         session.beginTransaction();
+        session.delete(orderLine);
         session.delete(order);
+        session.delete(pizza);
         session.delete(customer);
         session.delete(pizzaStore);
 
