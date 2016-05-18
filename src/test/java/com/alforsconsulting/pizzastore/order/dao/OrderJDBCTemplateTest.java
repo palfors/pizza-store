@@ -114,6 +114,7 @@ public class OrderJDBCTemplateTest {
                 pizzaItem.getMenuItemId(), "topping", "Sausage");
 
         OrderLine orderLine = (OrderLine) context.getBean("orderLine");
+        orderLine.generateId();
         orderLine.setOrderId(order.getOrderId());
         orderLine.setMenuItemId(pizzaItem.getMenuItemId());
         orderLine.setQuantity(1);

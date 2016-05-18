@@ -104,17 +104,6 @@ public class Order {
         orderLines.add(line);
     }
 
-    public void addItem(MenuItem item, int quantity) {
-
-        OrderLine orderLine = (OrderLine) AppContext.getInstance().getContext().getBean("orderLine");
-        orderLine.setOrderId(orderId);
-        orderLine.setMenuItemId(item.getMenuItemId());
-        orderLine.setQuantity(quantity);
-        // TODO: handle the price
-
-        orderLines.add(orderLine);
-    }
-
     protected void updateStatus(OrderStatus orderStatus) {
         status = orderStatus.name();
     }
