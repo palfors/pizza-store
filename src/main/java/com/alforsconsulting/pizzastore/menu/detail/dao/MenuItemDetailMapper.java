@@ -17,9 +17,9 @@ public class MenuItemDetailMapper implements RowMapper<MenuItemDetail> {
     private static final Logger logger = LogManager.getLogger();
 
     public MenuItemDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-        long menuItemDetailId = rs.getLong("menuItemDetailId");
         MenuItemDetail menuItemDetail = (MenuItemDetail) AppContext.getInstance(
-            ).getContext().getBean("menuItemDetail", menuItemDetailId);
+            ).getContext().getBean("menuItemDetail");
+        menuItemDetail.setMenuItemDetailId(rs.getLong("menuItemDetailId"));
         menuItemDetail.setMenuItemId(rs.getLong("menuItemId"));
         menuItemDetail.setDetailType(rs.getString("detailType"));
         menuItemDetail.setName(rs.getString("name"));

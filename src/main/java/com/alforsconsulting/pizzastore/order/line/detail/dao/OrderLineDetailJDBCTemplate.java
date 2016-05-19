@@ -37,7 +37,7 @@ public class OrderLineDetailJDBCTemplate implements OrderLineDetailDAO {
     @Override
     public void create(long orderLineDetailId, long orderLineId, long menuItemDetailId, String placement) {
         logger.debug("Creating orderLineDetail [{}][{}][{}][{}]", orderLineDetailId, orderLineId, menuItemDetailId, placement);
-        String SQL = "insert into ORDER_LINE_DETAIL (orderLineDetailId, name) values (?, ?, ?, ?)";
+        String SQL = "insert into ORDER_LINE_DETAIL (orderLineDetailId, orderLineId, menuItemDetailId, placement) values (?, ?, ?, ?)";
         jdbcTemplateObject.update(SQL, orderLineDetailId, orderLineId, menuItemDetailId, placement);
     }
 

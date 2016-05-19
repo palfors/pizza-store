@@ -119,15 +119,20 @@ public class OrderJDBCTemplateTest {
         orderLine.setMenuItemId(pizzaItem.getMenuItemId());
         orderLine.setQuantity(1);
         orderLine.setPrice(pizzaItem.getPrice());
+        orderLineJDBCTemplate.create(orderLine);
 
         order.addLine(orderLine);
 
         // add a line detail
         OrderLineDetail orderLineDetail = (OrderLineDetail) context.getBean("orderLineDetail");
+        orderLineDetail.generateId();
         orderLineDetail.setOrderLineId(orderLine.getOrderLineId());
         orderLineDetail.setMenuItemDetailId(topping.getMenuItemDetailId());
         orderLineDetail.setPlacement(ToppingPlacement.WHOLE.name());
-        orderLineJDBCTemplate.create(orderLine);
+        orderLineDetailJDBCTemplate.create(orderLineDetail);
+
+        orderLine.addOrderLineDetail(orderLineDetail);
+
         OrderLine junitOrderLine =
                 orderLineJDBCTemplate.getOrderLine(orderLine.getOrderLineId());
         assertNotNull("Unable to find order line created in test!", junitOrderLine);
