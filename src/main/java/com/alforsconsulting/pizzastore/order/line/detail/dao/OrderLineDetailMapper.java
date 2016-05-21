@@ -26,6 +26,7 @@ public class OrderLineDetailMapper implements RowMapper<OrderLineDetail> {
         orderLineDetail.setOrderLineId(rs.getLong("orderLineId"));
         orderLineDetail.setMenuItemDetailId(rs.getLong("menuItemDetailId"));
         orderLineDetail.setPlacement(rs.getString("placement"));
+        orderLineDetail.setPrice(rs.getDouble("price"));
 
         logger.debug("Mapped orderLineDetail [{}]", orderLineDetail);
         return orderLineDetail;

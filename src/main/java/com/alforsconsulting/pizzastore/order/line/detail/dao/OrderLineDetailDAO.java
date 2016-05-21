@@ -24,7 +24,7 @@ public interface OrderLineDetailDAO {
      * This is the method to be used to create
      * a record in the table.
      */
-    public void create(long orderLineDetailId, long orderLineId, long menuItemDetailId, String placement);
+    public void create(long orderLineDetailId, long orderLineId, long menuItemDetailId, String placement, double price);
     /**
      * This is the method to be used to list down
      * a record from the table corresponding
@@ -57,5 +57,5 @@ public interface OrderLineDetailDAO {
      * This is the method to be used to update
      * a record in the table.
      */
-    public void update(long orderLineDetailId, long orderLineId, long menuItemDetailId, String placement);
+    public void update(long orderLineDetailId, long orderLineId, long menuItemDetailId, String placement, double price);
 }

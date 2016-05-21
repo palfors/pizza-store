@@ -74,7 +74,7 @@ public class OrderHibernateTest extends AbstractHibernateTest {
 		// create customers for order
         Customer customer = (Customer) applicationContext.getBean("customer");
         customer.setName("hibernate-customer");
-        logger.debug("Saved pizzaStore [{}]", customer);
+        logger.debug("Saved customer [{}]", customer);
         session.save(customer);
 
         // create the order
@@ -118,6 +118,7 @@ public class OrderHibernateTest extends AbstractHibernateTest {
         orderLineDetail.setOrderLineId(orderLine.getOrderId());
         orderLineDetail.setMenuItemDetailId(menuItemDetail.getMenuItemDetailId());
         orderLineDetail.setPlacement(ToppingPlacement.WHOLE.name());
+        orderLineDetail.setPrice(menuItemDetail.getPrice());
         session.save(orderLineDetail);
         logger.debug("Saved orderLineDetail [{}]", orderLineDetail);
         // add the detail to the line

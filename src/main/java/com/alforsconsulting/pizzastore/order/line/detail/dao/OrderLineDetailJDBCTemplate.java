@@ -31,14 +31,15 @@ public class OrderLineDetailJDBCTemplate implements OrderLineDetailDAO {
         create(orderLineDetail.getOrderLineDetailId(),
                 orderLineDetail.getOrderLineId(),
                 orderLineDetail.getMenuItemDetailId(),
-                orderLineDetail.getPlacement());
+                orderLineDetail.getPlacement(),
+                orderLineDetail.getPrice());
     }
 
     @Override
-    public void create(long orderLineDetailId, long orderLineId, long menuItemDetailId, String placement) {
-        logger.debug("Creating orderLineDetail [{}][{}][{}][{}]", orderLineDetailId, orderLineId, menuItemDetailId, placement);
-        String SQL = "insert into ORDER_LINE_DETAIL (orderLineDetailId, orderLineId, menuItemDetailId, placement) values (?, ?, ?, ?)";
-        jdbcTemplateObject.update(SQL, orderLineDetailId, orderLineId, menuItemDetailId, placement);
+    public void create(long orderLineDetailId, long orderLineId, long menuItemDetailId, String placement, double price) {
+        logger.debug("Creating orderLineDetail [{}][{}][{}][{}][{}]", orderLineDetailId, orderLineId, menuItemDetailId, placement, price);
+        String SQL = "insert into ORDER_LINE_DETAIL (orderLineDetailId, orderLineId, menuItemDetailId, placement, price) values (?, ?, ?, ?, ?)";
+        jdbcTemplateObject.update(SQL, orderLineDetailId, orderLineId, menuItemDetailId, placement, price);
     }
 
     public OrderLineDetail getOrderLineDetail(long orderLineDetailId) {
@@ -80,14 +81,15 @@ public class OrderLineDetailJDBCTemplate implements OrderLineDetailDAO {
         update(orderLineDetail.getOrderLineDetailId(),
                 orderLineDetail.getOrderLineId(),
                 orderLineDetail.getMenuItemDetailId(),
-                orderLineDetail.getPlacement());
+                orderLineDetail.getPlacement(),
+                orderLineDetail.getPrice());
     }
 
     @Override
-    public void update(long orderLineDetailId, long orderLineId, long menuItemDetailId, String placement) {
-        logger.debug("Updating orderLineDetail [{}][{}][{}][{}]", orderLineDetailId, orderLineId, menuItemDetailId, placement);
-        String SQL = "update ORDER_LINE_DETAIL set orderLineId = ?, menuItemDetailId = ?, placement = ? where orderLineDetailId = ?";
-        jdbcTemplateObject.update(SQL, orderLineId, menuItemDetailId, placement, orderLineDetailId);
+    public void update(long orderLineDetailId, long orderLineId, long menuItemDetailId, String placement, double price) {
+        logger.debug("Updating orderLineDetail [{}][{}][{}][{}][{}]", orderLineDetailId, orderLineId, menuItemDetailId, placement, price);
+        String SQL = "update ORDER_LINE_DETAIL set orderLineId = ?, menuItemDetailId = ?, placement = ?, price = ? where orderLineDetailId = ?";
+        jdbcTemplateObject.update(SQL, orderLineId, menuItemDetailId, placement, price, orderLineDetailId);
     }
 
     public long getMaxId() {

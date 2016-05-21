@@ -129,6 +129,7 @@ public class OrderJDBCTemplateTest {
         orderLineDetail.setOrderLineId(orderLine.getOrderLineId());
         orderLineDetail.setMenuItemDetailId(topping.getMenuItemDetailId());
         orderLineDetail.setPlacement(ToppingPlacement.WHOLE.name());
+        orderLineDetail.setPrice(topping.getPrice());
         orderLineDetailJDBCTemplate.create(orderLineDetail);
 
         orderLine.addOrderLineDetail(orderLineDetail);

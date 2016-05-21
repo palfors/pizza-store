@@ -22,6 +22,7 @@ public class OrderLineDetail {
     private long orderLineId;
     private long menuItemDetailId;
     private String placement;
+    private double price;
 
     public OrderLineDetail() {
 
@@ -66,6 +67,14 @@ public class OrderLineDetail {
         this.placement = placement;
     }
 
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     public void generateId() {
         orderLineDetailId = OrderLineDetailIdGenerator.getInstance().generateId();
     }
@@ -76,6 +85,7 @@ public class OrderLineDetail {
         builder.append("[orderLineId: ").append(this.getOrderLineId()).append("]");
         builder.append("[menuItemDetailId: ").append(this.getMenuItemDetailId()).append("]");
         builder.append("[placement: ").append(this.getPlacement()).append("]");
+        builder.append("[price: ").append(this.getPrice()).append("]");
 
         return builder.toString();
     }

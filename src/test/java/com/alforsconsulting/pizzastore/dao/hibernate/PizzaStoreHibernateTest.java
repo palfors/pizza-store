@@ -62,7 +62,7 @@ public class PizzaStoreHibernateTest extends AbstractHibernateTest {
         pizzaStore.generateId();
 		pizzaStore.setName("hibernate-store");
 		session.save(pizzaStore);
-		logger.debug("Saving pizzaStore2 [{}]", pizzaStore);
+		logger.debug("Saving pizzaStore [{}]", pizzaStore);
 
 		PizzaStore pizzaStore2 = (PizzaStore) applicationContext.getBean("pizzaStore");
         pizzaStore2.generateId();
