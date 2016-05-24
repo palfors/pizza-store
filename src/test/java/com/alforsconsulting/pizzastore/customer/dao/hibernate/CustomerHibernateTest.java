@@ -51,31 +51,38 @@ public class CustomerHibernateTest extends AbstractHibernateTest {
 	public void testCRUD() {
         logger.debug("testCRUD entry");
 
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
 		// create customer to add
         Customer customer = CustomerUtil.create("hibernate-customer");
-        CustomerUtil.save(customer);
+        CustomerUtil.save(session, customer);
         assertNotNull(customer);
-
-        // load the record from the DB
-        customer = CustomerUtil.getCustomer(customer.getCustomerId());
-        assertNotNull(customer);
-
-		// list them
-        List<Customer> customers = CustomerUtil.getCustomers();
-        assertTrue(customers.size() > 0);
-        logger.debug("Loaded customers");
-		for ( Customer cust : customers ) {
-            logger.debug(cust.getName());
-		}
 
         // delete the test records
-        CustomerUtil.delete(customer);
+        CustomerUtil.delete(session, customer);
         logger.debug("Deleted customer [{}]", customer);
 
         // verify record no longer exists
         customer = CustomerUtil.getCustomer(customer.getCustomerId());
         assertNull(customer);
         logger.debug("Verified customer no longer exists [{}]", customer);
+
+        session.getTransaction().commit();
+        session.close();
+
+        // list all customers
+        List<Customer> customers = CustomerUtil.getCustomers();
+        assertTrue(customers.size() > 0);
+        logger.debug("Loaded customers");
+        for ( Customer cust : customers ) {
+            logger.debug(cust.getName());
+        }
+
+        // load a record from the DB
+        customer = customers.get(0);
+        customer = CustomerUtil.getCustomer(customer.getCustomerId());
+        assertNotNull(customer);
 
     }
 }

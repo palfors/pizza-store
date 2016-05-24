@@ -26,6 +26,7 @@ package com.alforsconsulting.pizzastore.dao.hibernate;
 import com.alforsconsulting.pizzastore.AbstractHibernateTest;
 import com.alforsconsulting.pizzastore.PizzaStore;
 import com.alforsconsulting.pizzastore.StoreUtil;
+import org.hibernate.Session;
 import org.junit.*;
 
 import java.util.List;
@@ -47,37 +48,46 @@ public class PizzaStoreHibernateTest extends AbstractHibernateTest {
 	@Test
 	public void testCRUD() {
         logger.debug("testCRUD entry");
-		// create a couple of stores...
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
 
 		// create store to add
 		PizzaStore pizzaStore = StoreUtil.create("hibernate-store");
-        StoreUtil.save(pizzaStore);
+        StoreUtil.save(session, pizzaStore);
 		logger.debug("Created pizzaStore [{}]", pizzaStore);
 
-        pizzaStore = StoreUtil.getStore(pizzaStore.getStoreId());
-        assertNotNull(pizzaStore);
-        logger.debug("Found pizzaStore by Id [{}]", pizzaStore);
-
-        pizzaStore = StoreUtil.getStore(pizzaStore.getName());
-        assertNotNull(pizzaStore);
-        logger.debug("Found pizzaStore by name [{}]", pizzaStore);
-
-		// list them
-        List<PizzaStore> stores = StoreUtil.getStores();
-        assertTrue(stores.size() > 0);
-        logger.debug("Loaded stores");
-		for ( PizzaStore store : stores ) {
-            logger.debug(store);
-		}
-
         // delete the test records
-        StoreUtil.delete(pizzaStore);
+        StoreUtil.delete(session, pizzaStore);
         logger.debug("Deleted pizzaStore [{}]", pizzaStore);
 
         // verify record no longer exists
         pizzaStore = StoreUtil.getStore(pizzaStore.getStoreId());
         assertNull(pizzaStore);
         logger.debug("Verified store no longer exists [{}]", pizzaStore);
+
+        session.getTransaction().commit();
+        session.close();
+
+        // list them
+        List<PizzaStore> stores = StoreUtil.getStores();
+        assertTrue(stores.size() > 0);
+        logger.debug("Loaded stores");
+        for ( PizzaStore store : stores ) {
+            logger.debug(store);
+        }
+
+        long pizzaStoreId = stores.get(0).getStoreId();
+        String storeName = stores.get(0).getName();
+
+        pizzaStore = StoreUtil.getStore(pizzaStoreId);
+        assertNotNull(pizzaStore);
+        logger.debug("Found pizzaStore by Id [{}]", pizzaStore);
+
+        pizzaStore = StoreUtil.getStore(storeName);
+        assertNotNull(pizzaStore);
+        logger.debug("Found pizzaStore by name [{}]", pizzaStore);
+
 	}
 
 

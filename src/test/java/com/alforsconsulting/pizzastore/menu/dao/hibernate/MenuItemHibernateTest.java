@@ -29,6 +29,7 @@ import com.alforsconsulting.pizzastore.menu.MenuItemType;
 import com.alforsconsulting.pizzastore.menu.MenuItemUtil;
 import com.alforsconsulting.pizzastore.menu.pizza.Pizza;
 import com.alforsconsulting.pizzastore.menu.sides.Breadsticks;
+import org.hibernate.Session;
 import org.junit.*;
 
 import java.util.List;
@@ -53,17 +54,25 @@ public class MenuItemHibernateTest extends AbstractHibernateTest {
 	public void testCRUD() {
         logger.debug("testCRUD entry");
 
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
 		// create menuItem
 		MenuItem menuItem = (MenuItem) MenuItemUtil.create(MenuItemType.PIZZA, "hibernate-pizza", 7.55);
-        MenuItemUtil.save(menuItem);
+        MenuItemUtil.save(session, menuItem);
 		logger.debug("Created menuItem [{}]", menuItem);
 
-        menuItem = MenuItemUtil.getMenuItem(menuItem.getMenuItemId());
-        assertNotNull(menuItem);
+        // delete the test records
+        MenuItemUtil.delete(session, menuItem);
+        logger.debug("Deleted menuItem [{}]", menuItem);
 
-        // we just added a second PIZZA type, so look for breadsticks instead
-        MenuItem breadsticks = MenuItemUtil.getMenuItem(MenuItemType.BREADSTICKS);
-        assertNotNull(breadsticks);
+        // verify record no longer exists
+        menuItem = MenuItemUtil.getMenuItem(menuItem.getMenuItemId());
+        assertNull(menuItem);
+        logger.debug("Verified menuItem no longer exists [{}]", menuItem);
+
+        session.getTransaction().commit();
+        session.close();
 
         // list them
         List<MenuItem> menuItems = MenuItemUtil.getMenuItems();
@@ -73,13 +82,12 @@ public class MenuItemHibernateTest extends AbstractHibernateTest {
             logger.debug(item);
         }
 
-        // delete the test records
-        MenuItemUtil.delete(menuItem);
-        logger.debug("Deleted menuItem [{}]", menuItem);
+        long menuItemId = menuItems.get(0).getMenuItemId();
+        menuItem = MenuItemUtil.getMenuItem(menuItemId);
+        assertNotNull(menuItem);
 
-        // verify record no longer exists
-        menuItem = MenuItemUtil.getMenuItem(menuItem.getMenuItemId());
-        assertNull(menuItem);
-        logger.debug("Verified menuItem no longer exists [{}]", menuItem);
+        MenuItem breadsticks = MenuItemUtil.getMenuItem(MenuItemType.BREADSTICKS);
+        assertNotNull(breadsticks);
+
     }
 }

@@ -57,9 +57,12 @@ public class MenuItemDetailHibernateTest extends AbstractHibernateTest {
 	public void testCRUD() {
         logger.debug("testCRUD entry");
 
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
         // create a menuItem to reference
         MenuItem menuItem = (MenuItem) MenuItemUtil.create(MenuItemType.PIZZA, "menuItemDetailTest-pizza", 7.55);
-        MenuItemUtil.save(menuItem);
+        MenuItemUtil.save(session, menuItem);
         logger.debug("Created menuItem [{}]", menuItem);
 
         // create menuItemDetail
@@ -68,18 +71,23 @@ public class MenuItemDetailHibernateTest extends AbstractHibernateTest {
                                             MenuItemDetailType.TOPPING,
                                             "menuItemDetailTest-topping",
                                             1.75);
-        MenuItemDetailUtil.save(menuItemDetail);
+        MenuItemDetailUtil.save(session, menuItemDetail);
         logger.debug("Created menuItemDetail [{}]", menuItemDetail);
 
-        menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(
-                menuItemDetail.getMenuItemDetailId());
-        assertNotNull(menuItemDetail);
+        // delete the test records
+        MenuItemDetailUtil.delete(session, menuItemDetail);
+        logger.debug("Deleted menuItemDetail [{}]", menuItemDetail);
+        MenuItemUtil.delete(session, menuItem);
+        logger.debug("Deleted menuItem [{}]", menuItem);
 
-        menuItemDetail =
-                MenuItemDetailUtil.getMenuItemDetail(menuItem.getMenuItemId(),
-                                                    MenuItemDetailType.TOPPING,
-                                                    menuItemDetail.getName());
-        assertNotNull(menuItemDetail);
+        // verify record no longer exists
+        assertNull(MenuItemDetailUtil.getMenuItemDetail(menuItemDetail.getMenuItemDetailId()));
+        logger.debug("Verified menuItemDetail no longer exists [{}]", menuItemDetail);
+        assertNull(MenuItemUtil.getMenuItem(menuItem.getMenuItemId()));
+        logger.debug("Verified menuItem no longer exists [{}]", menuItem);
+
+        session.getTransaction().commit();
+        session.close();
 
         // list them
         List<MenuItemDetail> menuItemDetails = MenuItemDetailUtil.getMenuItemDetails();
@@ -89,17 +97,17 @@ public class MenuItemDetailHibernateTest extends AbstractHibernateTest {
             logger.debug(detail);
         }
 
-        // delete the test records
-        MenuItemDetailUtil.delete(menuItemDetail);
-        logger.debug("Deleted menuItemDetail [{}]", menuItemDetail);
-        MenuItemUtil.delete(menuItem);
-        logger.debug("Deleted menuItem [{}]", menuItem);
+        MenuItemDetail detail = menuItemDetails.get(0);
 
-        // verify record no longer exists
-        assertNull(MenuItemDetailUtil.getMenuItemDetail(menuItemDetail.getMenuItemDetailId()));
-        logger.debug("Verified menuItemDetail no longer exists [{}]", menuItemDetail);
-        assertNull(MenuItemUtil.getMenuItem(menuItem.getMenuItemId()));
-        logger.debug("Verified menuItem no longer exists [{}]", menuItem);
+        menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(
+                detail.getMenuItemDetailId());
+        assertNotNull(menuItemDetail);
+
+        menuItemDetail =
+                MenuItemDetailUtil.getMenuItemDetail(detail.getMenuItemId(),
+                        MenuItemDetailType.valueOf(detail.getDetailType().toUpperCase()),
+                        detail.getName());
+        assertNotNull(menuItemDetail);
 
     }
 }

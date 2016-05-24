@@ -41,6 +41,7 @@ import com.alforsconsulting.pizzastore.order.line.OrderLine;
 import com.alforsconsulting.pizzastore.order.line.OrderLineUtil;
 import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetail;
 import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetailUtil;
+import org.hibernate.Session;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -64,15 +65,18 @@ public class OrderHibernateTest extends AbstractHibernateTest {
 	public void testCRUD() {
         logger.debug("testCRUD entry");
 
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
         // create store for order
         PizzaStore pizzaStore = StoreUtil.create("test-store");
-        StoreUtil.save(pizzaStore);
+        StoreUtil.save(session, pizzaStore);
         Assert.assertNotNull(pizzaStore);
         logger.debug("Created pizzaStore [{}]", pizzaStore);
 
         // create customer for order
         Customer customer = CustomerUtil.create("test-customer");
-        CustomerUtil.save(customer);
+        CustomerUtil.save(session, customer);
         Assert.assertNotNull(customer);
         logger.debug("Created customer [{}]", customer);
 
@@ -89,7 +93,7 @@ public class OrderHibernateTest extends AbstractHibernateTest {
 
         // create the order
         Order order = OrderUtil.create(pizzaStore.getStoreId(), customer.getCustomerId(), 23.45);
-        OrderUtil.save(order);
+        OrderUtil.save(session, order);
         Assert.assertNotNull(order);
         logger.debug("Created order [{}]", order);
 
@@ -98,7 +102,7 @@ public class OrderHibernateTest extends AbstractHibernateTest {
         double linePrice = (menuItem.getPrice() * lineQuantity);
         OrderLine orderLine = OrderLineUtil.create(
                 order.getOrderId(), menuItem.getMenuItemId(), lineQuantity, linePrice);
-        OrderLineUtil.save(orderLine);
+        OrderLineUtil.save(session, orderLine);
         Assert.assertNotNull(orderLine);
         logger.debug("Created orderLine [{}]", orderLine);
         // add the line to the order
@@ -110,29 +114,33 @@ public class OrderHibernateTest extends AbstractHibernateTest {
                         menuItemDetail.getMenuItemDetailId(),
                         ToppingPlacement.WHOLE,
                         menuItemDetail.getPrice());
-        OrderLineDetailUtil.save(orderLineDetail);
+        OrderLineDetailUtil.save(session, orderLineDetail);
         Assert.assertNotNull(orderLineDetail);
         logger.debug("Saved orderLineDetail [{}]", orderLineDetail);
         // add the detail to the line
         orderLine.addOrderLineDetail(orderLineDetail);
 
-        // load the record from the DB
-        OrderUtil.getOrder(order.getOrderId());
-        Assert.assertNotNull(orderLineDetail);
-        logger.debug("Loaded order [{}]", order);
+        // delete the test records
+        OrderUtil.delete(session, order);
+        CustomerUtil.delete(session, customer);
+        StoreUtil.delete(session, pizzaStore);
 
-		// list them
+        session.getTransaction().commit();
+        session.close();
+
+        // list them
         List<Order> orders = OrderUtil.getOrders();
         logger.debug("Loaded orders");
-		for ( Order ord : orders ) {
+        for ( Order ord : orders ) {
             logger.debug(ord);
-		}
+        }
 
-        // delete the test records
-        OrderUtil.delete(order);
-        CustomerUtil.delete(customer);
-        StoreUtil.delete(pizzaStore);
-	}
+        // load an order from the DB
+        order = OrderUtil.getOrder(orders.get(0).getOrderId());
+        Assert.assertNotNull(order);
+        logger.debug("Loaded order [{}]", order);
+
+    }
 
     @Test
     public void testObjectSave() {
