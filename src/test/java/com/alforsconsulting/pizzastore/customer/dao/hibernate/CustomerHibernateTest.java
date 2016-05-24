@@ -25,64 +25,57 @@ package com.alforsconsulting.pizzastore.customer.dao.hibernate;
 
 import com.alforsconsulting.pizzastore.AbstractHibernateTest;
 import com.alforsconsulting.pizzastore.customer.Customer;
+import com.alforsconsulting.pizzastore.customer.CustomerUtil;
 import org.hibernate.Session;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.List;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 public class CustomerHibernateTest extends AbstractHibernateTest {
+
     @BeforeClass
-    public static void prepareClass() {
-        AbstractHibernateTest.prepareClass();
+    public static void prepareClass() throws Exception {
+        setUpClass();
     }
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
+    @AfterClass
+    public static void tearDown() throws Exception {
+        tearDownClass();
     }
 
 	@Test
-	public void testBasicUsage() {
-        logger.debug("testBasicUsage entry");
-		// create a couple of events...
-		Session session = sessionFactory.openSession();
-		session.beginTransaction();
+	public void testCRUD() {
+        logger.debug("testCRUD entry");
 
-		// create customers to add
-		Customer customer = (Customer) applicationContext.getBean("customer");
-		customer.setName("hibernate-customer");
-		session.save(customer);
-        Customer customer2 = (Customer) applicationContext.getBean("customer");
-        customer.setName("hibernate-customer2");
-        session.save(customer2);
+		// create customer to add
+        Customer customer = CustomerUtil.create("hibernate-customer");
+        assertNotNull(customer);
 
-        logger.debug("Saving customer [{}]", customer);
-
-        // TODO: load the record from the DB
+        // load the record from the DB
+        customer = CustomerUtil.getCustomer(customer.getCustomerId());
+        assertNotNull(customer);
 
 		// list them
-        List<Customer> customers = (List<Customer>) session.createQuery( "from Customer" ).list();
-        logger.debug("Loading customers");
+        List<Customer> customers = CustomerUtil.getCustomers();
+        assertTrue(customers.size() > 0);
+        logger.debug("Loaded customers");
 		for ( Customer cust : customers ) {
             logger.debug(cust.getName());
 		}
 
         // delete the test records
-        session.beginTransaction();
-        session.delete(customer);
-        session.delete(customer2);
+        boolean result = CustomerUtil.delete(customer);
+        assertTrue(result);
+        logger.debug("Deleted customer [{}]", customer);
 
-        session.getTransaction().commit();
-        session.close();
+        // verify record no longer exists
+        customer = CustomerUtil.getCustomer(customer.getCustomerId());
+        assertNull(customer);
+        logger.debug("Verified customer no longer exists [{}]", customer);
 
-        // TODO: verify record no longer exists
-	}
+    }
 }

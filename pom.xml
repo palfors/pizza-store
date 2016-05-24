@@ -71,6 +71,11 @@
             <artifactId>hibernate-core</artifactId>
             <version>5.1.0.Final</version>
         </dependency>
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>3.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>

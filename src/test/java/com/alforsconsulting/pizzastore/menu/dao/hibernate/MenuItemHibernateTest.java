@@ -24,71 +24,62 @@
 package com.alforsconsulting.pizzastore.menu.dao.hibernate;
 
 import com.alforsconsulting.pizzastore.AbstractHibernateTest;
-import com.alforsconsulting.pizzastore.PizzaStore;
 import com.alforsconsulting.pizzastore.menu.MenuItem;
+import com.alforsconsulting.pizzastore.menu.MenuItemType;
+import com.alforsconsulting.pizzastore.menu.MenuItemUtil;
 import com.alforsconsulting.pizzastore.menu.pizza.Pizza;
 import com.alforsconsulting.pizzastore.menu.sides.Breadsticks;
-import org.hibernate.Session;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.List;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class MenuItemHibernateTest extends AbstractHibernateTest {
 
     @BeforeClass
-    public static void prepareClass() {
-        AbstractHibernateTest.prepareClass();
+    public static void prepareClass() throws Exception {
+        setUpClass();
     }
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
+    @AfterClass
+    public static void tearDown() throws Exception {
+        tearDownClass();
     }
 
 	@Test
-	public void testBasicUsage() {
-        logger.debug("testBasicUsage entry");
-		// create a couple of events...
-		Session session = sessionFactory.openSession();
-		session.beginTransaction();
+	public void testCRUD() {
+        logger.debug("testCRUD entry");
 
-		// create pizza to add
-		Pizza pizza = (Pizza) applicationContext.getBean("pizza");
-        pizza.setName("hibernate-pizza");
-        pizza.setPrice(7.55);
-		session.save(pizza);
-		logger.debug("Saving pizza [{}]", pizza);
+		// create menuItem
+		MenuItem menuItem = (MenuItem) MenuItemUtil.create(MenuItemType.PIZZA, "hibernate-pizza", 7.55);
+		logger.debug("Created menuItem [{}]", menuItem);
 
-        Breadsticks breadsticks = (Breadsticks) applicationContext.getBean("breadsticks");
-        breadsticks.setName("hibernate-breadsticks");
-        breadsticks.setPrice(1.33);
-        session.save(breadsticks);
-        logger.debug("Saving breadsticks [{}]", breadsticks);
+        menuItem = MenuItemUtil.getMenuItem(menuItem.getMenuItemId());
+        assertNotNull(menuItem);
 
-        // TODO: load the record from the DB
+        // we just added a second PIZZA type, so look for breadsticks instead
+        MenuItem breadsticks = MenuItemUtil.getMenuItem(MenuItemType.BREADSTICKS);
+        assertNotNull(breadsticks);
 
-		// list them
-        List<MenuItem> menuItems = (List<MenuItem>) session.createQuery( "from GenericMenuItem" ).list();
-        logger.debug("Loading menuItems");
-		for ( MenuItem item : menuItems ) {
+        // list them
+        List<MenuItem> menuItems = MenuItemUtil.getMenuItems();
+        assertTrue(menuItems.size() > 0);
+        logger.debug("Loaded menuItems");
+        for ( MenuItem item : menuItems ) {
             logger.debug(item);
-		}
+        }
 
         // delete the test records
-        session.delete(pizza);
-        session.delete(breadsticks);
+        boolean result = MenuItemUtil.delete(menuItem);
+        assertTrue(result);
+        logger.debug("Deleted menuItem [{}]", menuItem);
 
-        session.getTransaction().commit();
-        session.close();
-
-        // TODO: verify record no longer exists
-	}
+        // verify record no longer exists
+        menuItem = MenuItemUtil.getMenuItem(menuItem.getMenuItemId());
+        assertNull(menuItem);
+        logger.debug("Verified menuItem no longer exists [{}]", menuItem);
+    }
 }

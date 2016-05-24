@@ -16,16 +16,14 @@ import org.springframework.context.ApplicationContext;
  */
 public abstract class AbstractHibernateTest {
     protected static final Logger logger = LogManager.getLogger();
-    protected SessionFactory sessionFactory;
+    protected static SessionFactory sessionFactory;
     protected static ApplicationContext applicationContext;
 
-    public static void prepareClass() {
-        logger.debug("prepareClass entry");
-        applicationContext = AppContext.getInstance().getContext();
-    }
+    public static void setUpClass() throws Exception {
+        logger.debug("setUpClass entry");
 
-    public void setUp() throws Exception {
-        logger.debug("setUp entry");
+        applicationContext = AppContext.getInstance().getContext();
+
         // A SessionFactory is set up once for an application!
         final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .configure("hibernate/hibernate.cfg.xml") // configures settings from hibernate.cfg.xml
@@ -41,8 +39,8 @@ public abstract class AbstractHibernateTest {
         }
     }
 
-    public void tearDown() throws Exception {
-        logger.debug("tearDown entry");
+    public static void tearDownClass() throws Exception {
+        logger.debug("tearDownClass entry");
         if ( sessionFactory != null ) {
             sessionFactory.close();
         }

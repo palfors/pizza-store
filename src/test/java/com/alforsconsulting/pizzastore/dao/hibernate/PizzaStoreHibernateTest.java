@@ -25,68 +25,60 @@ package com.alforsconsulting.pizzastore.dao.hibernate;
 
 import com.alforsconsulting.pizzastore.AbstractHibernateTest;
 import com.alforsconsulting.pizzastore.PizzaStore;
-import org.hibernate.Session;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.alforsconsulting.pizzastore.StoreUtil;
+import org.junit.*;
 
 import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class PizzaStoreHibernateTest extends AbstractHibernateTest {
 
     @BeforeClass
-    public static void prepareClass() {
-        AbstractHibernateTest.prepareClass();
+    public static void prepareClass() throws Exception {
+        setUpClass();
     }
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
+    @AfterClass
+    public static void tearDown() throws Exception {
+        tearDownClass();
     }
 
 	@Test
-	public void testBasicUsage() {
-        logger.debug("testBasicUsage entry");
+	public void testCRUD() {
+        logger.debug("testCRUD entry");
 		// create a couple of stores...
-		Session session = sessionFactory.openSession();
-		session.beginTransaction();
 
 		// create store to add
-		PizzaStore pizzaStore = (PizzaStore) applicationContext.getBean("pizzaStore");
-        pizzaStore.generateId();
-		pizzaStore.setName("hibernate-store");
-		session.save(pizzaStore);
-		logger.debug("Saving pizzaStore [{}]", pizzaStore);
+		PizzaStore pizzaStore = StoreUtil.create("hibernate-store");
+		logger.debug("Created pizzaStore [{}]", pizzaStore);
 
-		PizzaStore pizzaStore2 = (PizzaStore) applicationContext.getBean("pizzaStore");
-        pizzaStore2.generateId();
-		pizzaStore2.setName("hibernate-store2");
-        session.save(pizzaStore2);
+        pizzaStore = StoreUtil.getStore(pizzaStore.getStoreId());
+        assertNotNull(pizzaStore);
+        logger.debug("Found pizzaStore by Id [{}]", pizzaStore);
 
-        logger.debug("Saving pizzaStore2 [{}]", pizzaStore2);
-
-        // TODO: load the record from the DB
+        pizzaStore = StoreUtil.getStore(pizzaStore.getName());
+        assertNotNull(pizzaStore);
+        logger.debug("Found pizzaStore by name [{}]", pizzaStore);
 
 		// list them
-        List<PizzaStore> stores = (List<PizzaStore>) session.createQuery( "from PizzaStore" ).list();
-        logger.debug("Loading stores");
+        List<PizzaStore> stores = StoreUtil.getStores();
+        assertTrue(stores.size() > 0);
+        logger.debug("Loaded stores");
 		for ( PizzaStore store : stores ) {
-            logger.debug(store.getName());
+            logger.debug(store);
 		}
 
         // delete the test records
-        session.delete(pizzaStore);
-		session.delete(pizzaStore2);
+        boolean result = StoreUtil.delete(pizzaStore);
+        assertTrue(result);
+        logger.debug("Deleted pizzaStore [{}]", pizzaStore);
 
-        session.getTransaction().commit();
-        session.close();
-
-        // TODO: verify record no longer exists
+        // verify record no longer exists
+        pizzaStore = StoreUtil.getStore(pizzaStore.getStoreId());
+        assertNull(pizzaStore);
+        logger.debug("Verified store no longer exists [{}]", pizzaStore);
 	}
+
+
 }
