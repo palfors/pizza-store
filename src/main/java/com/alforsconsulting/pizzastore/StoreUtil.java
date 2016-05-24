@@ -29,33 +29,36 @@ public class StoreUtil {
         sessionFactory = AppContext.getInstance().getSessionFactory();
     }
 
+    public static PizzaStore newPizzaStore() {
+        return (PizzaStore) applicationContext.getBean("pizzaStore");
+    }
+
     public static PizzaStore create(String name) {
 
-        PizzaStore pizzaStore = (PizzaStore) applicationContext.getBean("pizzaStore");
+        PizzaStore pizzaStore = newPizzaStore();
         pizzaStore.setName(name);
-
-        if (!save(pizzaStore)) {
-            pizzaStore = null;
-        }
 
         return pizzaStore;
     }
 
-    public static boolean save(PizzaStore store) {
+    public static void save(Session session, PizzaStore store) {
         logger.debug("Saving pizzaStore [{}]", store);
 
-        boolean success = true;
+        session.saveOrUpdate(store);
+
+        // currently no children to save
+    }
+
+    public static void save(PizzaStore store) {
+        logger.debug("Saving pizzaStore [{}]", store);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        // TODO: check for success
-        session.save(store);
+        save(session, store);
 
         session.getTransaction().commit();
         session.close();
-
-        return success;
     }
 
     public static PizzaStore getStore(long id) {
@@ -134,21 +137,24 @@ public class StoreUtil {
         return stores;
     }
 
-    public static boolean delete(PizzaStore store) {
+    public static void delete(Session session, PizzaStore store) {
         logger.debug("Deleting customer [{}]", store);
 
-        boolean success = true;
+        // currently no children to delete
+
+        session.delete(store);
+    }
+
+    public static void delete(PizzaStore store) {
+        logger.debug("Deleting customer [{}]", store);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        // TODO: check for success
-        session.delete(store);
+        delete(session, store);
 
         session.getTransaction().commit();
         session.close();
-
-        return success;
     }
 
 }

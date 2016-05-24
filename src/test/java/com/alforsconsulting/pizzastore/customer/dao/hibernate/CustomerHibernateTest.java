@@ -53,6 +53,7 @@ public class CustomerHibernateTest extends AbstractHibernateTest {
 
 		// create customer to add
         Customer customer = CustomerUtil.create("hibernate-customer");
+        CustomerUtil.save(customer);
         assertNotNull(customer);
 
         // load the record from the DB
@@ -68,8 +69,7 @@ public class CustomerHibernateTest extends AbstractHibernateTest {
 		}
 
         // delete the test records
-        boolean result = CustomerUtil.delete(customer);
-        assertTrue(result);
+        CustomerUtil.delete(customer);
         logger.debug("Deleted customer [{}]", customer);
 
         // verify record no longer exists

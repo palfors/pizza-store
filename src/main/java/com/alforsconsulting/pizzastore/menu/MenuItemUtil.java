@@ -1,8 +1,6 @@
 package com.alforsconsulting.pizzastore.menu;
 
 import com.alforsconsulting.pizzastore.AppContext;
-import com.alforsconsulting.pizzastore.menu.detail.MenuItemDetail;
-import com.alforsconsulting.pizzastore.menu.detail.MenuItemDetailType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
@@ -32,27 +30,37 @@ public class MenuItemUtil {
         return instance;
     }
 
+    public static MenuItem newMenuItem(MenuItemType menuItemType) {
+        return (MenuItem) applicationContext.getBean(menuItemType.getBeanName());
+    }
+
     public static MenuItem create(MenuItemType menuItemType, String name, double price) {
-        MenuItem menuItem = (MenuItem) applicationContext.getBean(menuItemType.getBeanName());
+        MenuItem menuItem = newMenuItem(menuItemType);
         menuItem.setMenuItemType(menuItemType.getBeanName());
         menuItem.setName(name);
         menuItem.setPrice(price);
 
-        return save(menuItem);
+        return menuItem;
     }
 
-    public static MenuItem save(MenuItem menuItem) {
+    public static void save(Session session, MenuItem menuItem) {
+        logger.debug("Saving menuItem [{}]", menuItem);
+
+        session.saveOrUpdate(menuItem);
+
+        // currently no children to save
+    }
+
+    public static void save(MenuItem menuItem) {
         logger.debug("Saving menuItem [{}]", menuItem);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        session.save(menuItem);
+        save(session, menuItem);
 
         session.getTransaction().commit();
         session.close();
-
-        return menuItem;
     }
 
     public static MenuItem getMenuItem(long menuItemId) {
@@ -130,21 +138,24 @@ public class MenuItemUtil {
         return menuItems;
     }
 
-    public static boolean delete(MenuItem menuItem) {
+    public static void delete(Session session, MenuItem menuItem) {
         logger.debug("Deleting menuItem [{}]", menuItem);
 
-        boolean result = true;
+        // currently no children to delete
+
+        session.delete(menuItem);
+    }
+
+    public static void delete(MenuItem menuItem) {
+        logger.debug("Deleting menuItem [{}]", menuItem);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        // TODO: check for success
-        session.delete(menuItem);
+        delete(session, menuItem);
 
         session.getTransaction().commit();
         session.close();
-
-        return result;
     }
 
 }

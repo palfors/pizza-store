@@ -59,6 +59,7 @@ public class MenuItemDetailHibernateTest extends AbstractHibernateTest {
 
         // create a menuItem to reference
         MenuItem menuItem = (MenuItem) MenuItemUtil.create(MenuItemType.PIZZA, "menuItemDetailTest-pizza", 7.55);
+        MenuItemUtil.save(menuItem);
         logger.debug("Created menuItem [{}]", menuItem);
 
         // create menuItemDetail
@@ -67,6 +68,7 @@ public class MenuItemDetailHibernateTest extends AbstractHibernateTest {
                                             MenuItemDetailType.TOPPING,
                                             "menuItemDetailTest-topping",
                                             1.75);
+        MenuItemDetailUtil.save(menuItemDetail);
         logger.debug("Created menuItemDetail [{}]", menuItemDetail);
 
         menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(
@@ -88,9 +90,9 @@ public class MenuItemDetailHibernateTest extends AbstractHibernateTest {
         }
 
         // delete the test records
-        assertTrue(MenuItemDetailUtil.delete(menuItemDetail));
+        MenuItemDetailUtil.delete(menuItemDetail);
         logger.debug("Deleted menuItemDetail [{}]", menuItemDetail);
-        assertTrue(MenuItemUtil.delete(menuItem));
+        MenuItemUtil.delete(menuItem);
         logger.debug("Deleted menuItem [{}]", menuItem);
 
         // verify record no longer exists

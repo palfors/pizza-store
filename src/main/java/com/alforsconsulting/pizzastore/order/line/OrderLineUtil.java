@@ -1,7 +1,8 @@
 package com.alforsconsulting.pizzastore.order.line;
 
 import com.alforsconsulting.pizzastore.AppContext;
-import com.alforsconsulting.pizzastore.order.Order;
+import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetail;
+import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetailUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
@@ -31,29 +32,42 @@ public class OrderLineUtil {
         return instance;
     }
 
+    public static OrderLine newOrderLine() {
+        return (OrderLine) applicationContext.getBean("orderLine");
+    }
 
     public static OrderLine create(long orderId, long menuItemId, int quantity, double price) {
-        OrderLine orderLine = (OrderLine) applicationContext.getBean("orderLine");
+        OrderLine orderLine = newOrderLine();
         orderLine.setOrderId(orderId);
         orderLine.setMenuItemId(menuItemId);
         orderLine.setQuantity(quantity);
         orderLine.setPrice(price);
 
-        return save(orderLine);
+        return orderLine;
     }
 
-    public static OrderLine save(OrderLine orderLine) {
+    public static void save(Session session, OrderLine orderLine) {
+        logger.debug("Saving orderLine [{}]", orderLine);
+
+        session.saveOrUpdate(orderLine);
+
+        // save order line details
+        for (OrderLineDetail detail : orderLine.getOrderLineDetails()) {
+            detail.setOrderLineId(orderLine.getOrderLineId());
+            OrderLineDetailUtil.save(session, detail);
+        }
+    }
+
+    public static void save(OrderLine orderLine) {
         logger.debug("Saving orderLine [{}]", orderLine);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        session.save(orderLine);
+        save(session, orderLine);
 
         session.getTransaction().commit();
         session.close();
-
-        return orderLine;
     }
 
     public static OrderLine getOrderLine(long orderLineId) {
@@ -122,20 +136,27 @@ public class OrderLineUtil {
         return orderLines;
     }
 
-    public static boolean delete(OrderLine orderLine) {
+    public static void delete(Session session, OrderLine orderLine) {
         logger.debug("Deleting orderLine [{}]", orderLine);
 
-        boolean result = true;
+        // delete line details first
+        for (OrderLineDetail detail : orderLine.getOrderLineDetails()) {
+            OrderLineDetailUtil.delete(session, detail);
+        }
+
+        session.delete(orderLine);
+
+    }
+
+    public static void delete(OrderLine orderLine) {
+        logger.debug("Deleting orderLine [{}]", orderLine);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        // TODO: check for success
-        session.delete(orderLine);
+        delete(session, orderLine);
 
         session.getTransaction().commit();
         session.close();
-
-        return result;
     }
 }

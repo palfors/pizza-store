@@ -1,7 +1,8 @@
 package com.alforsconsulting.pizzastore.order;
 
 import com.alforsconsulting.pizzastore.AppContext;
-import com.alforsconsulting.pizzastore.customer.Customer;
+import com.alforsconsulting.pizzastore.order.line.OrderLine;
+import com.alforsconsulting.pizzastore.order.line.OrderLineUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
@@ -32,27 +33,41 @@ public class OrderUtil {
     }
 
 
+    public static Order newOrder() {
+        return (Order) applicationContext.getBean("order");
+    }
+
     public static Order create(long storeId, long customerId, double price) {
-        Order order = (Order) applicationContext.getBean("order");
+        Order order = newOrder();
         order.setStoreId(storeId);
         order.setCustomerId(customerId);
         order.setPrice(price);
 
-        return save(order);
+        return order;
     }
 
-    public static Order save(Order order) {
+    public static void save(Session session, Order order) {
+        logger.debug("Saving order [{}]", order);
+
+        session.saveOrUpdate(order);
+
+        // save order lines
+        for (OrderLine line : order.getOrderLines()) {
+            line.setOrderId(order.getOrderId());
+            OrderLineUtil.save(session, line);
+        }
+    }
+
+    public static void save(Order order) {
         logger.debug("Saving order [{}]", order);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        session.save(order);
+        save(session, order);
 
         session.getTransaction().commit();
         session.close();
-
-        return order;
     }
 
     public static Order getOrder(long orderId) {
@@ -102,20 +117,26 @@ public class OrderUtil {
         return orders;
     }
 
-    public static boolean delete(Order order) {
+    public static void delete(Session session, Order order) {
         logger.debug("Deleting order [{}]", order);
 
-        boolean result = true;
+        // delete the order lines first
+        for (OrderLine line : order.getOrderLines()) {
+            OrderLineUtil.delete(session, line);
+        }
+
+        session.delete(order);
+    }
+
+    public static void delete(Order order) {
+        logger.debug("Deleting order [{}]", order);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        // TODO: check for success
-        session.delete(order);
+        delete(session, order);
 
         session.getTransaction().commit();
         session.close();
-
-        return result;
     }
 }

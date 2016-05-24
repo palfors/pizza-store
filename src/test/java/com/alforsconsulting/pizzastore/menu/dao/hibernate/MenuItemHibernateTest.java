@@ -55,6 +55,7 @@ public class MenuItemHibernateTest extends AbstractHibernateTest {
 
 		// create menuItem
 		MenuItem menuItem = (MenuItem) MenuItemUtil.create(MenuItemType.PIZZA, "hibernate-pizza", 7.55);
+        MenuItemUtil.save(menuItem);
 		logger.debug("Created menuItem [{}]", menuItem);
 
         menuItem = MenuItemUtil.getMenuItem(menuItem.getMenuItemId());
@@ -73,8 +74,7 @@ public class MenuItemHibernateTest extends AbstractHibernateTest {
         }
 
         // delete the test records
-        boolean result = MenuItemUtil.delete(menuItem);
-        assertTrue(result);
+        MenuItemUtil.delete(menuItem);
         logger.debug("Deleted menuItem [{}]", menuItem);
 
         // verify record no longer exists

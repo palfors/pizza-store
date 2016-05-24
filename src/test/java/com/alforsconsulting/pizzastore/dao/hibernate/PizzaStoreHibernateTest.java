@@ -51,6 +51,7 @@ public class PizzaStoreHibernateTest extends AbstractHibernateTest {
 
 		// create store to add
 		PizzaStore pizzaStore = StoreUtil.create("hibernate-store");
+        StoreUtil.save(pizzaStore);
 		logger.debug("Created pizzaStore [{}]", pizzaStore);
 
         pizzaStore = StoreUtil.getStore(pizzaStore.getStoreId());
@@ -70,8 +71,7 @@ public class PizzaStoreHibernateTest extends AbstractHibernateTest {
 		}
 
         // delete the test records
-        boolean result = StoreUtil.delete(pizzaStore);
-        assertTrue(result);
+        StoreUtil.delete(pizzaStore);
         logger.debug("Deleted pizzaStore [{}]", pizzaStore);
 
         // verify record no longer exists

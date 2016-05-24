@@ -62,15 +62,17 @@ public class OrderHibernateTest extends AbstractHibernateTest {
 
     @Test
 	public void testCRUD() {
-        logger.debug("testBasicUsage entry");
+        logger.debug("testCRUD entry");
 
         // create store for order
         PizzaStore pizzaStore = StoreUtil.create("test-store");
+        StoreUtil.save(pizzaStore);
         Assert.assertNotNull(pizzaStore);
         logger.debug("Created pizzaStore [{}]", pizzaStore);
 
         // create customer for order
         Customer customer = CustomerUtil.create("test-customer");
+        CustomerUtil.save(customer);
         Assert.assertNotNull(customer);
         logger.debug("Created customer [{}]", customer);
 
@@ -87,6 +89,7 @@ public class OrderHibernateTest extends AbstractHibernateTest {
 
         // create the order
         Order order = OrderUtil.create(pizzaStore.getStoreId(), customer.getCustomerId(), 23.45);
+        OrderUtil.save(order);
         Assert.assertNotNull(order);
         logger.debug("Created order [{}]", order);
 
@@ -95,6 +98,7 @@ public class OrderHibernateTest extends AbstractHibernateTest {
         double linePrice = (menuItem.getPrice() * lineQuantity);
         OrderLine orderLine = OrderLineUtil.create(
                 order.getOrderId(), menuItem.getMenuItemId(), lineQuantity, linePrice);
+        OrderLineUtil.save(orderLine);
         Assert.assertNotNull(orderLine);
         logger.debug("Created orderLine [{}]", orderLine);
         // add the line to the order
@@ -106,6 +110,7 @@ public class OrderHibernateTest extends AbstractHibernateTest {
                         menuItemDetail.getMenuItemDetailId(),
                         ToppingPlacement.WHOLE,
                         menuItemDetail.getPrice());
+        OrderLineDetailUtil.save(orderLineDetail);
         Assert.assertNotNull(orderLineDetail);
         logger.debug("Saved orderLineDetail [{}]", orderLineDetail);
         // add the detail to the line
@@ -124,12 +129,76 @@ public class OrderHibernateTest extends AbstractHibernateTest {
 		}
 
         // delete the test records
-        OrderLineDetailUtil.delete(orderLineDetail);
-        OrderLineUtil.delete(orderLine);
         OrderUtil.delete(order);
         CustomerUtil.delete(customer);
         StoreUtil.delete(pizzaStore);
-
-        // TODO: verify record no longer exists
 	}
+
+    @Test
+    public void testObjectSave() {
+        logger.debug("testObjectSave entry");
+
+        // create store for order
+        PizzaStore pizzaStore = StoreUtil.create("testObjectSave-store");
+        StoreUtil.save(pizzaStore);
+        Assert.assertNotNull(pizzaStore);
+        logger.debug("Created pizzaStore [{}]", pizzaStore);
+
+        // create customer for order
+        Customer customer = CustomerUtil.create("testObjectSave-customer");
+        CustomerUtil.save(customer);
+        Assert.assertNotNull(customer);
+        logger.debug("Created customer [{}]", customer);
+
+        // get a menuItem to use for the order
+        MenuItem menuItem = MenuItemUtil.getMenuItem(MenuItemType.PIZZA);
+        Assert.assertNotNull(menuItem);
+
+        // get a menuItemDetail to use for the order
+        MenuItemDetail menuItemDetail =
+                MenuItemDetailUtil.getMenuItemDetail(menuItem.getMenuItemId(),
+                        MenuItemDetailType.TOPPING,
+                        "Onion");
+        Assert.assertNotNull(menuItemDetail);
+
+        // create the order
+        Order order = OrderUtil.newOrder();
+        order.setStoreId(pizzaStore.getStoreId());
+        order.setCustomerId(customer.getCustomerId());
+        order.setPrice(23.45);
+        logger.debug("Created order [{}]", order);
+
+        // create an order line
+        int lineQuantity = 2;
+        double linePrice = (menuItem.getPrice() * lineQuantity);
+        OrderLine orderLine = OrderLineUtil.newOrderLine();
+        orderLine.setOrderId(order.getOrderId());
+        orderLine.setMenuItemId(menuItem.getMenuItemId());
+        orderLine.setQuantity(lineQuantity);
+        orderLine.setPrice(linePrice);
+        logger.debug("Created orderLine [{}]", orderLine);
+        // add the line to the order
+        order.addLine(orderLine);
+
+        // create an order line detail
+        OrderLineDetail orderLineDetail = OrderLineDetailUtil.newOrderLineDetail();
+        orderLineDetail.setOrderLineId(orderLine.getOrderLineId());
+        orderLineDetail.setMenuItemDetailId(menuItemDetail.getMenuItemDetailId());
+        orderLineDetail.setPlacement(ToppingPlacement.WHOLE.name());
+        orderLineDetail.setPrice(menuItemDetail.getPrice());
+        logger.debug("Created orderLineDetail [{}]", orderLineDetail);
+        // add the detail to the line
+        orderLine.addOrderLineDetail(orderLineDetail);
+
+        // save the order in one transaction
+        OrderUtil.save(order);
+
+        // delete the order and its children in one transaction
+        OrderUtil.delete(order);
+
+        // delete the supporting data
+        CustomerUtil.delete(customer);
+        StoreUtil.delete(pizzaStore);
+    }
+
 }

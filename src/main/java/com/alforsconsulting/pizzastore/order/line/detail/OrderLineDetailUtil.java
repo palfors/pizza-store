@@ -32,32 +32,42 @@ public class OrderLineDetailUtil {
         return instance;
     }
 
+    public static OrderLineDetail newOrderLineDetail() {
+        return (OrderLineDetail) applicationContext.getBean("orderLineDetail");
+    }
+
     public static OrderLineDetail create(long orderLineId, long menuItemDetailId, double price) {
         return create(orderLineId, menuItemDetailId, ToppingPlacement.WHOLE, price);
     }
 
     public static OrderLineDetail create(long orderLineId, long menuItemDetailId, ToppingPlacement placement, double price) {
-        OrderLineDetail orderLineDetail = (OrderLineDetail) applicationContext.getBean("orderLineDetail");
+        OrderLineDetail orderLineDetail = newOrderLineDetail();
         orderLineDetail.setOrderLineId(orderLineId);
         orderLineDetail.setMenuItemDetailId(menuItemDetailId);
         orderLineDetail.setPlacement(placement.name());
         orderLineDetail.setPrice(price);
 
-        return save(orderLineDetail);
+        return orderLineDetail;
     }
 
-    public static OrderLineDetail save(OrderLineDetail orderLineDetail) {
+    public static void save(Session session, OrderLineDetail orderLineDetail) {
+        logger.debug("Saving orderLineDetail [{}]", orderLineDetail);
+
+        session.saveOrUpdate(orderLineDetail);
+
+        // currently no children to save
+    }
+
+    public static void save(OrderLineDetail orderLineDetail) {
         logger.debug("Saving orderLineDetail [{}]", orderLineDetail);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        session.save(orderLineDetail);
+        save(session, orderLineDetail);
 
         session.getTransaction().commit();
         session.close();
-
-        return orderLineDetail;
     }
 
     public static OrderLineDetail getOrderLineDetail(long orderLineDetailId) {
@@ -126,20 +136,23 @@ public class OrderLineDetailUtil {
         return orderLines;
     }
 
-    public static boolean delete(OrderLineDetail orderLineDetail) {
+    public static void delete(Session session, OrderLineDetail orderLineDetail) {
         logger.debug("Deleting orderLineDetail [{}]", orderLineDetail);
 
-        boolean result = true;
+        // currently no children to delete
+
+        session.delete(orderLineDetail);
+    }
+
+    public static void delete(OrderLineDetail orderLineDetail) {
+        logger.debug("Deleting orderLineDetail [{}]", orderLineDetail);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        // TODO: check for success
-        session.delete(orderLineDetail);
+        delete(session, orderLineDetail);
 
         session.getTransaction().commit();
         session.close();
-
-        return result;
     }
 }

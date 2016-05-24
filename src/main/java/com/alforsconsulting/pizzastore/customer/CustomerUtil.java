@@ -30,26 +30,35 @@ public class CustomerUtil {
         return instance;
     }
 
-
-    public static Customer create(String name) {
-        Customer customer = (Customer) applicationContext.getBean("customer");
-        customer.setName(name);
-
-        return save(customer);
+    public static Customer newCustomer() {
+        return (Customer) applicationContext.getBean("customer");
     }
 
-    public static Customer save(Customer customer) {
+    public static Customer create(String name) {
+        Customer customer = newCustomer();
+        customer.setName(name);
+
+        return customer;
+    }
+
+    public static void save(Session session, Customer customer) {
+        logger.debug("Saving customer [{}]", customer);
+
+        session.saveOrUpdate(customer);
+
+        // currently no children to save
+    }
+
+    public static void save(Customer customer) {
         logger.debug("Saving customer [{}]", customer);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        session.save(customer);
+        save(session, customer);
 
         session.getTransaction().commit();
         session.close();
-
-        return customer;
     }
 
     public static Customer getCustomer(long id) {
@@ -99,20 +108,23 @@ public class CustomerUtil {
         return customers;
     }
 
-    public static boolean delete(Customer customer) {
+    public static void delete(Session session, Customer customer) {
         logger.debug("Deleting customer [{}]", customer);
 
-        boolean result = true;
+        // currently no children to delete
+
+        session.delete(customer);
+    }
+
+    public static void delete(Customer customer) {
+        logger.debug("Deleting customer [{}]", customer);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        // TODO: check for success
-        session.delete(customer);
+        delete(session, customer);
 
         session.getTransaction().commit();
         session.close();
-
-        return result;
     }
 }
