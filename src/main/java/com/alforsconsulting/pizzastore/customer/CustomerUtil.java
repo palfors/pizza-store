@@ -92,6 +92,37 @@ public class CustomerUtil {
         return customer;
     }
 
+    public static Customer getCustomer(String name) {
+        Customer customer = null;
+
+        StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
+                .append(" where name = :name");
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        Query query =  session.createQuery(builder.toString());
+        query.setParameter("name", name);
+
+        List<Customer> customers = (List<Customer>) query.list();
+        if (customers.size() == 0) {
+            logger.debug("Unable to find customer [{}]", name);
+
+        } else if (customers.size() == 1) {
+            customer = customers.get(0);
+            logger.debug("Found customer [{}]", customer);
+        } else {
+            logger.debug("Found [{}] customers. Expecting only one", customers.size());
+            // TODO handle more gracefully
+            // for now, return null
+        }
+
+        session.getTransaction().commit();
+        session.close();
+
+        return customer;
+    }
+
     public static List<Customer> getCustomers() {
         logger.debug("Loading customers");
 
