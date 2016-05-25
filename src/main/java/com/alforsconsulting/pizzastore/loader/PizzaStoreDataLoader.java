@@ -2,17 +2,23 @@ package com.alforsconsulting.pizzastore.loader;
 
 import com.alforsconsulting.pizzastore.AppContext;
 import com.alforsconsulting.pizzastore.PizzaStore;
+import com.alforsconsulting.pizzastore.StoreUtil;
 import com.alforsconsulting.pizzastore.customer.Customer;
+import com.alforsconsulting.pizzastore.customer.CustomerUtil;
 import com.alforsconsulting.pizzastore.menu.MenuItem;
 import com.alforsconsulting.pizzastore.menu.MenuItemType;
+import com.alforsconsulting.pizzastore.menu.MenuItemUtil;
 import com.alforsconsulting.pizzastore.menu.detail.MenuItemDetail;
+import com.alforsconsulting.pizzastore.menu.detail.MenuItemDetailUtil;
 import com.alforsconsulting.pizzastore.menu.pizza.topping.ToppingPlacement;
 import com.alforsconsulting.pizzastore.order.Order;
+import com.alforsconsulting.pizzastore.order.OrderUtil;
 import com.alforsconsulting.pizzastore.order.line.OrderLine;
+import com.alforsconsulting.pizzastore.order.line.OrderLineUtil;
 import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetail;
+import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetailUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
@@ -20,8 +26,10 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.springframework.context.ApplicationContext;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by palfors on 5/18/16.
@@ -50,7 +58,12 @@ public class PizzaStoreDataLoader {
         }
 
         PizzaStoreDataLoader loader = new PizzaStoreDataLoader();
-        loader.placeOrders(threadCount, sleepTime, maxOrders, maxLineCount, maxLineDetailCount);
+        try {
+            loader.placeOrders(threadCount, sleepTime, maxOrders, maxLineCount, maxLineDetailCount);
+        } catch (Exception e) {
+            System.out.println("Loader caught exception! [" + e.getMessage() + "]");
+            e.printStackTrace();
+        }
 
         System.out.println("Done!");
     }
@@ -88,7 +101,7 @@ public class PizzaStoreDataLoader {
     }
 
     private void initialize() {
-        logger.debug("initialize entry");
+        logger.info("initialize entry");
         applicationContext = AppContext.getInstance().getContext();
 
         // A SessionFactory is set up once for an application!
@@ -108,7 +121,14 @@ public class PizzaStoreDataLoader {
 
     }
 
-    public void placeOrders(int threadCount, long sleepTime, int maxOrders, int maxLineCount, int maxLineDetailCount) {
+    public void cleanup() throws Exception {
+        logger.info("cleanup entry");
+        if ( sessionFactory != null ) {
+            sessionFactory.close();
+        }
+    }
+
+    public void placeOrders(int threadCount, long sleepTime, int maxOrders, int maxLineCount, int maxLineDetailCount) throws Exception {
         long startTime = System.currentTimeMillis();
 
         // initialize class variables
@@ -116,6 +136,7 @@ public class PizzaStoreDataLoader {
 
         // create a store to use for the new orders for easy cleanup
         PizzaStore store = createPizzaStore("dataload-store");
+
         Customer customer = createCustomer("dataload-customer");
 
         // load the menu that will be used for orders
@@ -136,85 +157,69 @@ public class PizzaStoreDataLoader {
                                             maxLineDetailCount));
         }
 
-        fixedThreadPoolService.shutdown();
-        while (!fixedThreadPoolService.isTerminated()) {
+        fixedThreadPoolService.shutdown(); // Disable new tasks from being submitted
+        try {
+            // Wait a while for existing tasks to terminate
+            if (!fixedThreadPoolService.awaitTermination(60, TimeUnit.SECONDS)) {
+                fixedThreadPoolService.shutdownNow(); // Cancel currently executing tasks
+                // Wait a while for tasks to respond to being cancelled
+                if (!fixedThreadPoolService.awaitTermination(60, TimeUnit.SECONDS))
+                    System.err.println("Pool did not terminate");
+            }
+        } catch (InterruptedException ie) {
+            System.out.println("InterruptedException [" + ie + "] occurred closing down thread pool!");
+            // (Re-)Cancel if current thread also interrupted
+            fixedThreadPoolService.shutdownNow();
+            // Preserve interrupt status
+            Thread.currentThread().interrupt();
         }
 
         System.out.println("All threads are done!");
+
+        cleanup();
     }
 
     private PizzaStore createPizzaStore(String name) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-
         // check if this store exists. if not, create it
-        PizzaStore pizzaStore = null;
-        Query query = session.createQuery("from PizzaStore where name = :param ");
-        query.setParameter("param", name);
-        List<PizzaStore> list = (List<PizzaStore>) query.list();
-        if (list != null && list.size() > 0) {
-            pizzaStore = list.get(0);
-        } else {
+        PizzaStore store = StoreUtil.getStore(name);
+        if (store == null) {
             // create store to add
-            pizzaStore = (PizzaStore) applicationContext.getBean("pizzaStore");
-            pizzaStore.generateId();
-            pizzaStore.setName(name);
-            session.save(pizzaStore);
-
-            session.getTransaction().commit();
+            store = StoreUtil.create(name);
+            StoreUtil.save(store);
+            logger.debug("Created store [{}]", store);
         }
-        session.close();
 
-        return pizzaStore;
+        return store;
     }
 
     private Customer createCustomer(String name) {
-        Session session = sessionFactory.openSession();
 
-        Customer customer = null;
-        // check if this customer exists. if not, create it
-        Query query = session.createQuery("from Customer where name = :param ");
-        query.setParameter("param", name);
-        List<Customer> list = (List<Customer>) query.list();
-        if (list != null && list.size() > 0) {
-            customer = list.get(0);
-        } else {
-            // create customers for order
-            session.beginTransaction();
-
-            customer = (Customer) applicationContext.getBean("customer");
-            customer.setName(name);
-            logger.debug("Saved customer [{}]", customer);
-            session.save(customer);
-
-            session.getTransaction().commit();
+        Customer customer = CustomerUtil.getCustomer(name);
+        if (customer == null) {
+            customer = CustomerUtil.create(name);
+            CustomerUtil.save(customer);
+            logger.debug("Created customer [{}]", customer);
         }
-
-        session.close();
 
         return customer;
     }
 
     private List<MenuItem> loadMenuItems() {
-        Session session = this.sessionFactory.openSession();
-        List<MenuItem> menuItems = (List<MenuItem>) session.createQuery( "from GenericMenuItem" ).list();
+        List<MenuItem> menuItems = MenuItemUtil.getMenuItems();
         logger.debug("Loaded menuItems:");
         for ( MenuItem item : menuItems ) {
             logger.debug(item);
         }
-        session.close();
 
         return menuItems;
     }
 
     private List<MenuItemDetail> loadMenuItemDetails() {
-        Session session = this.sessionFactory.openSession();
-        List<MenuItemDetail> details = (List<MenuItemDetail>) session.createQuery( "from MenuItemDetail" ).list();
+        List<MenuItemDetail> details = MenuItemDetailUtil.getMenuItemDetails();
         logger.debug("Loaded menuItemDetails:");
         for ( MenuItemDetail detail : details ) {
             logger.debug(detail);
         }
-        session.close();
 
         return details;
     }
@@ -253,23 +258,8 @@ public class PizzaStoreDataLoader {
 
             // persist everything
             logger.debug("Preparing to save order [{}]", order);
-            session.save(order);
+            OrderUtil.save(session, order);
             logger.debug("Saved order [{}]", order);
-
-            for (OrderLine orderLine : order.getOrderLines()) {
-                // update the orderId now that hibernate has generated it (after saving)
-                orderLine.setOrderId(order.getOrderId());
-                logger.debug("Preparing to save order line [{}]", orderLine);
-                session.save(orderLine);
-                logger.debug("Saved orderLine [{}]", orderLine);
-                for (OrderLineDetail orderLineDetail : orderLine.getOrderLineDetails()) {
-                    // update the orderId now that hibernate has generated it (after saving)
-                    orderLineDetail.setOrderLineId(orderLine.getOrderLineId());
-                    logger.debug("Preparing to save order line detail [{}]", orderLineDetail);
-                    session.save(orderLineDetail);
-                    logger.debug("Saved orderLineDetail [{}]", orderLineDetail);
-                }
-            }
 
             session.getTransaction().commit();
             session.close();
@@ -277,7 +267,7 @@ public class PizzaStoreDataLoader {
 
         private Order createOrder(int lineCount, int lineDetailCount) {
 
-            Order order = (Order) applicationContext.getBean("order");
+            Order order = OrderUtil.newOrder();
             order.setStoreId(storeId);
             order.setCustomerId(customerId);
 
@@ -297,7 +287,7 @@ public class PizzaStoreDataLoader {
         }
 
         private OrderLine createOrderLine(long orderId, int lineDetailCount) {
-            OrderLine orderLine = (OrderLine) applicationContext.getBean("orderLine");
+            OrderLine orderLine = OrderLineUtil.newOrderLine();
             orderLine.setOrderId(orderId);
             MenuItem menuItem = chooseMenuItem();
             orderLine.setMenuItemId(menuItem.getMenuItemId());
@@ -322,7 +312,7 @@ public class PizzaStoreDataLoader {
         }
 
         private OrderLineDetail createOrderLineDetail(long orderLineId, MenuItem menuItem) {
-            OrderLineDetail orderLineDetail = (OrderLineDetail) applicationContext.getBean("orderLineDetail");
+            OrderLineDetail orderLineDetail = OrderLineDetailUtil.newOrderLineDetail();
             orderLineDetail.setOrderLineId(orderLineId);
 
             MenuItemDetail menuItemDetail = chooseMenuItemDetail();
