@@ -37,9 +37,7 @@ import org.junit.*;
 
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class MenuItemDetailHibernateTest extends AbstractHibernateTest {
 
@@ -63,6 +61,9 @@ public class MenuItemDetailHibernateTest extends AbstractHibernateTest {
         // create a menuItem to reference
         MenuItem menuItem = (MenuItem) MenuItemUtil.create(MenuItemType.PIZZA, "menuItemDetailTest-pizza", 7.55);
         MenuItemUtil.save(session, menuItem);
+        assertNotNull(menuItem);
+        menuItem = MenuItemUtil.getMenuItem(session, menuItem.getMenuItemId());
+        assertNotNull(menuItem);
         logger.debug("Created menuItem [{}]", menuItem);
 
         // create menuItemDetail
@@ -72,42 +73,71 @@ public class MenuItemDetailHibernateTest extends AbstractHibernateTest {
                                             "menuItemDetailTest-topping",
                                             1.75);
         MenuItemDetailUtil.save(session, menuItemDetail);
+        assertNotNull(menuItemDetail);
+        menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(session, menuItemDetail.getMenuItemDetailId());
         logger.debug("Created menuItemDetail [{}]", menuItemDetail);
+
+        // update
+        menuItemDetail.setName("updated-menuItemDetailTest-topping");
+        MenuItemDetailUtil.save(session, menuItemDetail);
+        menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(session, menuItemDetail.getMenuItemDetailId());
+        assertEquals("updated-menuItemDetailTest-topping", menuItemDetail.getName());
+
+        // list them
+        List<MenuItemDetail> menuItemDetails = MenuItemDetailUtil.getMenuItemDetails(session);
+        assertTrue(menuItemDetails.size() > 0);
+        logger.debug("Loaded menuItemDetails");
+        for ( MenuItemDetail details : menuItemDetails ) {
+            logger.debug(details);
+        }
 
         // delete the test records
         MenuItemDetailUtil.delete(session, menuItemDetail);
         logger.debug("Deleted menuItemDetail [{}]", menuItemDetail);
-        MenuItemUtil.delete(session, menuItem);
-        logger.debug("Deleted menuItem [{}]", menuItem);
-
-        // verify record no longer exists
         assertNull(MenuItemDetailUtil.getMenuItemDetail(menuItemDetail.getMenuItemDetailId()));
         logger.debug("Verified menuItemDetail no longer exists [{}]", menuItemDetail);
+
+        MenuItemUtil.delete(session, menuItem);
+        logger.debug("Deleted menuItem [{}]", menuItem);
         assertNull(MenuItemUtil.getMenuItem(menuItem.getMenuItemId()));
         logger.debug("Verified menuItem no longer exists [{}]", menuItem);
 
         session.getTransaction().commit();
         session.close();
+    }
 
-        // list them
+    @Test
+    public void list() {
+        logger.debug("Listing menuItemDetails");
         List<MenuItemDetail> menuItemDetails = MenuItemDetailUtil.getMenuItemDetails();
         assertTrue(menuItemDetails.size() > 0);
         logger.debug("Loaded menuItemDetails");
-        for ( MenuItemDetail detail : menuItemDetails ) {
-            logger.debug(detail);
+        for ( MenuItemDetail menuItemDetail : menuItemDetails ) {
+            logger.debug(menuItemDetail);
         }
-
-        MenuItemDetail detail = menuItemDetails.get(0);
-
-        menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(
-                detail.getMenuItemDetailId());
-        assertNotNull(menuItemDetail);
-
-        menuItemDetail =
-                MenuItemDetailUtil.getMenuItemDetail(detail.getMenuItemId(),
-                        MenuItemDetailType.valueOf(detail.getDetailType().toUpperCase()),
-                        detail.getName());
-        assertNotNull(menuItemDetail);
-
     }
+
+    @Test
+    public void load() {
+        logger.debug("Load() entry");
+        // load a record from the DB
+        List<MenuItemDetail> menuItemDetails = MenuItemDetailUtil.getMenuItemDetails();
+        assertTrue(menuItemDetails.size() > 0);
+        if (menuItemDetails != null && menuItemDetails.size() > 0) {
+            MenuItemDetail menuItemDetail = menuItemDetails.get(0);
+            long menuItemDetailId = menuItemDetail.getMenuItemDetailId();
+            long menuItemId = menuItemDetail.getMenuItemId();
+            String detailType = menuItemDetail.getDetailType();
+            String name = menuItemDetail.getName();
+
+            menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(menuItemDetailId);
+            assertNotNull(menuItemDetail);
+            logger.debug("Found menuItemDetail by Id [{}]", menuItemDetail);
+
+            menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(menuItemId, MenuItemDetailType.valueOf(detailType.toUpperCase()), name);
+            assertNotNull(menuItemDetail);
+            logger.debug("Found menuItemDetail by menuItem,detailType,name [{}]", menuItemDetail);
+        }
+    }
+
 }

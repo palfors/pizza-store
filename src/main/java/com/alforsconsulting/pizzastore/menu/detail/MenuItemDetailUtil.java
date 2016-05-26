@@ -48,15 +48,15 @@ public class MenuItemDetailUtil {
     public static void save(Session session, MenuItemDetail menuItemDetail) {
         logger.debug("Saving menuItemDetail [{}]", menuItemDetail);
 
-        session.saveOrUpdate(menuItemDetail);
-
         menuItemDetail.setLastModifiedDate(new Timestamp(System.currentTimeMillis()));
+
+        session.persist(menuItemDetail);
 
         // currently no children to save
     }
 
     public static void save(MenuItemDetail menuItemDetail) {
-        logger.debug("Saving menuItemDetail [{}]", menuItemDetail);
+        logger.debug("Saving (in transaction) menuItemDetail [{}]", menuItemDetail);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
@@ -68,10 +68,23 @@ public class MenuItemDetailUtil {
     }
 
     public static MenuItemDetail getMenuItemDetail(long menuItemDetailId) {
+        logger.debug("Retrieving (in transaction) menuItemDetail [{}]", menuItemDetailId );
         MenuItemDetail menuItemDetail = null;
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
+
+        menuItemDetail = getMenuItemDetail(session, menuItemDetailId);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return menuItemDetail;
+    }
+
+    public static MenuItemDetail getMenuItemDetail(Session session, long menuItemDetailId) {
+        logger.debug("Retrieving menuItemDetail [{}]", menuItemDetailId );
+        MenuItemDetail menuItemDetail = null;
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where menuItemDetailId = :menuItemDetailId");
@@ -95,22 +108,32 @@ public class MenuItemDetailUtil {
             logger.debug(itemDetail);
         }
 
+        return menuItemDetail;
+    }
+
+    public static MenuItemDetail getMenuItemDetail(long menuItemId, MenuItemDetailType menuItemDetailType, String name) {
+        logger.debug("Retrieving (in transaction) menuItemDetail [{}][{}][{}]", menuItemId, menuItemDetailType, name);
+        MenuItemDetail menuItemDetail = null;
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        menuItemDetail = getMenuItemDetail(session, menuItemId, menuItemDetailType, name);
+
         session.getTransaction().commit();
         session.close();
 
         return menuItemDetail;
     }
 
-    public static MenuItemDetail getMenuItemDetail(long menuItemId, MenuItemDetailType menuItemDetailType, String name) {
+    public static MenuItemDetail getMenuItemDetail(Session session, long menuItemId, MenuItemDetailType menuItemDetailType, String name) {
+        logger.debug("Retrieving menuItemDetail [{}][{}][{}]", menuItemId, menuItemDetailType, name);
         MenuItemDetail menuItemDetail = null;
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where menuItemId = :menuItemId")
                 .append(" and detailType = :detailType")
                 .append(" and name = :name");
-
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
 
         Query query =  session.createQuery(builder.toString());
         query.setParameter("menuItemId", menuItemId);
@@ -134,19 +157,16 @@ public class MenuItemDetailUtil {
             logger.debug(itemDetail);
         }
 
-        session.getTransaction().commit();
-        session.close();
-
         return menuItemDetail;
     }
 
     public static List<MenuItemDetail> getMenuItemDetails() {
+        logger.debug("Retrieving (in transaction) menuItemDetails");
+
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING);
-        List<MenuItemDetail> details =
-                (List<MenuItemDetail>) session.createQuery(builder.toString()).list();
+        List<MenuItemDetail> details = getMenuItemDetails(session);
 
         session.getTransaction().commit();
         session.close();
@@ -154,9 +174,31 @@ public class MenuItemDetailUtil {
         return details;
     }
 
+    public static List<MenuItemDetail> getMenuItemDetails(Session session) {
+        logger.debug("Retrieving menuItemDetails");
+
+        StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING);
+        List<MenuItemDetail> details =
+                (List<MenuItemDetail>) session.createQuery(builder.toString()).list();
+
+        return details;
+    }
+
     public static List<MenuItemDetail> getMenuItemDetails(long menuItemId) {
+        logger.debug("Retrieving (in transaction) menuItemDetails by menuItem [{}]", menuItemId);
         Session session = sessionFactory.openSession();
         session.beginTransaction();
+
+        List<MenuItemDetail> details = getMenuItemDetails(session, menuItemId);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return details;
+    }
+
+    public static List<MenuItemDetail> getMenuItemDetails(Session session, long menuItemId) {
+        logger.debug("Retrieving menuItemDetails by menuItem [{}]", menuItemId);
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where menuItemId = :menuItemId");
@@ -164,24 +206,30 @@ public class MenuItemDetailUtil {
         query.setParameter("menuItemId", menuItemId);
         List<MenuItemDetail> details = (List<MenuItemDetail>) query.list();
 
+        return details;
+    }
+
+    public static List<MenuItemDetail> getMenuItemDetails(MenuItemDetailType detailType) {
+        logger.debug("Retrieving (in transaction) menuItemDetails by detailType [{}]", detailType);
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        List<MenuItemDetail> details = getMenuItemDetails(session, detailType);
+
         session.getTransaction().commit();
         session.close();
 
         return details;
     }
 
-    public static List<MenuItemDetail> getMenuItemDetails(MenuItemDetailType detailType) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
+    public static List<MenuItemDetail> getMenuItemDetails(Session session, MenuItemDetailType detailType) {
+        logger.debug("Retrieving menuItemDetails by detailType [{}]", detailType);
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" and detailType = :detailType");
         Query query =  session.createQuery(builder.toString());
         query.setParameter("detailType", detailType.getBeanName());
         List<MenuItemDetail> details = (List<MenuItemDetail>) query.list();
-
-        session.getTransaction().commit();
-        session.close();
 
         return details;
     }
@@ -195,7 +243,7 @@ public class MenuItemDetailUtil {
     }
 
     public static void delete(MenuItemDetail menuItemDetail) {
-        logger.debug("Deleting menuItemDetail [{}]", menuItemDetail);
+        logger.debug("Deleting (in transaction) menuItemDetail [{}]", menuItemDetail);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
