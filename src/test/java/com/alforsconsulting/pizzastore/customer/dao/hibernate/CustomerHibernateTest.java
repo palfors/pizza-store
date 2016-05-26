@@ -57,6 +57,7 @@ public class CustomerHibernateTest extends AbstractHibernateTest {
         CustomerUtil.save(session, customer);
         assertNotNull(customer);
         customer = CustomerUtil.getCustomer(session, customer.getCustomerId());
+        assertNotNull(customer);
         logger.debug("added customer [{}]", customer);
 
         // update customer

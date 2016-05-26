@@ -43,17 +43,17 @@ public class StoreUtil {
     }
 
     public static void save(Session session, PizzaStore store) {
-        logger.debug("Saving pizzaStore [{}]", store);
-
-        session.saveOrUpdate(store);
+        logger.info("Saving pizzaStore [{}]", store);
 
         store.setLastModifiedDate(new Timestamp(System.currentTimeMillis()));
+
+        session.persist(store);
 
         // currently no children to save
     }
 
     public static void save(PizzaStore store) {
-        logger.debug("Saving pizzaStore [{}]", store);
+        logger.info("Saving (in transaction) pizzaStore [{}]", store);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
@@ -65,13 +65,26 @@ public class StoreUtil {
     }
 
     public static PizzaStore getStore(long id) {
+        logger.info("Retrieving (in transaction) pizzaStore [{}]", id);
+        PizzaStore store = null;
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        store = getStore(session, id);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return store;
+    }
+
+    public static PizzaStore getStore(Session session, long id) {
+        logger.info("Retrieving pizzaStore [{}]", id);
         PizzaStore store = null;
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where storeId = :storeId");
-
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
 
         Query query =  session.createQuery(builder.toString());
         query.setParameter("storeId", id);
@@ -89,20 +102,30 @@ public class StoreUtil {
             // for now, return null
         }
 
+        return store;
+    }
+
+    public static PizzaStore getStore(String name) {
+        logger.info("Retrieving (in transaction) pizzaStore [{}]", name);
+        PizzaStore store = null;
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        store = getStore(session, name);
+
         session.getTransaction().commit();
         session.close();
 
         return store;
     }
 
-    public static PizzaStore getStore(String name) {
+    public static PizzaStore getStore(Session session, String name) {
+        logger.info("Retrieving pizzaStore [{}]", name);
         PizzaStore store = null;
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where name = :name");
-
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
 
         Query query =  session.createQuery(builder.toString());
         query.setParameter("name", name);
@@ -120,19 +143,15 @@ public class StoreUtil {
             // for now, return null
         }
 
-        session.getTransaction().commit();
-        session.close();
-
         return store;
     }
 
     public static List<PizzaStore> getStores() {
+        logger.info("Retrieving (in transaction) stores");
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING);
-        List<PizzaStore> stores =
-                (List<PizzaStore>) session.createQuery(builder.toString()).list();
+        List<PizzaStore> stores = getStores(session);
 
         session.getTransaction().commit();
         session.close();
@@ -140,8 +159,18 @@ public class StoreUtil {
         return stores;
     }
 
+    public static List<PizzaStore> getStores(Session session) {
+        logger.info("Retrieving stores");
+
+        StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING);
+        List<PizzaStore> stores =
+                (List<PizzaStore>) session.createQuery(builder.toString()).list();
+
+        return stores;
+    }
+
     public static void delete(Session session, PizzaStore store) {
-        logger.debug("Deleting customer [{}]", store);
+        logger.debug("Deleting store [{}]", store);
 
         // currently no children to delete
 
@@ -149,7 +178,7 @@ public class StoreUtil {
     }
 
     public static void delete(PizzaStore store) {
-        logger.debug("Deleting customer [{}]", store);
+        logger.debug("Deleting (in transaction) store [{}]", store);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();

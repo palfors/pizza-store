@@ -146,7 +146,7 @@ public class CustomerUtil {
     }
 
     public static List<Customer> getCustomers() {
-        logger.info("Loading customers");
+        logger.info("Loading (in transaction) customers");
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
@@ -177,7 +177,7 @@ public class CustomerUtil {
     }
 
     public static void delete(Customer customer) {
-        logger.info("Deleting customer [{}]", customer);
+        logger.info("Deleting (in transaction) customer [{}]", customer);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
