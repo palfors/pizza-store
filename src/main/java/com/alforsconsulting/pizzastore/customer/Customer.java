@@ -69,6 +69,7 @@ public class Customer {
 
     public String toString() {
         StringBuilder builder = new StringBuilder("Customer: ")
+            .append("[customerId: ").append(this.getCustomerId()).append("]")
             .append("[name: ").append(this.getName()).append("]")
             .append("[createDate: ").append(this.getCreateDate()).append("]")
             .append("[lastModifedDate: ").append(this.getLastModifiedDate()).append("]");

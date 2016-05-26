@@ -36,6 +36,7 @@ public class CustomerUtil {
     }
 
     public static Customer create(String name) {
+        logger.info("Creating customer [{}]", name);
         Customer customer = newCustomer();
         customer.setName(name);
 
@@ -43,17 +44,17 @@ public class CustomerUtil {
     }
 
     public static void save(Session session, Customer customer) {
-        logger.debug("Saving customer [{}]", customer);
-
-        session.saveOrUpdate(customer);
+        logger.info("Saving customer [{}]", customer);
 
         customer.setLastModifiedDate(new Timestamp(System.currentTimeMillis()));
+
+        session.persist(customer);
 
         // currently no children to save
     }
 
     public static void save(Customer customer) {
-        logger.debug("Saving customer [{}]", customer);
+        logger.info("Saving (in transaction) customer [{}]", customer);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
@@ -65,13 +66,26 @@ public class CustomerUtil {
     }
 
     public static Customer getCustomer(long id) {
+        logger.info("Retrieving (in transaction) customer [{}]", id);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        Customer customer = getCustomer(session, id);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return customer;
+    }
+
+    public static Customer getCustomer(Session session, long id) {
+        logger.info("Retrieving up customer [{}]", id);
+
         Customer customer = null;
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where customerId = :customerId");
-
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
 
         Query query =  session.createQuery(builder.toString());
         query.setParameter("customerId", id);
@@ -89,20 +103,28 @@ public class CustomerUtil {
             // for now, return null
         }
 
+        return customer;
+    }
+
+    public static Customer getCustomer(String name) {
+        logger.info("Retrieving (in transaction) customer [{}]", name);
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        Customer customer = getCustomer(session, name);
+
         session.getTransaction().commit();
         session.close();
 
         return customer;
     }
 
-    public static Customer getCustomer(String name) {
+    public static Customer getCustomer(Session session, String name) {
+        logger.info("Retrieving up customer [{}]", name);
         Customer customer = null;
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where name = :name");
-
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
 
         Query query =  session.createQuery(builder.toString());
         query.setParameter("name", name);
@@ -120,21 +142,15 @@ public class CustomerUtil {
             // for now, return null
         }
 
-        session.getTransaction().commit();
-        session.close();
-
         return customer;
     }
 
     public static List<Customer> getCustomers() {
-        logger.debug("Loading customers");
-
+        logger.info("Loading customers");
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING);
-        List<Customer> customers =
-                (List<Customer>) session.createQuery(builder.toString()).list();
+        List<Customer> customers = getCustomers(session);
 
         session.getTransaction().commit();
         session.close();
@@ -142,8 +158,18 @@ public class CustomerUtil {
         return customers;
     }
 
+    public static List<Customer> getCustomers(Session session) {
+        logger.info("Loading customers");
+
+        StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING);
+        List<Customer> customers =
+                (List<Customer>) session.createQuery(builder.toString()).list();
+
+        return customers;
+    }
+
     public static void delete(Session session, Customer customer) {
-        logger.debug("Deleting customer [{}]", customer);
+        logger.info("Deleting customer [{}]", customer);
 
         // currently no children to delete
 
@@ -151,7 +177,7 @@ public class CustomerUtil {
     }
 
     public static void delete(Customer customer) {
-        logger.debug("Deleting customer [{}]", customer);
+        logger.info("Deleting customer [{}]", customer);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();

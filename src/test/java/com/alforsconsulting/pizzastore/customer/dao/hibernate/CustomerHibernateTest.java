@@ -31,9 +31,7 @@ import org.junit.*;
 
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class CustomerHibernateTest extends AbstractHibernateTest {
 
@@ -58,31 +56,60 @@ public class CustomerHibernateTest extends AbstractHibernateTest {
         Customer customer = CustomerUtil.create("hibernate-customer");
         CustomerUtil.save(session, customer);
         assertNotNull(customer);
+        customer = CustomerUtil.getCustomer(session, customer.getCustomerId());
+        logger.debug("added customer [{}]", customer);
+
+        // update customer
+        customer.setName("updated-hibernate-customer");
+        CustomerUtil.save(session, customer);
+        customer = CustomerUtil.getCustomer(session, customer.getCustomerId());
+        assertEquals("updated-hibernate-customer", customer.getName());
+
+        // list all customers
+        List<Customer> customers = CustomerUtil.getCustomers(session);
+        assertTrue(customers.size() > 0);
+        logger.debug("Loaded customers within transaction");
+        for ( Customer cust : customers ) {
+            logger.debug(cust.getName());
+        }
 
         // delete the test records
         CustomerUtil.delete(session, customer);
         logger.debug("Deleted customer [{}]", customer);
 
         // verify record no longer exists
-        customer = CustomerUtil.getCustomer(customer.getCustomerId());
+        customer = CustomerUtil.getCustomer(session, customer.getCustomerId());
         assertNull(customer);
         logger.debug("Verified customer no longer exists [{}]", customer);
 
         session.getTransaction().commit();
         session.close();
+    }
 
-        // list all customers
+    @Test
+    public void list() {
+        logger.debug("Listing customers");
         List<Customer> customers = CustomerUtil.getCustomers();
         assertTrue(customers.size() > 0);
         logger.debug("Loaded customers");
-        for ( Customer cust : customers ) {
-            logger.debug(cust.getName());
+        for ( Customer customer : customers ) {
+            logger.debug(customer);
+        }
+    }
+
+    @Test
+    public void load() {
+        logger.debug("Load() entry");
+        // load a record from the DB
+        List<Customer> customers = CustomerUtil.getCustomers();
+        if (customers != null && customers.size() > 0) {
+            Customer customer = customers.get(0);
+            customer = CustomerUtil.getCustomer(customer.getCustomerId());
+            assertNotNull(customer);
+        } else {
+            logger.warn("Load() no customers to load!");
         }
 
-        // load a record from the DB
-        customer = customers.get(0);
-        customer = CustomerUtil.getCustomer(customer.getCustomerId());
-        assertNotNull(customer);
-
     }
+
 }
