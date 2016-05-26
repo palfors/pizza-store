@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.sql.Timestamp;
 
 /**
  * Created by palfors on 5/12/16.
@@ -23,6 +24,8 @@ public class OrderLineDetail {
     private long menuItemDetailId;
     private String placement;
     private double price;
+    private Timestamp createDate;
+    private Timestamp lastModifiedDate;
 
     public OrderLineDetail() {
 
@@ -75,17 +78,35 @@ public class OrderLineDetail {
         this.price = price;
     }
 
+    public Timestamp getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Timestamp createDate) {
+        this.createDate = createDate;
+    }
+
+    public Timestamp getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Timestamp lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
     public void generateId() {
         orderLineDetailId = OrderLineDetailIdGenerator.getInstance().generateId();
     }
 
     public String toString() {
-        StringBuilder builder = new StringBuilder().append("OrderLineDetail: ");
-        builder.append("[orderLineDetailId: ").append(this.getOrderLineDetailId()).append("]");
-        builder.append("[orderLineId: ").append(this.getOrderLineId()).append("]");
-        builder.append("[menuItemDetailId: ").append(this.getMenuItemDetailId()).append("]");
-        builder.append("[placement: ").append(this.getPlacement()).append("]");
-        builder.append("[price: ").append(this.getPrice()).append("]");
+        StringBuilder builder = new StringBuilder().append("OrderLineDetail: ")
+            .append("[orderLineDetailId: ").append(this.getOrderLineDetailId()).append("]")
+            .append("[orderLineId: ").append(this.getOrderLineId()).append("]")
+            .append("[menuItemDetailId: ").append(this.getMenuItemDetailId()).append("]")
+            .append("[placement: ").append(this.getPlacement()).append("]")
+            .append("[price: ").append(this.getPrice()).append("]")
+            .append("[createDate: ").append(this.getCreateDate()).append("]")
+            .append("[lastModifedDate: ").append(this.getLastModifiedDate()).append("]");
 
         return builder.toString();
     }

@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -92,8 +93,8 @@ public class OrderLineJDBCTemplate implements OrderLineDAO {
 
     public void update(long orderLineId, long orderId, long menuItemId, int quantity, double price) {
         logger.debug("Updating OrderLine [{}][{}][{}][{}][{}]", orderLineId, orderId, menuItemId, quantity, price);
-        String SQL = "update ORDER_LINE set orderId = ?, menuItemId = ?, quantity = ?, price = ? where orderLineId = ?";
-        jdbcTemplateObject.update(SQL, orderId, menuItemId, quantity, price, orderLineId);
+        String SQL = "update ORDER_LINE set orderId = ?, menuItemId = ?, quantity = ?, price = ?, lastModifiedDate = ? where orderLineId = ?";
+        jdbcTemplateObject.update(SQL, orderId, menuItemId, quantity, price, new Timestamp(System.currentTimeMillis()), orderLineId);
     }
 
     public long getMaxId() {

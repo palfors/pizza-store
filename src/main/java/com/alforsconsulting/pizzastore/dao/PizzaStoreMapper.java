@@ -18,6 +18,8 @@ public class PizzaStoreMapper implements RowMapper<PizzaStore> {
     public PizzaStore mapRow(ResultSet rs, int rowNum) throws SQLException {
         PizzaStore pizzaStore = new PizzaStore(rs.getLong("storeId"));
         pizzaStore.setName(rs.getString("name"));
+        pizzaStore.setCreateDate(rs.getTimestamp("createDate"));
+        pizzaStore.setLastModifiedDate(rs.getTimestamp("lastModifiedDate"));
 
         logger.debug("Mapped pizzaStore [{}]", pizzaStore);
         return pizzaStore;

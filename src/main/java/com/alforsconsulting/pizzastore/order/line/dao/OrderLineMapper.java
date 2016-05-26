@@ -20,6 +20,8 @@ public class OrderLineMapper implements RowMapper<OrderLine> {
         orderLine.setMenuItemId(rs.getLong("menuItemId"));
         orderLine.setQuantity(rs.getInt("quantity"));
         orderLine.setPrice(rs.getDouble("price"));
+        orderLine.setCreateDate(rs.getTimestamp("createDate"));
+        orderLine.setLastModifiedDate(rs.getTimestamp("lastModifiedDate"));
 
         logger.debug("Mapped orderLine [{}]", orderLine);
         return orderLine;

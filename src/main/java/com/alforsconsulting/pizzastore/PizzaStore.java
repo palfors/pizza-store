@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class PizzaStore {
     private long storeId = 0;
     private List<Order> orders = new ArrayList<Order>();
     protected String name = "PizzaStore";
+    private Timestamp createDate;
+    private Timestamp lastModifiedDate;
 
     public PizzaStore() {
     }
@@ -49,6 +52,22 @@ public class PizzaStore {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Timestamp getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Timestamp createDate) {
+        this.createDate = createDate;
+    }
+
+    public Timestamp getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Timestamp lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
     @Transient
@@ -78,9 +97,11 @@ public class PizzaStore {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("PizzaStore: \n");
-        builder.append("- id [").append(this.storeId).append("]\n");
-        builder.append("- name [").append(this.name).append("]");
+        StringBuilder builder = new StringBuilder("PizzaStore: ")
+            .append("[id: ").append(this.getStoreId()).append("]")
+            .append("[name: ").append(this.getName()).append("]")
+            .append("[createDate: ").append(this.getCreateDate()).append("]")
+            .append("[lastModifedDate: ").append(this.getLastModifiedDate()).append("]");
         return builder.toString();
     }
 

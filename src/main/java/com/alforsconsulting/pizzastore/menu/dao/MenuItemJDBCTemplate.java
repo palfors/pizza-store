@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -104,8 +105,9 @@ public class MenuItemJDBCTemplate implements MenuItemDAO {
 
     public void update(long id, String name, double price) {
         logger.debug("Deleting menuItem [{}][{}][{}]", id, name, price);
-        String SQL = "update MENUITEM set name = ?, price = ? where menuItemId = ?";
-        jdbcTemplateObject.update(SQL, name, price, id);
+        String SQL = "update MENUITEM set name = ?, price = ?, lastModifiedDate = ? where menuItemId = ?";
+        jdbcTemplateObject.update(
+                SQL, name, price, new Timestamp(System.currentTimeMillis()), id);
     }
 
     public long getMaxId() {

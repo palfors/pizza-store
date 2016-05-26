@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.sql.Timestamp;
 
 /**
  * Created by palfors on 5/12/16.
@@ -21,6 +22,8 @@ public class MenuItemDetail {
     private String detailType;
     private String name;
     private double price;
+    private Timestamp createDate;
+    private Timestamp lastModifiedDate;
 
     public MenuItemDetail() {
     }
@@ -70,6 +73,22 @@ public class MenuItemDetail {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public Timestamp getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Timestamp createDate) {
+        this.createDate = createDate;
+    }
+
+    public Timestamp getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Timestamp lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
     @Override

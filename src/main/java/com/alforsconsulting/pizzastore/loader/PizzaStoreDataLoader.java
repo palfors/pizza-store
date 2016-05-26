@@ -124,6 +124,7 @@ public class PizzaStoreDataLoader {
     public void cleanup() throws Exception {
         logger.info("cleanup entry");
         if ( sessionFactory != null ) {
+            logger.info("closing sessionFactory: [{}]", sessionFactory);
             sessionFactory.close();
         }
     }
@@ -160,11 +161,12 @@ public class PizzaStoreDataLoader {
         fixedThreadPoolService.shutdown(); // Disable new tasks from being submitted
         try {
             // Wait a while for existing tasks to terminate
-            if (!fixedThreadPoolService.awaitTermination(60, TimeUnit.SECONDS)) {
+            if (!fixedThreadPoolService.awaitTermination(10, TimeUnit.SECONDS)) {
+                System.out.println("still waiting for pool to shutdown!");
                 fixedThreadPoolService.shutdownNow(); // Cancel currently executing tasks
                 // Wait a while for tasks to respond to being cancelled
-                if (!fixedThreadPoolService.awaitTermination(60, TimeUnit.SECONDS))
-                    System.err.println("Pool did not terminate");
+                if (!fixedThreadPoolService.awaitTermination(10, TimeUnit.SECONDS))
+                    System.out.println("Pool did not terminate");
             }
         } catch (InterruptedException ie) {
             System.out.println("InterruptedException [" + ie + "] occurred closing down thread pool!");
@@ -251,6 +253,8 @@ public class PizzaStoreDataLoader {
 
         @Override
         public void run() {
+            logger.info("Thread using sessionFactory: [{}]", sessionFactory);
+
             Session session = sessionFactory.openSession();
             session.beginTransaction();
 

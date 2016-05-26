@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,8 @@ public class OrderLine {
     private long menuItemId;
     private int quantity;
     private double price;
+    private Timestamp createDate;
+    private Timestamp lastModifiedDate;
 
     private List<OrderLineDetail> orderLineDetails = new ArrayList<>();
 
@@ -76,6 +79,22 @@ public class OrderLine {
         this.price = price;
     }
 
+    public Timestamp getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Timestamp createDate) {
+        this.createDate = createDate;
+    }
+
+    public Timestamp getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Timestamp lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
     public void addOrderLineDetail(OrderLineDetail orderLineDetail) {
         orderLineDetails.add(orderLineDetail);
     }
@@ -94,12 +113,14 @@ public class OrderLine {
     }
 
     public String toString() {
-        StringBuilder builder = new StringBuilder().append("OrderLine: ");
-        builder.append("[orderLineId: ").append(orderLineId).append("]");
-        builder.append("[orderId: ").append(orderId).append("]");
-        builder.append("[menuItemId: ").append(menuItemId).append("]");
-        builder.append("[quantity: ").append(quantity).append("]");
-        builder.append("[price: ").append(price).append("]");
+        StringBuilder builder = new StringBuilder().append("OrderLine: ")
+            .append("[orderLineId: ").append(this.getOrderLineId()).append("]")
+            .append("[orderId: ").append(this.getOrderId()).append("]")
+            .append("[menuItemId: ").append(this.getMenuItemId()).append("]")
+            .append("[quantity: ").append(this.getQuantity()).append("]")
+            .append("[price: ").append(this.getPrice()).append("]")
+            .append("[createDate: ").append(this.getCreateDate()).append("]")
+            .append("[lastModifedDate: ").append(this.getLastModifiedDate()).append("]");
 
         for (OrderLineDetail detail : orderLineDetails) {
             builder.append("\n - ").append(detail);

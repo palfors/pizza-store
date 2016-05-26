@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -81,8 +82,8 @@ public class PizzaStoreJDBCTemplate implements PizzaStoreDAO {
 
     public void update(long storeId, String name) {
         logger.debug("Updating pizzaStore [{}] [{}]", storeId, name);
-        String SQL = "update STORE set name = ? where storeId = ?";
-        jdbcTemplateObject.update(SQL, name, storeId);
+        String SQL = "update STORE set name = ?, lastModifiedDate = ? where storeId = ?";
+        jdbcTemplateObject.update(SQL, name, new Timestamp(System.currentTimeMillis()), storeId);
     }
 
     public long getMaxId() {

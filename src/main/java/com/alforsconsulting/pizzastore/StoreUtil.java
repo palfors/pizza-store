@@ -7,6 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -45,6 +46,8 @@ public class StoreUtil {
         logger.debug("Saving pizzaStore [{}]", store);
 
         session.saveOrUpdate(store);
+
+        store.setLastModifiedDate(new Timestamp(System.currentTimeMillis()));
 
         // currently no children to save
     }

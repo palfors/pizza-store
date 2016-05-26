@@ -68,7 +68,10 @@ public class Customer {
     }
 
     public String toString() {
-        StringBuilder builder = new StringBuilder("Customer: ").append(getName());
+        StringBuilder builder = new StringBuilder("Customer: ")
+            .append("[name: ").append(this.getName()).append("]")
+            .append("[createDate: ").append(this.getCreateDate()).append("]")
+            .append("[lastModifedDate: ").append(this.getLastModifiedDate()).append("]");
         return builder.toString();
     }
 

@@ -23,6 +23,8 @@ public class OrderMapper implements RowMapper<Order> {
         order.setCustomerId(rs.getLong("customerId"));
         order.setStatus(rs.getString("status"));
         order.setPrice(rs.getDouble("price"));
+        order.setCreateDate(rs.getTimestamp("createDate"));
+        order.setLastModifiedDate(rs.getTimestamp("lastModifiedDate"));
 
         logger.debug("Mapped orderLine [{}]", order);
         return order;

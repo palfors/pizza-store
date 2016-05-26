@@ -29,6 +29,8 @@ public class MenuItemMapper implements RowMapper<MenuItem> {
         menuItem.setMenuItemId(menuItemId);
         menuItem.setName(rs.getString("name"));
         menuItem.setPrice(rs.getDouble("price"));
+        menuItem.setCreateDate(rs.getTimestamp("createDate"));
+        menuItem.setLastModifiedDate(rs.getTimestamp("lastModifiedDate"));
 
         return menuItem;
     }

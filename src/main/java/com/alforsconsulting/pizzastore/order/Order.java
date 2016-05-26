@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,8 @@ public class Order {
     private List<OrderLine> orderLines = new ArrayList<OrderLine>();
     private long customerId;
     private double price;
+    private Timestamp createDate;
+    private Timestamp lastModifiedDate;
 
     public Order() {
     }
@@ -79,6 +82,22 @@ public class Order {
         this.price = price;
     }
 
+    public Timestamp getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Timestamp createDate) {
+        this.createDate = createDate;
+    }
+
+    public Timestamp getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Timestamp lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
     public void generateId() {
         this.orderId = OrderIdGenerator.getInstance().generateId();
     }
@@ -110,12 +129,14 @@ public class Order {
 
     public String toString() {
         // loop through the order and list the items
-        StringBuilder builder = new StringBuilder("Order:")
+        StringBuilder builder = new StringBuilder("Order: ")
             .append("[orderId: ").append(this.getOrderId()).append("]")
             .append("[store: ").append(this.getStoreId()).append("]")
             .append("[customer: ").append(this.getCustomerId()).append("]")
             .append("[status: ").append(this.getStatus()).append("]")
-            .append("[price: ").append(this.getPrice()).append("]");
+            .append("[price: ").append(this.getPrice()).append("]")
+            .append("[createDate: ").append(this.getCreateDate()).append("]")
+            .append("[lastModifedDate: ").append(this.getLastModifiedDate()).append("]");
 
         for (OrderLine line : orderLines) {
             builder.append("\n - ").append(line);

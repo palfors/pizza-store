@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -48,6 +49,8 @@ public class MenuItemDetailUtil {
         logger.debug("Saving menuItemDetail [{}]", menuItemDetail);
 
         session.saveOrUpdate(menuItemDetail);
+
+        menuItemDetail.setLastModifiedDate(new Timestamp(System.currentTimeMillis()));
 
         // currently no children to save
     }

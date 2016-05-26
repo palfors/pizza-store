@@ -10,6 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -50,6 +51,8 @@ public class OrderLineUtil {
         logger.debug("Saving orderLine [{}]", orderLine);
 
         session.saveOrUpdate(orderLine);
+
+        orderLine.setLastModifiedDate(new Timestamp(System.currentTimeMillis()));
 
         // save order line details
         for (OrderLineDetail detail : orderLine.getOrderLineDetails()) {

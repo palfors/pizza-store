@@ -3,6 +3,7 @@ package com.alforsconsulting.pizzastore.menu;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 /**
  * Created by palfors on 5/14/16.
@@ -17,6 +18,8 @@ public class GenericMenuItem implements MenuItem {
     protected String name;
     protected double price;
     protected String menuItemType;
+    protected Timestamp createDate;
+    protected Timestamp lastModifiedDate;
 
     @Override
     @Id
@@ -59,6 +62,22 @@ public class GenericMenuItem implements MenuItem {
         return price;
     }
 
+    public Timestamp getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Timestamp createDate) {
+        this.createDate = createDate;
+    }
+
+    public Timestamp getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Timestamp lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
     @Override
     public void generateId() {
         this.setMenuItemId(MenuItemIdGenerator.getInstance().generateId());
@@ -67,10 +86,12 @@ public class GenericMenuItem implements MenuItem {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("MenuItem: ")
-                .append("[").append(this.getMenuItemId()).append("]")
-                .append("[").append(this.getMenuItemType()).append("]")
-                .append("[").append(this.getName()).append("]")
-                .append("[").append(this.getPrice()).append("]");
+                .append("[menuItemId: ").append(this.getMenuItemId()).append("]")
+                .append("[menuItemType: ").append(this.getMenuItemType()).append("]")
+                .append("[name: ").append(this.getName()).append("]")
+                .append("[price: ").append(this.getPrice()).append("]")
+                .append("[createDate: ").append(this.getCreateDate()).append("]")
+                .append("[lastModifedDate: ").append(this.getLastModifiedDate()).append("]");
         return builder.toString();
     }
 
