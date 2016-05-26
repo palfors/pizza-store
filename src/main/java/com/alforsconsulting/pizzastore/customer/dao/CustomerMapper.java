@@ -17,6 +17,8 @@ public class CustomerMapper implements RowMapper<Customer> {
     public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
         Customer customer = new Customer(rs.getLong("customerId"));
         customer.setName(rs.getString("name"));
+        customer.setCreateDate(rs.getTimestamp("createDate"));
+        customer.setLastModifiedDate(rs.getTimestamp("lastModifiedDate"));
 
         logger.debug("Mapped customer [{}]", customer);
         return customer;

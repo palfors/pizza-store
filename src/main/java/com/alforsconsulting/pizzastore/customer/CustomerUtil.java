@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -45,6 +46,8 @@ public class CustomerUtil {
         logger.debug("Saving customer [{}]", customer);
 
         session.saveOrUpdate(customer);
+
+        customer.setLastModifiedDate(new Timestamp(System.currentTimeMillis()));
 
         // currently no children to save
     }

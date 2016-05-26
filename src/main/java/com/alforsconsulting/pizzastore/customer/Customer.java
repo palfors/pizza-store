@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 /**
  * Created by palfors on 5/12/16.
@@ -16,7 +17,9 @@ import javax.persistence.*;
 public class Customer {
 
     private long customerId;
-    private String name = "<unknown>";
+    private String name;
+    private Timestamp createDate;
+    private Timestamp lastModifiedDate;
 
     public Customer() {
     }
@@ -42,6 +45,22 @@ public class Customer {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Timestamp getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Timestamp createDate) {
+        this.createDate = createDate;
+    }
+
+    public Timestamp getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Timestamp lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
     public void generateId() {
