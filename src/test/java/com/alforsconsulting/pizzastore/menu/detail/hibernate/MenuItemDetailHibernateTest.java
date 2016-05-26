@@ -123,21 +123,20 @@ public class MenuItemDetailHibernateTest extends AbstractHibernateTest {
         // load a record from the DB
         List<MenuItemDetail> menuItemDetails = MenuItemDetailUtil.getMenuItemDetails();
         assertTrue(menuItemDetails.size() > 0);
-        if (menuItemDetails != null && menuItemDetails.size() > 0) {
-            MenuItemDetail menuItemDetail = menuItemDetails.get(0);
-            long menuItemDetailId = menuItemDetail.getMenuItemDetailId();
-            long menuItemId = menuItemDetail.getMenuItemId();
-            String detailType = menuItemDetail.getDetailType();
-            String name = menuItemDetail.getName();
 
-            menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(menuItemDetailId);
-            assertNotNull(menuItemDetail);
-            logger.debug("Found menuItemDetail by Id [{}]", menuItemDetail);
+        MenuItemDetail menuItemDetail = menuItemDetails.get(0);
+        long menuItemDetailId = menuItemDetail.getMenuItemDetailId();
+        long menuItemId = menuItemDetail.getMenuItemId();
+        String detailType = menuItemDetail.getDetailType();
+        String name = menuItemDetail.getName();
 
-            menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(menuItemId, MenuItemDetailType.valueOf(detailType.toUpperCase()), name);
-            assertNotNull(menuItemDetail);
-            logger.debug("Found menuItemDetail by menuItem,detailType,name [{}]", menuItemDetail);
-        }
+        menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(menuItemDetailId);
+        assertNotNull(menuItemDetail);
+        logger.debug("Found menuItemDetail by Id [{}]", menuItemDetail);
+
+        menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(menuItemId, MenuItemDetailType.valueOf(detailType.toUpperCase()), name);
+        assertNotNull(menuItemDetail);
+        logger.debug("Found menuItemDetail by menuItem,detailType,name [{}]", menuItemDetail);
     }
 
 }

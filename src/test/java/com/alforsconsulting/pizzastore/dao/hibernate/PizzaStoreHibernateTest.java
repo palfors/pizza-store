@@ -105,21 +105,18 @@ public class PizzaStoreHibernateTest extends AbstractHibernateTest {
         logger.debug("Load() entry");
         // load a record from the DB
         List<PizzaStore> stores = StoreUtil.getStores();
-        if (stores != null && stores.size() > 0) {
-            long pizzaStoreId = stores.get(0).getStoreId();
-            String storeName = stores.get(0).getName();
+        assertTrue(stores.size() > 0);
 
-            PizzaStore pizzaStore = StoreUtil.getStore(pizzaStoreId);
-            assertNotNull(pizzaStore);
-            logger.debug("Found pizzaStore by Id [{}]", pizzaStore);
+        long pizzaStoreId = stores.get(0).getStoreId();
+        String storeName = stores.get(0).getName();
 
-            pizzaStore = StoreUtil.getStore(storeName);
-            assertNotNull(pizzaStore);
-            logger.debug("Found pizzaStore by name [{}]", pizzaStore);
+        PizzaStore pizzaStore = StoreUtil.getStore(pizzaStoreId);
+        assertNotNull(pizzaStore);
+        logger.debug("Found pizzaStore by Id [{}]", pizzaStore);
 
-        } else {
-            logger.warn("Load() no stores to load!");
-        }
+        pizzaStore = StoreUtil.getStore(storeName);
+        assertNotNull(pizzaStore);
+        logger.debug("Found pizzaStore by name [{}]", pizzaStore);
     }
 
 

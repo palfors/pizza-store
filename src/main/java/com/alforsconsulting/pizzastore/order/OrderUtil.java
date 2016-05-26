@@ -50,9 +50,9 @@ public class OrderUtil {
     public static void save(Session session, Order order) {
         logger.debug("Saving order [{}]", order);
 
-        session.saveOrUpdate(order);
-
         order.setLastModifiedDate(new Timestamp(System.currentTimeMillis()));
+
+        session.persist(order);
 
         // save order lines
         for (OrderLine line : order.getOrderLines()) {
@@ -62,7 +62,7 @@ public class OrderUtil {
     }
 
     public static void save(Order order) {
-        logger.debug("Saving order [{}]", order);
+        logger.debug("Saving (in transaction) order [{}]", order);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
@@ -74,13 +74,24 @@ public class OrderUtil {
     }
 
     public static Order getOrder(long orderId) {
+        logger.debug("Retrieving (in transaction) order [{}]", orderId);
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        Order order = getOrder(session, orderId);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return order;
+    }
+
+    public static Order getOrder(Session session, long orderId) {
+        logger.debug("Retrieving order [{}]", orderId);
         Order order = null;
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where orderId = :orderId");
-
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
 
         Query query =  session.createQuery(builder.toString());
         query.setParameter("orderId", orderId);
@@ -98,24 +109,28 @@ public class OrderUtil {
             // for now, return null
         }
 
-        session.getTransaction().commit();
-        session.close();
-
         return order;
     }
 
     public static List<Order> getOrders() {
-        logger.debug("Loading orders");
-
+        logger.debug("Loading (in transaction) orders");
         Session session = sessionFactory.openSession();
         session.beginTransaction();
+
+        List<Order> orders = getOrders(session);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return orders;
+    }
+
+    public static List<Order> getOrders(Session session) {
+        logger.debug("Loading orders");
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING);
         List<Order> orders =
                 (List<Order>) session.createQuery(builder.toString()).list();
-
-        session.getTransaction().commit();
-        session.close();
 
         return orders;
     }
@@ -132,7 +147,7 @@ public class OrderUtil {
     }
 
     public static void delete(Order order) {
-        logger.debug("Deleting order [{}]", order);
+        logger.debug("Deleting (in transaction) order [{}]", order);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();

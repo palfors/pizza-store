@@ -50,9 +50,9 @@ public class OrderLineUtil {
     public static void save(Session session, OrderLine orderLine) {
         logger.debug("Saving orderLine [{}]", orderLine);
 
-        session.saveOrUpdate(orderLine);
-
         orderLine.setLastModifiedDate(new Timestamp(System.currentTimeMillis()));
+
+        session.persist(orderLine);
 
         // save order line details
         for (OrderLineDetail detail : orderLine.getOrderLineDetails()) {
@@ -62,7 +62,7 @@ public class OrderLineUtil {
     }
 
     public static void save(OrderLine orderLine) {
-        logger.debug("Saving orderLine [{}]", orderLine);
+        logger.debug("Saving (in transaction) orderLine [{}]", orderLine);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
@@ -74,13 +74,24 @@ public class OrderLineUtil {
     }
 
     public static OrderLine getOrderLine(long orderLineId) {
+        logger.debug("Retrieving (in transaction) orderLine [{}]", orderLineId);
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        OrderLine orderLine = getOrderLine(session, orderLineId);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return orderLine;
+    }
+
+    public static OrderLine getOrderLine(Session session, long orderLineId) {
+        logger.debug("Retrieving orderLine [{}]", orderLineId);
         OrderLine orderLine = null;
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where orderLineId = :orderLineId");
-
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
 
         Query query =  session.createQuery(builder.toString());
         query.setParameter("orderLineId", orderLineId);
@@ -98,21 +109,15 @@ public class OrderLineUtil {
             // for now, return null
         }
 
-        session.getTransaction().commit();
-        session.close();
-
         return orderLine;
     }
 
     public static List<OrderLine> getOrderLines() {
-        logger.debug("Loading orderLines");
-
+        logger.debug("Loading (in transaction) orderLines");
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING);
-        List<OrderLine> orderLines =
-                (List<OrderLine>) session.createQuery(builder.toString()).list();
+        List<OrderLine> orderLines = getOrderLines(session);
 
         session.getTransaction().commit();
         session.close();
@@ -120,11 +125,32 @@ public class OrderLineUtil {
         return orderLines;
     }
 
+    public static List<OrderLine> getOrderLines(Session session) {
+        logger.debug("Loading orderLines");
+
+        StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING);
+        List<OrderLine> orderLines =
+                (List<OrderLine>) session.createQuery(builder.toString()).list();
+
+        return orderLines;
+    }
+
     public static List<OrderLine> getOrderLines(long orderId) {
-        logger.debug("Loading orderLines for order [{}]", orderId);
+        logger.debug("Loading (in transaction) orderLines for order [{}]", orderId);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
+
+        List<OrderLine> orderLines = getOrderLines(session, orderId);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return orderLines;
+    }
+
+    public static List<OrderLine> getOrderLines(Session session, long orderId) {
+        logger.debug("Loading orderLines for order [{}]", orderId);
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where orderId = :orderId");
@@ -132,9 +158,6 @@ public class OrderLineUtil {
         query.setParameter("orderId", orderId);
 
         List<OrderLine> orderLines = (List<OrderLine>) query.list();
-
-        session.getTransaction().commit();
-        session.close();
 
         return orderLines;
     }
@@ -152,7 +175,7 @@ public class OrderLineUtil {
     }
 
     public static void delete(OrderLine orderLine) {
-        logger.debug("Deleting orderLine [{}]", orderLine);
+        logger.debug("Deleting (in transaction) orderLine [{}]", orderLine);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();

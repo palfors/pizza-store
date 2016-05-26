@@ -106,21 +106,18 @@ public class MenuItemHibernateTest extends AbstractHibernateTest {
         logger.debug("Load() entry");
         // load a record from the DB
         List<MenuItem> menuItems = MenuItemUtil.getMenuItems();
-        if (menuItems != null && menuItems.size() > 0) {
-            long menuItemId = menuItems.get(0).getMenuItemId();
-            String menuItemType = menuItems.get(0).getMenuItemType();
+        assertTrue(menuItems.size() > 0);
 
-            MenuItem menuItem = MenuItemUtil.getMenuItem(menuItemId);
-            assertNotNull(menuItem);
-            logger.debug("Found menuItem by Id [{}]", menuItem);
+        long menuItemId = menuItems.get(0).getMenuItemId();
+        String menuItemType = menuItems.get(0).getMenuItemType();
 
-            menuItem = MenuItemUtil.getMenuItem(MenuItemType.valueOf(menuItemType.toUpperCase()));
-            assertNotNull(menuItem);
-            logger.debug("Found menuItem by menuItemType [{}]", menuItemType);
+        MenuItem menuItem = MenuItemUtil.getMenuItem(menuItemId);
+        assertNotNull(menuItem);
+        logger.debug("Found menuItem by Id [{}]", menuItem);
 
-        } else {
-            logger.warn("Load() no menuItems to load!");
-        }
+        menuItem = MenuItemUtil.getMenuItem(MenuItemType.valueOf(menuItemType.toUpperCase()));
+        assertNotNull(menuItem);
+        logger.debug("Found menuItem by menuItemType [{}]", menuItemType);
     }
 
 }

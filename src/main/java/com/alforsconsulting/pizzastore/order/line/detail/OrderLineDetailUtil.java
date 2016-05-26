@@ -54,15 +54,15 @@ public class OrderLineDetailUtil {
     public static void save(Session session, OrderLineDetail orderLineDetail) {
         logger.debug("Saving orderLineDetail [{}]", orderLineDetail);
 
-        session.saveOrUpdate(orderLineDetail);
-
         orderLineDetail.setLastModifiedDate(new Timestamp(System.currentTimeMillis()));
+
+        session.persist(orderLineDetail);
 
         // currently no children to save
     }
 
     public static void save(OrderLineDetail orderLineDetail) {
-        logger.debug("Saving orderLineDetail [{}]", orderLineDetail);
+        logger.debug("Saving (in transaction) orderLineDetail [{}]", orderLineDetail);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
@@ -74,13 +74,24 @@ public class OrderLineDetailUtil {
     }
 
     public static OrderLineDetail getOrderLineDetail(long orderLineDetailId) {
+        logger.debug("Retrieving (in transaction) orderLineDetail [{}]", orderLineDetailId);
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        OrderLineDetail orderLineDetail = getOrderLineDetail(session, orderLineDetailId);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return orderLineDetail;
+    }
+
+    public static OrderLineDetail getOrderLineDetail(Session session, long orderLineDetailId) {
+        logger.debug("Retrieving orderLineDetail [{}]", orderLineDetailId);
         OrderLineDetail orderLineDetail = null;
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where orderLineDetailId = :orderLineDetailId");
-
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
 
         Query query =  session.createQuery(builder.toString());
         query.setParameter("orderLineDetailId", orderLineDetailId);
@@ -98,21 +109,15 @@ public class OrderLineDetailUtil {
             // for now, return null
         }
 
-        session.getTransaction().commit();
-        session.close();
-
         return orderLineDetail;
     }
 
     public static List<OrderLineDetail> getOrderLineDetails() {
-        logger.debug("Loading orderLineDetails");
-
+        logger.debug("Loading (in transaction) orderLineDetails");
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING);
-        List<OrderLineDetail> orderLineDetails =
-                (List<OrderLineDetail>) session.createQuery(builder.toString()).list();
+        List<OrderLineDetail> orderLineDetails = getOrderLineDetails(session);
 
         session.getTransaction().commit();
         session.close();
@@ -120,21 +125,38 @@ public class OrderLineDetailUtil {
         return orderLineDetails;
     }
 
-    public static List<OrderLine> getOrderLineDetails(long orderLineId) {
-        logger.debug("Loading orderLineDetails for orderLine [{}]", orderLineId);
+    public static List<OrderLineDetail> getOrderLineDetails(Session session) {
+        logger.debug("Loading orderLineDetails");
 
+        StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING);
+        List<OrderLineDetail> orderLineDetails =
+                (List<OrderLineDetail>) session.createQuery(builder.toString()).list();
+
+        return orderLineDetails;
+    }
+
+    public static List<OrderLineDetail> getOrderLineDetails(long orderLineId) {
+        logger.debug("Loading (in transaction) orderLineDetails for orderLine [{}]", orderLineId);
         Session session = sessionFactory.openSession();
         session.beginTransaction();
+
+        List<OrderLineDetail> orderLines = getOrderLineDetails(session, orderLineId);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return orderLines;
+    }
+
+    public static List<OrderLineDetail> getOrderLineDetails(Session session, long orderLineId) {
+        logger.debug("Loading orderLineDetails for orderLine [{}]", orderLineId);
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where orderLineId = :orderLineId");
         Query query = session.createQuery(builder.toString());
         query.setParameter("orderLineId", orderLineId);
 
-        List<OrderLine> orderLines = (List<OrderLine>) query.list();
-
-        session.getTransaction().commit();
-        session.close();
+        List<OrderLineDetail> orderLines = (List<OrderLineDetail>) query.list();
 
         return orderLines;
     }
@@ -148,7 +170,7 @@ public class OrderLineDetailUtil {
     }
 
     public static void delete(OrderLineDetail orderLineDetail) {
-        logger.debug("Deleting orderLineDetail [{}]", orderLineDetail);
+        logger.debug("Deleting (in transaction) orderLineDetail [{}]", orderLineDetail);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();

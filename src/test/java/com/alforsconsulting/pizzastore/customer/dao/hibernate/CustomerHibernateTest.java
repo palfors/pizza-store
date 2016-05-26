@@ -103,14 +103,11 @@ public class CustomerHibernateTest extends AbstractHibernateTest {
         logger.debug("Load() entry");
         // load a record from the DB
         List<Customer> customers = CustomerUtil.getCustomers();
-        if (customers != null && customers.size() > 0) {
-            Customer customer = customers.get(0);
-            customer = CustomerUtil.getCustomer(customer.getCustomerId());
-            assertNotNull(customer);
-        } else {
-            logger.warn("Load() no customers to load!");
-        }
+        assertTrue(customers.size() > 0);
 
+        Customer customer = customers.get(0);
+        customer = CustomerUtil.getCustomer(customer.getCustomerId());
+        assertNotNull(customer);
     }
 
 }

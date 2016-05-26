@@ -49,6 +49,10 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 public class OrderHibernateTest extends AbstractHibernateTest {
 
     @BeforeClass
@@ -71,30 +75,32 @@ public class OrderHibernateTest extends AbstractHibernateTest {
         // create store for order
         PizzaStore pizzaStore = StoreUtil.create("test-store");
         StoreUtil.save(session, pizzaStore);
-        Assert.assertNotNull(pizzaStore);
+        assertNotNull(pizzaStore);
         logger.debug("Created pizzaStore [{}]", pizzaStore);
 
         // create customer for order
         Customer customer = CustomerUtil.create("test-customer");
         CustomerUtil.save(session, customer);
-        Assert.assertNotNull(customer);
+        assertNotNull(customer);
         logger.debug("Created customer [{}]", customer);
 
         // get a menuItem to use for the order
         MenuItem menuItem = MenuItemUtil.getMenuItem(MenuItemType.PIZZA);
-        Assert.assertNotNull(menuItem);
+        assertNotNull(menuItem);
 
         // get a menuItemDetail to use for the order
         MenuItemDetail menuItemDetail =
                 MenuItemDetailUtil.getMenuItemDetail(menuItem.getMenuItemId(),
                         MenuItemDetailType.TOPPING,
                         "Onion");
-        Assert.assertNotNull(menuItemDetail);
+        assertNotNull(menuItemDetail);
 
         // create the order
         Order order = OrderUtil.create(pizzaStore.getStoreId(), customer.getCustomerId(), 23.45);
         OrderUtil.save(session, order);
-        Assert.assertNotNull(order);
+        assertNotNull(order);
+        order = OrderUtil.getOrder(session, order.getOrderId());
+        assertNotNull(order);
         logger.debug("Created order [{}]", order);
 
         // create an order line
@@ -103,10 +109,15 @@ public class OrderHibernateTest extends AbstractHibernateTest {
         OrderLine orderLine = OrderLineUtil.create(
                 order.getOrderId(), menuItem.getMenuItemId(), lineQuantity, linePrice);
         OrderLineUtil.save(session, orderLine);
-        Assert.assertNotNull(orderLine);
+        assertNotNull(orderLine);
+        orderLine = OrderLineUtil.getOrderLine(session, orderLine.getOrderLineId());
+        assertNotNull(orderLine);
         logger.debug("Created orderLine [{}]", orderLine);
         // add the line to the order
         order.addLine(orderLine);
+        // check order line count
+        List<OrderLine> orderLines = OrderLineUtil.getOrderLines(session, order.getOrderId());
+        assertTrue(orderLines.size() == 1);
 
         // create an order line detail
         OrderLineDetail orderLineDetail =
@@ -115,59 +126,158 @@ public class OrderHibernateTest extends AbstractHibernateTest {
                         ToppingPlacement.WHOLE,
                         menuItemDetail.getPrice());
         OrderLineDetailUtil.save(session, orderLineDetail);
-        Assert.assertNotNull(orderLineDetail);
+        assertNotNull(orderLineDetail);
+        orderLineDetail = OrderLineDetailUtil.getOrderLineDetail(session, orderLineDetail.getOrderLineDetailId());
+        assertNotNull(orderLineDetail);
         logger.debug("Saved orderLineDetail [{}]", orderLineDetail);
         // add the detail to the line
         orderLine.addOrderLineDetail(orderLineDetail);
+        // check order line detail count
+        List<OrderLineDetail> orderLineDetails = OrderLineDetailUtil.getOrderLineDetails(session, orderLine.getOrderLineId());
+        assertTrue(orderLineDetails.size() == 1);
 
         // delete the test records
         OrderUtil.delete(session, order);
+        order = OrderUtil.getOrder(session, order.getOrderId());
+        assertNull(order);
+
         CustomerUtil.delete(session, customer);
+        customer = CustomerUtil.getCustomer(session, customer.getCustomerId());
+        assertNull(customer);
+
         StoreUtil.delete(session, pizzaStore);
+        pizzaStore = StoreUtil.getStore(session, pizzaStore.getStoreId());
+        assertNull(pizzaStore);
 
         session.getTransaction().commit();
         session.close();
+    }
 
-        // list them
+    @Test
+    public void list() {
+        logger.debug("Listing orders");
         List<Order> orders = OrderUtil.getOrders();
+        assertTrue(orders.size() > 0);
         logger.debug("Loaded orders");
-        for ( Order ord : orders ) {
-            logger.debug(ord);
+        for ( Order order : orders ) {
+            logger.debug(order);
         }
 
-        // load an order from the DB
-        order = OrderUtil.getOrder(orders.get(0).getOrderId());
-        Assert.assertNotNull(order);
-        logger.debug("Loaded order [{}]", order);
+        // list lines for first order
+        long orderId = orders.get(0).getOrderId();
+        List<OrderLine> orderLines = OrderLineUtil.getOrderLines(orderId);
+        assertTrue(orderLines.size() > 0);
+        logger.debug("Loaded orderLines for order [{}]", orderId);
+        for ( OrderLine orderLine : orderLines ) {
+            logger.debug(orderLine);
+        }
 
+        // list details for first line
+        long orderLineId = orderLines.get(0).getOrderLineId();
+        List<OrderLineDetail> orderLineDetails =
+                OrderLineDetailUtil.getOrderLineDetails(orderLineId);
+        assertTrue(orderLineDetails.size() > 0);
+        logger.debug("Loaded orderLineDetails for orderLine [{}]", orderLineId);
+        for ( OrderLineDetail orderLineDetail : orderLineDetails ) {
+            logger.debug(orderLineDetail);
+        }
     }
+
+    @Test
+    public void listOrders() {
+        logger.debug("Listing orders");
+        List<Order> orders = OrderUtil.getOrders();
+        assertTrue(orders.size() > 0);
+        logger.debug("Loaded orders");
+        for ( Order order : orders ) {
+            logger.debug(order);
+        }
+    }
+
+    @Test
+    public void listOrderLines() {
+        logger.debug("Listing orderLines");
+        List<OrderLine> orderLines = OrderLineUtil.getOrderLines();
+        assertTrue(orderLines.size() > 0);
+        logger.debug("Loaded orderLines");
+        for ( OrderLine orderLine : orderLines ) {
+            logger.debug(orderLine);
+        }
+    }
+
+    @Test
+    public void listOrderLineDetails() {
+        logger.debug("Listing orderLineDetails");
+        List<OrderLineDetail> orderLineDetails = OrderLineDetailUtil.getOrderLineDetails();
+        assertTrue(orderLineDetails.size() > 0);
+        logger.debug("Loaded orderLineDetails");
+        for ( OrderLineDetail orderLineDetail : orderLineDetails ) {
+            logger.debug(orderLineDetail);
+        }
+    }
+
+    @Test
+    public void load() {
+        logger.debug("Load() entry");
+        // load a record from the DB
+        List<Order> orders = OrderUtil.getOrders();
+        assertTrue(orders.size() > 0);
+
+        long orderId = orders.get(0).getStoreId();
+
+        Order order = OrderUtil.getOrder(orderId);
+        assertNotNull(order);
+        logger.debug("Found order by Id [{}]", order);
+
+        List<OrderLine> orderLines = OrderLineUtil.getOrderLines(orderId);
+        assertTrue(orderLines.size() > 0);
+
+        long orderLineId = orderLines.get(0).getOrderLineId();
+
+        OrderLine orderLine = OrderLineUtil.getOrderLine(orderLineId);
+        assertNotNull(orderLine);
+        logger.debug("Found orderLine by Id [{}]", orderLine);
+
+        List<OrderLineDetail> orderLineDetails = OrderLineDetailUtil.getOrderLineDetails(orderLineId);
+        assertTrue(orderLineDetails.size() > 0);
+
+        long orderLineDetailId = orderLineDetails.get(0).getOrderLineDetailId();
+
+        OrderLineDetail orderLineDetail = OrderLineDetailUtil.getOrderLineDetail(orderLineDetailId);
+        assertNotNull(orderLineDetail);
+        logger.debug("Found orderLineDetail by Id [{}]", orderLineDetail);
+    }
+
 
     @Test
     public void testObjectSave() {
         logger.debug("testObjectSave entry");
 
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
         // create store for order
         PizzaStore pizzaStore = StoreUtil.create("testObjectSave-store");
-        StoreUtil.save(pizzaStore);
-        Assert.assertNotNull(pizzaStore);
+        StoreUtil.save(session, pizzaStore);
+        assertNotNull(pizzaStore);
         logger.debug("Created pizzaStore [{}]", pizzaStore);
 
         // create customer for order
         Customer customer = CustomerUtil.create("testObjectSave-customer");
-        CustomerUtil.save(customer);
-        Assert.assertNotNull(customer);
+        CustomerUtil.save(session, customer);
+        assertNotNull(customer);
         logger.debug("Created customer [{}]", customer);
 
         // get a menuItem to use for the order
         MenuItem menuItem = MenuItemUtil.getMenuItem(MenuItemType.PIZZA);
-        Assert.assertNotNull(menuItem);
+        assertNotNull(menuItem);
 
         // get a menuItemDetail to use for the order
         MenuItemDetail menuItemDetail =
                 MenuItemDetailUtil.getMenuItemDetail(menuItem.getMenuItemId(),
                         MenuItemDetailType.TOPPING,
                         "Onion");
-        Assert.assertNotNull(menuItemDetail);
+        assertNotNull(menuItemDetail);
 
         // create the order
         Order order = OrderUtil.newOrder();
@@ -199,14 +309,18 @@ public class OrderHibernateTest extends AbstractHibernateTest {
         orderLine.addOrderLineDetail(orderLineDetail);
 
         // save the order in one transaction
-        OrderUtil.save(order);
+        OrderUtil.save(session, order);
 
         // delete the order and its children in one transaction
-        OrderUtil.delete(order);
+        OrderUtil.delete(session, order);
 
         // delete the supporting data
-        CustomerUtil.delete(customer);
-        StoreUtil.delete(pizzaStore);
+        CustomerUtil.delete(session, customer);
+        StoreUtil.delete(session, pizzaStore);
+
+        session.getTransaction().commit();
+        session.close();
+
     }
 
 }
