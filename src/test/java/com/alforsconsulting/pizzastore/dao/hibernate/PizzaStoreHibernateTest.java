@@ -60,7 +60,7 @@ public class PizzaStoreHibernateTest extends AbstractHibernateTest {
         assertNotNull(pizzaStore);
         logger.debug("Created pizzaStore [{}]", pizzaStore);
 
-        // update customer
+        // update
         pizzaStore.setName("updated-hibernate-store");
         StoreUtil.save(session, pizzaStore);
         pizzaStore = StoreUtil.getStore(session, pizzaStore.getStoreId());
@@ -94,7 +94,7 @@ public class PizzaStoreHibernateTest extends AbstractHibernateTest {
         logger.debug("Listing stores");
         List<PizzaStore> stores = StoreUtil.getStores();
         assertTrue(stores.size() > 0);
-        logger.debug("Loaded customers");
+        logger.debug("Loaded stores");
         for ( PizzaStore store : stores ) {
             logger.debug(store);
         }

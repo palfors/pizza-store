@@ -34,9 +34,7 @@ import org.junit.*;
 
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class MenuItemHibernateTest extends AbstractHibernateTest {
 
@@ -60,34 +58,69 @@ public class MenuItemHibernateTest extends AbstractHibernateTest {
 		// create menuItem
 		MenuItem menuItem = (MenuItem) MenuItemUtil.create(MenuItemType.PIZZA, "hibernate-pizza", 7.55);
         MenuItemUtil.save(session, menuItem);
+        assertNotNull(menuItem);
+        menuItem = MenuItemUtil.getMenuItem(session, menuItem.getMenuItemId());
+        assertNotNull(menuItem);
 		logger.debug("Created menuItem [{}]", menuItem);
+
+        // update
+        menuItem.setName("updated-hibernate-pizza");
+        MenuItemUtil.save(session, menuItem);
+        menuItem = MenuItemUtil.getMenuItem(session, menuItem.getMenuItemId());
+        assertEquals("updated-hibernate-pizza", menuItem.getName());
+
+        // list them
+        List<MenuItem> items = MenuItemUtil.getMenuItems(session);
+        assertTrue(items.size() > 0);
+        logger.debug("Loaded menuItems");
+        for ( MenuItem item : items ) {
+            logger.debug(item);
+        }
 
         // delete the test records
         MenuItemUtil.delete(session, menuItem);
         logger.debug("Deleted menuItem [{}]", menuItem);
 
         // verify record no longer exists
-        menuItem = MenuItemUtil.getMenuItem(menuItem.getMenuItemId());
+        menuItem = MenuItemUtil.getMenuItem(session, menuItem.getMenuItemId());
         assertNull(menuItem);
         logger.debug("Verified menuItem no longer exists [{}]", menuItem);
 
         session.getTransaction().commit();
         session.close();
+    }
 
-        // list them
+    @Test
+    public void list() {
+        logger.debug("Listing menuItems");
         List<MenuItem> menuItems = MenuItemUtil.getMenuItems();
         assertTrue(menuItems.size() > 0);
         logger.debug("Loaded menuItems");
-        for ( MenuItem item : menuItems ) {
-            logger.debug(item);
+        for ( MenuItem menuItem : menuItems ) {
+            logger.debug(menuItem);
         }
-
-        long menuItemId = menuItems.get(0).getMenuItemId();
-        menuItem = MenuItemUtil.getMenuItem(menuItemId);
-        assertNotNull(menuItem);
-
-        MenuItem breadsticks = MenuItemUtil.getMenuItem(MenuItemType.BREADSTICKS);
-        assertNotNull(breadsticks);
-
     }
+
+    @Test
+    public void load() {
+        logger.debug("Load() entry");
+        // load a record from the DB
+        List<MenuItem> menuItems = MenuItemUtil.getMenuItems();
+        if (menuItems != null && menuItems.size() > 0) {
+            long menuItemId = menuItems.get(0).getMenuItemId();
+            String menuItemType = menuItems.get(0).getMenuItemType();
+
+            MenuItem menuItem = MenuItemUtil.getMenuItem(menuItemId);
+            assertNotNull(menuItem);
+            logger.debug("Found menuItem by Id [{}]", menuItem);
+
+            menuItem = MenuItemUtil.getMenuItem(MenuItemType.valueOf(menuItemType.toUpperCase()));
+            assertNotNull(menuItem);
+            logger.debug("Found menuItem by menuItemType [{}]", menuItemType);
+
+        } else {
+            logger.warn("Load() no menuItems to load!");
+        }
+    }
+
 }

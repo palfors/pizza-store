@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.awt.*;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -47,15 +48,15 @@ public class MenuItemUtil {
     public static void save(Session session, MenuItem menuItem) {
         logger.debug("Saving menuItem [{}]", menuItem);
 
-        session.saveOrUpdate(menuItem);
-
         menuItem.setLastModifiedDate(new Timestamp(System.currentTimeMillis()));
+
+        session.persist(menuItem);
 
         // currently no children to save
     }
 
     public static void save(MenuItem menuItem) {
-        logger.debug("Saving menuItem [{}]", menuItem);
+        logger.debug("Saving (in transaction) menuItem [{}]", menuItem);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
@@ -67,10 +68,22 @@ public class MenuItemUtil {
     }
 
     public static MenuItem getMenuItem(long menuItemId) {
-        MenuItem menuItem = null;
+        logger.debug("Saving (in transaction) menuItem [{}]", menuItemId);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
+
+        MenuItem menuItem = getMenuItem(session, menuItemId);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return menuItem;
+    }
+
+    public static MenuItem getMenuItem(Session session, long menuItemId) {
+        logger.debug("Saving menuItem [{}]", menuItemId);
+        MenuItem menuItem = null;
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where menuItemId = :menuItemId");
@@ -90,17 +103,26 @@ public class MenuItemUtil {
             // for now, return null
         }
 
+        return menuItem;
+    }
+
+    public static MenuItem getMenuItem(MenuItemType menuItemType) {
+        logger.debug("Saving (in transaction) menuItem [{}]", menuItemType);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        MenuItem menuItem = getMenuItem(session, menuItemType);
+
         session.getTransaction().commit();
         session.close();
 
         return menuItem;
     }
 
-    public static MenuItem getMenuItem(MenuItemType menuItemType) {
+    public static MenuItem getMenuItem(Session session, MenuItemType menuItemType) {
+        logger.debug("Saving menuItem [{}]", menuItemType);
         MenuItem menuItem = null;
-
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where menuItemType = :menuItemType");
@@ -120,23 +142,28 @@ public class MenuItemUtil {
             // for now, return null
         }
 
-        session.getTransaction().commit();
-        session.close();
-
         return menuItem;
     }
 
     public static List<MenuItem> getMenuItems() {
-
+        logger.debug("Retrieving (in transaction) menuItems");
         Session session = sessionFactory.openSession();
         session.beginTransaction();
+
+        List<MenuItem> menuItems = getMenuItems(session);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return menuItems;
+    }
+
+    public static List<MenuItem> getMenuItems(Session session) {
+        logger.debug("Retrieving menuItems ");
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING);
         List<MenuItem> menuItems =
                 (List<MenuItem>) session.createQuery(builder.toString()).list();
-
-        session.getTransaction().commit();
-        session.close();
 
         return menuItems;
     }
@@ -150,7 +177,7 @@ public class MenuItemUtil {
     }
 
     public static void delete(MenuItem menuItem) {
-        logger.debug("Deleting menuItem [{}]", menuItem);
+        logger.debug("Deleting (in transaction) menuItem [{}]", menuItem);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
