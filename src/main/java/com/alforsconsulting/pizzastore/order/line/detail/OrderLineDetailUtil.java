@@ -1,7 +1,7 @@
 package com.alforsconsulting.pizzastore.order.line.detail;
 
 import com.alforsconsulting.pizzastore.AppContext;
-import com.alforsconsulting.pizzastore.menu.pizza.topping.ToppingPlacement;
+import com.alforsconsulting.pizzastore.menu.pizza.ToppingPlacement;
 import com.alforsconsulting.pizzastore.order.line.OrderLine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

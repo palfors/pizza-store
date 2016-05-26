@@ -34,7 +34,7 @@ import com.alforsconsulting.pizzastore.menu.MenuItemUtil;
 import com.alforsconsulting.pizzastore.menu.detail.MenuItemDetail;
 import com.alforsconsulting.pizzastore.menu.detail.MenuItemDetailType;
 import com.alforsconsulting.pizzastore.menu.detail.MenuItemDetailUtil;
-import com.alforsconsulting.pizzastore.menu.pizza.topping.ToppingPlacement;
+import com.alforsconsulting.pizzastore.menu.pizza.ToppingPlacement;
 import com.alforsconsulting.pizzastore.order.Order;
 import com.alforsconsulting.pizzastore.order.OrderUtil;
 import com.alforsconsulting.pizzastore.order.line.OrderLine;

@@ -1,4 +1,4 @@
-package com.alforsconsulting.pizzastore.menu.pizza.topping;
+package com.alforsconsulting.pizzastore.menu.pizza;
 
 /**
  * Created by palfors on 5/12/16.
