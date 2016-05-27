@@ -117,6 +117,14 @@
         <connection>scm:git:file://localhost/Users/palfors/Work/AlforsConsulting/dvlp/pizza-store</connection>
         <developerConnection>scm:git:file://localhost/Users/palfors/Work/AlforsConsulting/dvlp/pizza-store</developerConnection>
         <tag>HEAD</tag>
-  </scm>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>local_nexus</id>
+            <name>Local Nexus</name>
+            <url>http://localhost:9081/nexus/content/repositories/stage/</url>
+        </repository>
+    </distributionManagement>
 
 </project>
