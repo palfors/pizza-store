@@ -114,9 +114,9 @@
     </build>
 
     <scm>
-        <connection>scm:git:file://localhost/Users/palfors/Work/AlforsConsulting/dvlp/pizza-store:pizza-store</connection>
-        <developerConnection>scm:git:file://localhost/Users/palfors/Work/AlforsConsulting/dvlp/pizza-store:pizza-store</developerConnection>
-      <tag>HEAD</tag>
+        <connection>scm:git:file://localhost/Users/palfors/Work/AlforsConsulting/dvlp/pizza-store</connection>
+        <developerConnection>scm:git:file://localhost/Users/palfors/Work/AlforsConsulting/dvlp/pizza-store</developerConnection>
+        <tag>HEAD</tag>
   </scm>
 
 </project>
