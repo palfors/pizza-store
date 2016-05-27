@@ -42,10 +42,7 @@ import com.alforsconsulting.pizzastore.order.line.OrderLineUtil;
 import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetail;
 import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetailUtil;
 import org.hibernate.Session;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.List;
 
@@ -154,6 +151,7 @@ public class OrderHibernateTest extends AbstractHibernateTest {
     }
 
     @Test
+    @Ignore("Ignoring until there are orders maintained in the database")
     public void list() {
         logger.debug("Listing orders");
         List<Order> orders = OrderUtil.getOrders();
@@ -184,6 +182,7 @@ public class OrderHibernateTest extends AbstractHibernateTest {
     }
 
     @Test
+    @Ignore("Ignoring until there are orders maintained in the database")
     public void listOrders() {
         logger.debug("Listing orders");
         List<Order> orders = OrderUtil.getOrders();
@@ -195,6 +194,7 @@ public class OrderHibernateTest extends AbstractHibernateTest {
     }
 
     @Test
+    @Ignore("Ignoring until there are orders maintained in the database")
     public void listOrderLines() {
         logger.debug("Listing orderLines");
         List<OrderLine> orderLines = OrderLineUtil.getOrderLines();
@@ -206,6 +206,7 @@ public class OrderHibernateTest extends AbstractHibernateTest {
     }
 
     @Test
+    @Ignore("Ignoring until there are orders maintained in the database")
     public void listOrderLineDetails() {
         logger.debug("Listing orderLineDetails");
         List<OrderLineDetail> orderLineDetails = OrderLineDetailUtil.getOrderLineDetails();
@@ -217,6 +218,7 @@ public class OrderHibernateTest extends AbstractHibernateTest {
     }
 
     @Test
+    @Ignore("Ignoring until there are orders maintained in the database")
     public void load() {
         logger.debug("Load() entry");
         // load a record from the DB
