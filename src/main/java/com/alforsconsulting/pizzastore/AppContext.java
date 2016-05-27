@@ -14,7 +14,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class AppContext {
     private ApplicationContext applicationContext = null;
-    protected SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
     private static final Logger logger = LogManager.getLogger();
 
     private static AppContext ourInstance = new AppContext();
@@ -56,6 +56,13 @@ public class AppContext {
             throw e;
         }
 
+    }
+
+    public void close() {
+        logger.debug("Closing Spring application context");
+        ((ClassPathXmlApplicationContext)ourInstance.getContext()).close();
+        sessionFactory.close();
+//        ((ClassPathXmlApplicationContext)ourInstance.getContext()).registerShutdownHook();
     }
 
 }
