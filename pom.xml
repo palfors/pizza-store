@@ -4,7 +4,7 @@
 
     <groupId>com.alforsconsulting</groupId>
     <artifactId>pizza-store</artifactId>
-    <version>1.0.0.1</version>
+    <version>1.0.0.2-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -116,7 +116,7 @@
     <scm>
         <connection>scm:git:file://localhost/Users/palfors/Work/AlforsConsulting/dvlp/pizza-store</connection>
         <developerConnection>scm:git:file://localhost/Users/palfors/Work/AlforsConsulting/dvlp/pizza-store</developerConnection>
-        <tag>pizza-store-1.0.0.1</tag>
+        <tag>HEAD</tag>
   </scm>
 
 </project>
