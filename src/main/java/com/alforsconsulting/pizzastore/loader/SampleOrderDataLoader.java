@@ -25,6 +25,7 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by palfors on 5/18/16.
  */
-public class PizzaStoreDataLoader {
+public class SampleOrderDataLoader {
     private static final Logger logger = LogManager.getLogger();
     protected SessionFactory sessionFactory;
     protected static ApplicationContext applicationContext;
@@ -57,7 +58,7 @@ public class PizzaStoreDataLoader {
             }
         }
 
-        PizzaStoreDataLoader loader = new PizzaStoreDataLoader();
+        SampleOrderDataLoader loader = new SampleOrderDataLoader();
         try {
             loader.placeOrders(threadCount, sleepTime, maxOrders, maxLineCount, maxLineDetailCount);
         } catch (Exception e) {
@@ -123,10 +124,7 @@ public class PizzaStoreDataLoader {
 
     public void cleanup() throws Exception {
         logger.info("cleanup entry");
-        if ( sessionFactory != null ) {
-            logger.info("closing sessionFactory: [{}]", sessionFactory);
-            sessionFactory.close();
-        }
+        AppContext.getInstance().close();
     }
 
     public void placeOrders(int threadCount, long sleepTime, int maxOrders, int maxLineCount, int maxLineDetailCount) throws Exception {
@@ -147,7 +145,7 @@ public class PizzaStoreDataLoader {
         // create a fixed thread pool for order generation
         ExecutorService fixedThreadPoolService = Executors.newFixedThreadPool(threadCount);
 
-        for (int i = 0; i < threadCount; i++) {
+        for (int i = 0; i < maxOrders; i++) {
             fixedThreadPoolService.execute(
                     new PlaceOrderThread(sessionFactory,
                                             store.getStoreId(),
