@@ -135,6 +135,58 @@ public class OrderUtil {
         return orders;
     }
 
+    public static List<Order> getCustomerOrders(long customerId) {
+        logger.debug("Loading (in transaction) customer orders");
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        List<Order> orders = getCustomerOrders(customerId, session);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return orders;
+    }
+
+    public static List<Order> getCustomerOrders(long customerId, Session session) {
+        logger.debug("Loading customer orders");
+
+        StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
+            .append(" where customerId = :customerId");
+        Query query =  session.createQuery(builder.toString());
+        query.setParameter("customerId", customerId);
+
+        List<Order> orders = (List<Order>) query.list();
+
+        return orders;
+    }
+
+    public static List<Order> getStoreOrders(long storeId) {
+        logger.debug("Loading (in transaction) customer orders");
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        List<Order> orders = getStoreOrders(storeId, session);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return orders;
+    }
+
+    public static List<Order> getStoreOrders(long storeId, Session session) {
+        logger.debug("Loading customer orders");
+
+        StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
+                .append(" where storeId = :storeId");
+        Query query =  session.createQuery(builder.toString());
+        query.setParameter("storeId", storeId);
+
+        List<Order> orders = (List<Order>) query.list();
+
+        return orders;
+    }
+
     public static void delete(Session session, Order order) {
         logger.debug("Deleting order [{}]", order);
 
