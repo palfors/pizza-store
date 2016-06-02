@@ -16,9 +16,11 @@ import java.sql.Timestamp;
 @Table( name = "CUSTOMER" )
 public class Customer {
 
-    private long customerId;
+    private long customerId = -1;
     private String name;
+    @Temporal(TemporalType.TIMESTAMP)
     private Timestamp createDate;
+    @Temporal(TemporalType.TIMESTAMP)
     private Timestamp lastModifiedDate;
 
     public Customer() {

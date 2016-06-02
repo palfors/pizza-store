@@ -8,9 +8,14 @@ import com.alforsconsulting.pizzastore.order.Order;
 import com.alforsconsulting.pizzastore.order.OrderUtil;
 import com.alforsconsulting.pizzastore.order.line.OrderLine;
 import com.alforsconsulting.pizzastore.order.line.OrderLineUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -20,6 +25,7 @@ import java.util.List;
  */
 @Controller
 public class PizzaStoreController {
+    private static final Logger logger = LogManager.getLogger();
 
     @RequestMapping("/")
     public String home(Model model) {
@@ -72,6 +78,39 @@ public class PizzaStoreController {
 
         // return the view name
         return "order";
+    }
+
+    @RequestMapping("/createCustomer")
+    public String createCustomer(Model model) {
+
+        model.addAttribute("customer", new Customer());
+
+        // show the customer page
+        return "customer";
+    }
+
+    @RequestMapping("/saveCustomer")
+    public String saveCustomer(@ModelAttribute("customer") Customer customer_attr,
+                               BindingResult result, Model model) {
+        logger.info("Saving customer_attr [{}]", customer_attr);
+
+        Customer customer = null;
+        if (customer_attr.getCustomerId() >= 0) {
+            // updating customer
+            customer = CustomerUtil.getCustomer(customer_attr.getCustomerId());
+            // merge changes
+            customer.setName(customer_attr.getName());
+            logger.info("Updating existing customer [{}]", customer);
+            CustomerUtil.merge(customer);
+        } else {
+            // new customer
+            customer = CustomerUtil.newCustomer();
+            customer.setName(customer_attr.getName());
+            CustomerUtil.save(customer);
+        }
+
+        // reload the customer
+        return "redirect:/getCustomer/?customerId=" + customer.getCustomerId();
     }
 
 }

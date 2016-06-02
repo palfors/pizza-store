@@ -65,6 +65,18 @@ public class CustomerUtil {
         session.close();
     }
 
+    public static void merge(Customer customer) {
+        logger.info("Merging (in transaction) customer [{}]", customer);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        session.merge(customer);
+
+        session.getTransaction().commit();
+        session.close();
+    }
+
     public static Customer getCustomer(long id) {
         logger.info("Retrieving (in transaction) customer [{}]", id);
 

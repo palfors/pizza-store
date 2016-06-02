@@ -65,6 +65,7 @@ public class CustomerHibernateTest extends AbstractHibernateTest {
         CustomerUtil.save(session, customer);
         customer = CustomerUtil.getCustomer(session, customer.getCustomerId());
         assertEquals("updated-hibernate-customer", customer.getName());
+        logger.debug("updated customer [{}]", customer);
 
         // list all customers
         List<Customer> customers = CustomerUtil.getCustomers(session);
@@ -89,7 +90,7 @@ public class CustomerHibernateTest extends AbstractHibernateTest {
 
     @Test
     public void list() {
-        logger.debug("Listing customers");
+        logger.debug("listing customers");
         List<Customer> customers = CustomerUtil.getCustomers();
         assertTrue(customers.size() > 0);
         logger.debug("Loaded customers");
@@ -100,7 +101,7 @@ public class CustomerHibernateTest extends AbstractHibernateTest {
 
     @Test
     public void load() {
-        logger.debug("Load() entry");
+        logger.debug("loading a customer");
         // load a record from the DB
         List<Customer> customers = CustomerUtil.getCustomers();
         assertTrue(customers.size() > 0);
@@ -108,6 +109,31 @@ public class CustomerHibernateTest extends AbstractHibernateTest {
         Customer customer = customers.get(0);
         customer = CustomerUtil.getCustomer(customer.getCustomerId());
         assertNotNull(customer);
+    }
+
+    @Test
+    public void merge() {
+        logger.debug("merge a customer");
+
+        int num = new Double(Math.random()*1000).intValue();
+        Customer customer = CustomerUtil.create("TEST_CUSTOMER_" + num);
+        CustomerUtil.save(customer);
+        assertNotNull(customer);
+
+        customer = CustomerUtil.getCustomer(customer.getCustomerId());
+        assertNotNull(customer);
+
+        String origName=customer.getName();
+        customer.setName(origName + "_UPDATED");
+        CustomerUtil.merge(customer);
+
+        customer = CustomerUtil.getCustomer(customer.getCustomerId());
+        assertNotNull(customer);
+        assertEquals(customer.getName(), origName + "_UPDATED");
+
+        CustomerUtil.delete(customer);
+        customer = CustomerUtil.getCustomer(customer.getCustomerId());
+        assertNull(customer);
     }
 
 }

@@ -3,6 +3,11 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page isELIgnored="false"%>
+<%@ page session="false"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <html>
 
@@ -31,7 +36,9 @@
       </tr>
     </c:forEach>
 </table>
+
 <br>
+
 <p>Or a customer</p>
 <table border="1">
       <tr>
@@ -43,12 +50,21 @@
     <c:forEach items="${customers}" var="customer">
       <tr>
         <td><a href="<c:url value="/getCustomer/?customerId=${customer.getCustomerId()}"/>">${customer.getCustomerId()}</a></td>
-        <td>${store.getName()}</td>
-        <td>${store.getCreateDate()}</td>
-        <td>${store.getLastModifiedDate()}</td>
+        <td>${customer.getName()}</td>
+        <td>${customer.getCreateDate()}</td>
+        <td>${customer.getLastModifiedDate()}</td>
       </tr>
     </c:forEach>
 </table>
 </body>
+
+<spring:url value="/createCustomer" var="actionUrl" />
+
+<form:form method="get"
+                modelAttribute="customer" action="${actionUrl}">
+    <div>
+        <button type="submit">New Customer</button>
+    </div>
+</form:form>
 
 </html>
