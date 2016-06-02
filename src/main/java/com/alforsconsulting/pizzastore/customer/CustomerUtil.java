@@ -1,6 +1,7 @@
 package com.alforsconsulting.pizzastore.customer;
 
 import com.alforsconsulting.pizzastore.AppContext;
+import com.alforsconsulting.pizzastore.order.OrderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
@@ -183,7 +184,8 @@ public class CustomerUtil {
     public static void delete(Session session, Customer customer) {
         logger.info("Deleting customer [{}]", customer);
 
-        // currently no children to delete
+        // delete all orders related to this customer
+        OrderUtil.deleteCustomerOrders(customer.getCustomerId(), session);
 
         session.delete(customer);
     }
@@ -199,4 +201,18 @@ public class CustomerUtil {
         session.getTransaction().commit();
         session.close();
     }
+
+    public static void delete(long customerId) {
+        logger.info("Deleting (in transaction) customer [{}]", customerId);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        Customer customer = getCustomer(session, customerId);
+        delete(session, customer);
+
+        session.getTransaction().commit();
+        session.close();
+    }
+
 }

@@ -229,7 +229,7 @@ public class OrderHibernateTest extends AbstractHibernateTest {
 
         Order order = OrderUtil.getOrder(orderId);
         assertNotNull(order);
-        logger.debug("Found order by Id [{}]", order);
+        logger.debug("Found order by Id [{}] with [{}] lines", order, order.getOrderLines().size());
 
         List<OrderLine> orderLines = OrderLineUtil.getOrderLines(orderId);
         assertTrue(orderLines.size() > 0);
@@ -323,6 +323,56 @@ public class OrderHibernateTest extends AbstractHibernateTest {
         session.getTransaction().commit();
         session.close();
 
+    }
+
+    @Test
+    public void testDeleteCustomerOrders() {
+        logger.debug("testDeleteCustomerOrders entry");
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        // create store for order
+        PizzaStore pizzaStore = StoreUtil.create("test-store");
+        StoreUtil.save(session, pizzaStore);
+        assertNotNull(pizzaStore);
+
+        // create the customer
+        Customer customer = CustomerUtil.create("OrderHibernateTestCustomer");
+        CustomerUtil.save(customer);
+        customer = CustomerUtil.getCustomer(session, customer.getCustomerId());
+        assertNotNull(customer);
+
+        // create an order for the customer
+        Order order = OrderUtil.create(pizzaStore.getStoreId(), customer.getCustomerId(), 23.45);
+        OrderUtil.save(session, order);
+        assertNotNull(order);
+        order = OrderUtil.getOrder(session, order.getOrderId());
+        assertNotNull(order);
+
+        // get customer order count
+        List<Order> orders = OrderUtil.getCustomerOrders(customer.getCustomerId(), session);
+        assertTrue(orders.size() == 1);
+
+        // delete the customer orders
+        OrderUtil.deleteCustomerOrders(customer.getCustomerId(), session);
+
+        // get customer order count
+        orders = OrderUtil.getCustomerOrders(customer.getCustomerId(), session);
+        assertTrue(orders.size() == 0);
+
+        // delete customer
+        CustomerUtil.delete(session, customer);
+        customer = CustomerUtil.getCustomer(session, customer.getCustomerId());
+        assertNull(customer);
+
+        // delete store
+        StoreUtil.delete(session, pizzaStore);
+        pizzaStore = StoreUtil.getStore(session, pizzaStore.getStoreId());
+        assertNull(pizzaStore);
+
+        session.getTransaction().commit();
+        session.close();
     }
 
 }

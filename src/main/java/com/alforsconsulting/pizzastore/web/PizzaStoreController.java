@@ -113,4 +113,12 @@ public class PizzaStoreController {
         return "redirect:/getCustomer/?customerId=" + customer.getCustomerId();
     }
 
+    @RequestMapping("/deleteCustomer")
+    public String deleteCustomer(@RequestParam(value="customerId", required=true) long customerId, Model model) {
+
+        CustomerUtil.delete(customerId);
+
+        return "redirect:/";
+    }
+
 }

@@ -209,4 +209,24 @@ public class OrderUtil {
         session.getTransaction().commit();
         session.close();
     }
+
+
+    public static void deleteCustomerOrders(long customerId) {
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        deleteCustomerOrders(customerId, session);
+
+        session.getTransaction().commit();
+        session.close();
+    }
+
+    public static void deleteCustomerOrders(long customerId, Session session) {
+        List<Order> orders = getCustomerOrders(customerId, session);
+
+        for (Order order : orders) {
+            delete(session, order);
+        }
+    }
+
 }
