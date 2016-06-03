@@ -375,4 +375,54 @@ public class OrderHibernateTest extends AbstractHibernateTest {
         session.close();
     }
 
+    @Test
+    public void testDeleteStoreOrders() {
+        logger.debug("testDeleteStoreOrders entry");
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        // create store for order
+        PizzaStore pizzaStore = StoreUtil.create("test-store");
+        StoreUtil.save(session, pizzaStore);
+        assertNotNull(pizzaStore);
+
+        // create the customer
+        Customer customer = CustomerUtil.create("OrderHibernateTestCustomer");
+        CustomerUtil.save(customer);
+        customer = CustomerUtil.getCustomer(session, customer.getCustomerId());
+        assertNotNull(customer);
+
+        // create an order for the store
+        Order order = OrderUtil.create(pizzaStore.getStoreId(), customer.getCustomerId(), 23.45);
+        OrderUtil.save(session, order);
+        assertNotNull(order);
+        order = OrderUtil.getOrder(session, order.getOrderId());
+        assertNotNull(order);
+
+        // get store order count
+        List<Order> orders = OrderUtil.getStoreOrders(pizzaStore.getStoreId(), session);
+        assertTrue(orders.size() == 1);
+
+        // delete the store orders
+        OrderUtil.deleteStoreOrders(pizzaStore.getStoreId(), session);
+
+        // get store order count
+        orders = OrderUtil.getStoreOrders(pizzaStore.getStoreId(), session);
+        assertTrue(orders.size() == 0);
+
+        // delete customer
+        CustomerUtil.delete(session, customer);
+        customer = CustomerUtil.getCustomer(session, customer.getCustomerId());
+        assertNull(customer);
+
+        // delete store
+        StoreUtil.delete(session, pizzaStore);
+        pizzaStore = StoreUtil.getStore(session, pizzaStore.getStoreId());
+        assertNull(pizzaStore);
+
+        session.getTransaction().commit();
+        session.close();
+    }
+
 }

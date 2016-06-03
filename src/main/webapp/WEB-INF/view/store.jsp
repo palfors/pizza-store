@@ -3,6 +3,11 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page isELIgnored="false"%>
+<%@ page session="false"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <html>
 
@@ -13,32 +18,55 @@
 
 <body>
 <h1>Store</h1>
-<ul>
-  <li>ID: ${store.getStoreId()}</li>
-  <li>Name: ${store.getName()}</li>
-</ul>
+
+<spring:url value="/saveStore" var="saveURL" />
+<spring:url value="/" var="homeURL" />
+<spring:url value="/deleteStore/?storeId=${store.getStoreId()}" var="deleteURL" />
+
+<form:form method="post" modelAttribute="store" action="${saveURL}">
+
+    <form:hidden path="storeId"/>
+    <form:hidden path="createDate"/>
+    <form:hidden path="lastModifiedDate"/>
+
+    <div>
+        <label>ID</label>: ${store.getStoreId()}
+    </div>
+    <spring:bind path="name">
+        <div>
+            <label>Name</label><form:input path="name" type="text" id="name" placeholder="Name" />
+        </div>
+    </spring:bind>
+
+    <button type="submit">Save</button> <a href="${homeURL}">Home</a> <a href="${deleteURL}">Delete</a>
+</form:form>
+
 <br>
-<h1>Orders:</h1>
-<table border="1">
-      <tr>
-        <th>Order ID</th>
-        <th>Store ID</th>
-        <th>Customer ID</th>
-        <th>Price</th>
-        <th>Create Date</th>
-        <th>Last Modified Date</th>
-      </tr>
-    <c:forEach items="${orders}" var="order">
-      <tr>
-        <td><a href="<c:url value="/getOrder/?orderId=${order.getOrderId()}"/>">${order.getOrderId()}</a></td>
-        <td>${order.getStoreId()}</td>
-        <td><a href="<c:url value="/getCustomer/?customerId=${order.getCustomerId()}"/>">${order.getCustomerId()}</a></td>
-        <td>${order.getPrice()}</td>
-        <td>${order.getCreateDate()}</td>
-        <td>${order.getLastModifiedDate()}</td>
-      </tr>
-    </c:forEach>
-</table>
+
+<c:if test="${orders.size() > 0}">
+    <h1>Orders:</h1>
+    <table border="1">
+          <tr>
+            <th>Order ID</th>
+            <th>Store ID</th>
+            <th>Customer ID</th>
+            <th>Price</th>
+            <th>Create Date</th>
+            <th>Last Modified Date</th>
+          </tr>
+        <c:forEach items="${orders}" var="order">
+          <tr>
+            <td><a href="<c:url value="/getOrder/?orderId=${order.getOrderId()}"/>">${order.getOrderId()}</a></td>
+            <td>${order.getStoreId()}</td>
+            <td><a href="<c:url value="/getCustomer/?customerId=${order.getCustomerId()}"/>">${order.getCustomerId()}</a></td>
+            <td>${order.getPrice()}</td>
+            <td>${order.getCreateDate()}</td>
+            <td>${order.getLastModifiedDate()}</td>
+          </tr>
+        </c:forEach>
+    </table>
+</c:if>
+
 </body>
 
 </html>

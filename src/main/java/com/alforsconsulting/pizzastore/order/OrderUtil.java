@@ -39,6 +39,7 @@ public class OrderUtil {
     }
 
     public static Order create(long storeId, long customerId, double price) {
+        logger.debug("Creating order [storeId={}][customerId={}][price={}]", storeId, customerId, price);
         Order order = newOrder();
         order.setStoreId(storeId);
         order.setCustomerId(customerId);
@@ -136,7 +137,7 @@ public class OrderUtil {
     }
 
     public static List<Order> getCustomerOrders(long customerId) {
-        logger.debug("Loading (in transaction) customer orders");
+        logger.debug("Loading (in transaction) customer [{}] orders", customerId);
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
@@ -149,7 +150,7 @@ public class OrderUtil {
     }
 
     public static List<Order> getCustomerOrders(long customerId, Session session) {
-        logger.debug("Loading customer orders");
+        logger.debug("Loading customer [{}] orders", customerId);
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
             .append(" where customerId = :customerId");
@@ -162,7 +163,7 @@ public class OrderUtil {
     }
 
     public static List<Order> getStoreOrders(long storeId) {
-        logger.debug("Loading (in transaction) customer orders");
+        logger.debug("Loading (in transaction) store [{}] orders", storeId);
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
@@ -175,7 +176,7 @@ public class OrderUtil {
     }
 
     public static List<Order> getStoreOrders(long storeId, Session session) {
-        logger.debug("Loading customer orders");
+        logger.debug("Loading store [{}] orders", storeId);
 
         StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
                 .append(" where storeId = :storeId");
@@ -212,6 +213,8 @@ public class OrderUtil {
 
 
     public static void deleteCustomerOrders(long customerId) {
+        logger.debug("Deleting customer [{}] orders (in transaction)", customerId);
+
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
@@ -223,6 +226,28 @@ public class OrderUtil {
 
     public static void deleteCustomerOrders(long customerId, Session session) {
         List<Order> orders = getCustomerOrders(customerId, session);
+
+        for (Order order : orders) {
+            delete(session, order);
+        }
+    }
+
+    public static void deleteStoreOrders(long storeId) {
+        logger.debug("Deleting store [{}] orders (in transaction)", storeId);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        deleteStoreOrders(storeId, session);
+
+        session.getTransaction().commit();
+        session.close();
+    }
+
+    public static void deleteStoreOrders(long storeId, Session session) {
+        logger.debug("Deleting store [{}] orders", storeId);
+
+        List<Order> orders = getStoreOrders(storeId, session);
 
         for (Order order : orders) {
             delete(session, order);

@@ -24,8 +24,7 @@
 <spring:url value="/" var="homeURL" />
 <spring:url value="/deleteCustomer/?customerId=${customer.getCustomerId()}" var="deleteURL" />
 
-<form:form class="form-horizontal" method="post"
-                modelAttribute="customer" action="${saveURL}">
+<form:form method="post" modelAttribute="customer" action="${saveURL}">
 
     <form:hidden path="customerId"/>
     <form:hidden path="createDate"/>

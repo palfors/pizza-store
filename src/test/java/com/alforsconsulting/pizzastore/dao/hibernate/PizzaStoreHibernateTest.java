@@ -27,7 +27,9 @@ import com.alforsconsulting.pizzastore.AbstractHibernateTest;
 import com.alforsconsulting.pizzastore.PizzaStore;
 import com.alforsconsulting.pizzastore.StoreUtil;
 import org.hibernate.Session;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.util.List;
 
@@ -119,5 +121,29 @@ public class PizzaStoreHibernateTest extends AbstractHibernateTest {
         logger.debug("Found pizzaStore by name [{}]", pizzaStore);
     }
 
+    @Test
+    public void merge() {
+        logger.debug("merge a store");
+
+        int num = new Double(Math.random()*1000).intValue();
+        PizzaStore store = StoreUtil.create("TEST_STORE_" + num);
+        StoreUtil.save(store);
+        assertNotNull(store);
+
+        store = StoreUtil.getStore(store.getStoreId());
+        assertNotNull(store);
+
+        String origName=store.getName();
+        store.setName(origName + "_UPDATED");
+        StoreUtil.merge(store);
+
+        store = StoreUtil.getStore(store.getStoreId());
+        assertNotNull(store);
+        assertEquals(store.getName(), origName + "_UPDATED");
+
+        StoreUtil.delete(store);
+        store = StoreUtil.getStore(store.getStoreId());
+        assertNull(store);
+    }
 
 }

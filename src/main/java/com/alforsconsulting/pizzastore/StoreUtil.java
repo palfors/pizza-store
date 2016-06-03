@@ -1,5 +1,6 @@
 package com.alforsconsulting.pizzastore;
 
+import com.alforsconsulting.pizzastore.order.OrderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
@@ -59,6 +60,18 @@ public class StoreUtil {
         session.beginTransaction();
 
         save(session, store);
+
+        session.getTransaction().commit();
+        session.close();
+    }
+
+    public static void merge(PizzaStore store) {
+        logger.info("Merging (in transaction) pizzaStore [{}]", store);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        session.merge(store);
 
         session.getTransaction().commit();
         session.close();
@@ -172,7 +185,8 @@ public class StoreUtil {
     public static void delete(Session session, PizzaStore store) {
         logger.debug("Deleting store [{}]", store);
 
-        // currently no children to delete
+        // delete orders tied to this store
+        OrderUtil.deleteStoreOrders(store.getStoreId(), session);
 
         session.delete(store);
     }
@@ -188,5 +202,19 @@ public class StoreUtil {
         session.getTransaction().commit();
         session.close();
     }
+
+    public static void delete(long storeId) {
+        logger.info("Deleting (in transaction) store [{}]", storeId);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        PizzaStore store = getStore(session, storeId);
+        delete(session, store);
+
+        session.getTransaction().commit();
+        session.close();
+    }
+
 
 }

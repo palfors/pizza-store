@@ -53,6 +53,47 @@ public class PizzaStoreController {
         return "store";
     }
 
+    @RequestMapping("/createStore")
+    public String createStore(Model model) {
+
+        model.addAttribute("store", new PizzaStore());
+
+        // show the store page
+        return "store";
+    }
+
+    @RequestMapping("/saveStore")
+    public String saveStore(@ModelAttribute("store") PizzaStore store_attr,
+                               BindingResult result, Model model) {
+        logger.info("Saving store_attr [{}]", store_attr);
+
+        PizzaStore store = null;
+        if (store_attr.getStoreId() >= 0) {
+            // updating store
+            store = StoreUtil.getStore(store_attr.getStoreId());
+            // merge changes
+            store.setName(store_attr.getName());
+            logger.info("Updating existing store [{}]", store);
+            StoreUtil.merge(store);
+        } else {
+            // new store
+            store = StoreUtil.newPizzaStore();
+            store.setName(store_attr.getName());
+            StoreUtil.save(store);
+        }
+
+        // reload the customer
+        return "redirect:/getStore/?storeId=" + store.getStoreId();
+    }
+
+    @RequestMapping("/deleteStore")
+    public String deleteStore(@RequestParam(value="storeId", required=true) long storeId, Model model) {
+
+        StoreUtil.delete(storeId);
+
+        return "redirect:/";
+    }
+
     @RequestMapping("/getCustomer")
     public String getCustomer(@RequestParam(value="customerId", required=true) long customerId, Model model) {
         model.addAttribute("customerId", customerId);
@@ -65,19 +106,6 @@ public class PizzaStoreController {
 
         // return the view name
         return "customer";
-    }
-
-    @RequestMapping("/getOrder")
-    public String getOrder(@RequestParam(value="orderId", required=true) long orderId, Model model) {
-
-        Order order = OrderUtil.getOrder(orderId);
-        model.addAttribute("order", order);
-
-        List<OrderLine> lines = OrderLineUtil.getOrderLines(orderId);
-        model.addAttribute("orderLines", lines);
-
-        // return the view name
-        return "order";
     }
 
     @RequestMapping("/createCustomer")
@@ -119,6 +147,19 @@ public class PizzaStoreController {
         CustomerUtil.delete(customerId);
 
         return "redirect:/";
+    }
+
+    @RequestMapping("/getOrder")
+    public String getOrder(@RequestParam(value="orderId", required=true) long orderId, Model model) {
+
+        Order order = OrderUtil.getOrder(orderId);
+        model.addAttribute("order", order);
+
+        List<OrderLine> lines = OrderLineUtil.getOrderLines(orderId);
+        model.addAttribute("orderLines", lines);
+
+        // return the view name
+        return "order";
     }
 
 }

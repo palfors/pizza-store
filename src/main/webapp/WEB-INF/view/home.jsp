@@ -37,6 +37,13 @@
     </c:forEach>
 </table>
 
+<spring:url value="/createStore" var="storeUrl" />
+<form:form method="get" modelAttribute="store" action="${storeUrl}">
+    <div>
+        <button type="submit">New Store</button>
+    </div>
+</form:form>
+
 <br>
 
 <p>Or a customer</p>
@@ -58,10 +65,8 @@
 </table>
 </body>
 
-<spring:url value="/createCustomer" var="actionUrl" />
-
-<form:form method="get"
-                modelAttribute="customer" action="${actionUrl}">
+<spring:url value="/createCustomer" var="customerUrl" />
+<form:form method="get" modelAttribute="customer" action="${customerUrl}">
     <div>
         <button type="submit">New Customer</button>
     </div>

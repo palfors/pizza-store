@@ -22,9 +22,9 @@ import java.util.List;
 public class PizzaStore {
     private static final Logger logger = LogManager.getLogger();
 
-    private long storeId = 0;
+    private long storeId = -1;
     private List<Order> orders = new ArrayList<Order>();
-    protected String name = "PizzaStore";
+    protected String name;
     private Timestamp createDate;
     private Timestamp lastModifiedDate;
 
