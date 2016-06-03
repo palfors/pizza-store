@@ -4,10 +4,14 @@ import com.alforsconsulting.pizzastore.PizzaStore;
 import com.alforsconsulting.pizzastore.StoreUtil;
 import com.alforsconsulting.pizzastore.customer.Customer;
 import com.alforsconsulting.pizzastore.customer.CustomerUtil;
+import com.alforsconsulting.pizzastore.menu.MenuItem;
+import com.alforsconsulting.pizzastore.menu.MenuItemUtil;
 import com.alforsconsulting.pizzastore.order.Order;
 import com.alforsconsulting.pizzastore.order.OrderUtil;
 import com.alforsconsulting.pizzastore.order.line.OrderLine;
 import com.alforsconsulting.pizzastore.order.line.OrderLineUtil;
+import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetail;
+import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetailUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -248,9 +252,84 @@ public class PizzaStoreController {
 
     @RequestMapping("/deleteOrder")
     public String deleteOrder(@RequestParam(value="orderId", required=true) long orderId, Model model) {
-        logger.info("Deleting order_attr [{}]", orderId);
+        logger.info("Deleting order [{}]", orderId);
 
         OrderUtil.delete(orderId);
+
+        return "redirect:/";
+    }
+
+    @RequestMapping("/getOrderLine")
+    public String getOrderLine(@RequestParam(value="orderLineId", required=true) long orderLineId, Model model) {
+        logger.info("Retrieving orderLine [{}]", orderLineId);
+
+        OrderLine orderLine = OrderLineUtil.getOrderLine(orderLineId);
+        model.addAttribute("orderLine", orderLine);
+
+        List<OrderLineDetail> details = OrderLineDetailUtil.getOrderLineDetails(orderLineId);
+        model.addAttribute("orderLineDetails", details);
+
+        MenuItem menuItem = MenuItemUtil.getMenuItem(orderLine.getMenuItemId());
+        model.addAttribute("menuItem", menuItem);
+
+        // return the view name
+        return "orderLine";
+    }
+
+    @RequestMapping("/createOrderLine")
+    public String createOrderLine(@RequestParam(value="orderId", required=true) long orderId, Model model) {
+        logger.info("Creating orderLine");
+
+        OrderLine orderLine = new OrderLine();
+        orderLine.setOrderId(orderId);
+
+        model.addAttribute("orderLine", orderLine);
+
+        List<MenuItem> menuItems = MenuItemUtil.getMenuItems();
+        HashMap<Long, String> menuItemMap = new HashMap<>();
+        for (MenuItem menuItem : menuItems) {
+            menuItemMap.put(menuItem.getMenuItemId(), menuItem.getName());
+        }
+        model.addAttribute("menuItems", menuItemMap);
+
+        // show the order page
+        return "orderLine";
+    }
+
+    @RequestMapping("/saveOrderLine")
+    public String saveOrderLine(@ModelAttribute("orderLine") OrderLine orderLine_attr,
+                            BindingResult result, Model model) {
+        logger.info("Saving orderLine_attr [{}]", orderLine_attr);
+
+        OrderLine orderLine = null;
+        if (orderLine_attr.getOrderLineId() >= 0) {
+            // updating orderLine
+            orderLine = OrderLineUtil.getOrderLine(orderLine_attr.getOrderLineId());
+            // merge changes
+            orderLine.setMenuItemId(orderLine_attr.getMenuItemId());
+            orderLine.setQuantity(orderLine_attr.getQuantity());
+            orderLine.setPrice(orderLine_attr.getPrice());
+            logger.info("Updating existing orderLine [{}]", orderLine);
+            OrderLineUtil.merge(orderLine);
+        } else {
+            // new orderLine
+            orderLine = OrderLineUtil.newOrderLine();
+            orderLine.setOrderId(orderLine_attr.getOrderId());
+            orderLine.setMenuItemId(orderLine_attr.getMenuItemId());
+            orderLine.setQuantity(orderLine_attr.getQuantity());
+            orderLine.setPrice(orderLine_attr.getPrice());
+            OrderLineUtil.save(orderLine);
+        }
+
+        // reload the orderLine
+        return "redirect:/getOrderLine/?orderLineId=" + orderLine.getOrderLineId();
+    }
+
+    @RequestMapping("/deleteOrderLine")
+    public String deleteOrderLine(@RequestParam(value="orderLineId", required=true) long orderLineId, Model model) {
+        logger.info("Deleting orderLine [{}]", orderLineId);
+
+        OrderLineUtil.delete(orderLineId);
 
         return "redirect:/";
     }

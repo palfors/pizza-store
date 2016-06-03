@@ -123,9 +123,12 @@ public class CustomerHibernateTest extends AbstractHibernateTest {
         customer = CustomerUtil.getCustomer(customer.getCustomerId());
         assertNotNull(customer);
 
+        // merge an updated detached customer
         String origName=customer.getName();
-        customer.setName(origName + "_UPDATED");
-        CustomerUtil.merge(customer);
+        Customer newCustomer = CustomerUtil.newCustomer();
+        newCustomer.setCustomerId(customer.getCustomerId());
+        newCustomer.setName(origName + "_UPDATED");
+        CustomerUtil.merge(newCustomer);
 
         customer = CustomerUtil.getCustomer(customer.getCustomerId());
         assertNotNull(customer);

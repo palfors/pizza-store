@@ -19,9 +19,9 @@ import java.util.List;
 @Entity
 @Table( name = "ORDER_LINE" )
 public class OrderLine {
-    private long orderLineId;
-    private long orderId;
-    private long menuItemId;
+    private long orderLineId = -1;
+    private long orderId = -1;
+    private long menuItemId = -1;
     private int quantity;
     private double price;
     private Timestamp createDate;

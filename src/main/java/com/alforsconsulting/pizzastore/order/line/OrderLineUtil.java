@@ -73,6 +73,18 @@ public class OrderLineUtil {
         session.close();
     }
 
+    public static void merge(OrderLine orderLine) {
+        logger.info("Merging (in transaction) orderLine [{}]", orderLine);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        session.merge(orderLine);
+
+        session.getTransaction().commit();
+        session.close();
+    }
+
     public static OrderLine getOrderLine(long orderLineId) {
         logger.debug("Retrieving (in transaction) orderLine [{}]", orderLineId);
         Session session = sessionFactory.openSession();
@@ -165,13 +177,13 @@ public class OrderLineUtil {
     public static void delete(Session session, OrderLine orderLine) {
         logger.debug("Deleting orderLine [{}]", orderLine);
 
+        List<OrderLineDetail> details =
+                OrderLineDetailUtil.getOrderLineDetails(session, orderLine.getOrderLineId());
         // delete line details first
-        for (OrderLineDetail detail : orderLine.getOrderLineDetails()) {
+        for (OrderLineDetail detail : details) {
             OrderLineDetailUtil.delete(session, detail);
         }
-
         session.delete(orderLine);
-
     }
 
     public static void delete(OrderLine orderLine) {
@@ -185,4 +197,18 @@ public class OrderLineUtil {
         session.getTransaction().commit();
         session.close();
     }
+
+    public static void delete(long orderLineId) {
+        logger.info("Deleting (in transaction) orderLine [{}]", orderLineId);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        OrderLine orderLine = getOrderLine(session, orderLineId);
+        delete(session, orderLine);
+
+        session.getTransaction().commit();
+        session.close();
+    }
+
 }

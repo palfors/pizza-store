@@ -133,9 +133,12 @@ public class PizzaStoreHibernateTest extends AbstractHibernateTest {
         store = StoreUtil.getStore(store.getStoreId());
         assertNotNull(store);
 
+        // merge an updated detached store
         String origName=store.getName();
-        store.setName(origName + "_UPDATED");
-        StoreUtil.merge(store);
+        PizzaStore newStore = StoreUtil.newPizzaStore();
+        newStore.setStoreId(store.getStoreId());
+        newStore.setName(origName + "_UPDATED");
+        StoreUtil.merge(newStore);
 
         store = StoreUtil.getStore(store.getStoreId());
         assertNotNull(store);

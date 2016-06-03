@@ -46,9 +46,7 @@ import org.junit.*;
 
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class OrderHibernateTest extends AbstractHibernateTest {
 
@@ -423,6 +421,81 @@ public class OrderHibernateTest extends AbstractHibernateTest {
 
         session.getTransaction().commit();
         session.close();
+    }
+
+    @Test
+    public void merge() {
+        logger.debug("merge an order");
+
+        int num = new Double(Math.random()*1000).intValue();
+        PizzaStore store = StoreUtil.create("TEST_STORE_" + num);
+        StoreUtil.save(store);
+        assertNotNull(store);
+
+        num = new Double(Math.random()*1000).intValue();
+        Customer customer = CustomerUtil.create("TEST_CUSTOMER_" + num);
+        CustomerUtil.save(customer);
+        assertNotNull(customer);
+
+        // create an order
+        Order order = OrderUtil.create(store.getStoreId(), customer.getCustomerId(), 23.45);
+        OrderUtil.save(order);
+        assertNotNull(order);
+        order = OrderUtil.getOrder(order.getOrderId());
+        assertNotNull(order);
+
+        // merge an updated detached order
+        Order updatedOrder = OrderUtil.newOrder();
+        updatedOrder.setOrderId(order.getOrderId());
+        updatedOrder.setStoreId(order.getStoreId());
+        updatedOrder.setCustomerId(order.getCustomerId());
+        // updated price
+        updatedOrder.setPrice(100.00);
+        OrderUtil.merge(updatedOrder);
+
+        // verify change
+        order = OrderUtil.getOrder(order.getOrderId());
+        assertEquals(order.getPrice(), 100.00, 0);
+
+        // get a menuItem to use for the order
+        MenuItem menuItem = MenuItemUtil.getMenuItem(MenuItemType.PIZZA);
+        assertNotNull(menuItem);
+
+        // add a line
+        OrderLine orderLine = OrderLineUtil.create(order.getOrderId(), menuItem.getMenuItemId(), 1, 23.45);
+        OrderLineUtil.save(orderLine);
+        assertNotNull(orderLine);
+        orderLine = OrderLineUtil.getOrderLine(orderLine.getOrderLineId());
+        assertNotNull(orderLine);
+
+        // merge an updated detached order line
+        OrderLine updatedOrderLine = OrderLineUtil.newOrderLine();
+        updatedOrderLine.setOrderLineId(orderLine.getOrderLineId());
+        updatedOrderLine.setOrderId(orderLine.getOrderId());
+        updatedOrderLine.setMenuItemId(orderLine.getMenuItemId());
+        // updated quantity
+        updatedOrderLine.setQuantity(2);
+        updatedOrderLine.setPrice(orderLine.getPrice());
+        OrderLineUtil.merge(updatedOrderLine);
+
+        // verify change
+        orderLine = OrderLineUtil.getOrderLine(orderLine.getOrderLineId());
+        assertEquals(orderLine.getQuantity(), 2);
+
+        // delete the order
+        OrderUtil.delete(order);
+
+        // get store order count
+        order = OrderUtil.getOrder(order.getOrderId());
+        assertNull(order);
+
+        CustomerUtil.delete(customer);
+        customer = CustomerUtil.getCustomer(customer.getCustomerId());
+        assertNull(customer);
+
+        StoreUtil.delete(store);
+        store = StoreUtil.getStore(store.getStoreId());
+        assertNull(store);
     }
 
 }

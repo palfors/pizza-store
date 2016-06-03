@@ -21,6 +21,7 @@
 <spring:url value="/saveOrder" var="saveURL" />
 <spring:url value="/" var="homeURL" />
 <spring:url value="/deleteOrder/?orderId=${order.getOrderId()}" var="deleteURL" />
+<spring:url value="/createOrderLine/?orderId=${order.getOrderId()}" var="addLineURL" />
 
 <h1>Order</h1>
 <form:form method="post" modelAttribute="order" action="${saveURL}">
@@ -29,6 +30,7 @@
         <button type="submit">Save</button>
         <a href="${homeURL}">Home</a>
         <a href="${deleteURL}">Delete</a>
+        <a href="${addLineURL}">Add Line</a>
     </span>
 
     <form:hidden path="orderId"/>
@@ -89,7 +91,7 @@
 
 <br>
 
-<c:if test="${orders.size() > 0}">
+<c:if test="${orderLines.size() > 0}">
     <h1>Lines:</h1>
     <table border="1">
           <tr>
@@ -103,7 +105,7 @@
           </tr>
         <c:forEach items="${orderLines}" var="line">
           <tr>
-            <td>${line.getOrderLineId()}</td>
+            <td><a href="<c:url value="/getOrderLine/?orderLineId=${line.getOrderLineId()}"/>">${line.getOrderLineId()}</a></td>
             <td>${line.getOrderId()}</td>
             <td>${line.getMenuItemId()}</td>
             <td>${line.getQuantity()}</td>

@@ -203,11 +203,10 @@ public class OrderUtil {
     public static void delete(Session session, Order order) {
         logger.debug("Deleting order [{}]", order);
 
-        // delete the order lines first
-        for (OrderLine line : order.getOrderLines()) {
+        List<OrderLine> lines = OrderLineUtil.getOrderLines(session, order.getOrderId());
+        for (OrderLine line : lines) {
             OrderLineUtil.delete(session, line);
         }
-
         session.delete(order);
     }
 
@@ -278,6 +277,5 @@ public class OrderUtil {
             delete(session, order);
         }
     }
-
 
 }

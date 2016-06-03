@@ -19,9 +19,9 @@ import java.sql.Timestamp;
 @Table( name = "ORDER_LINE_DETAIL" )
 public class OrderLineDetail {
 
-    private long orderLineDetailId;
-    private long orderLineId;
-    private long menuItemDetailId;
+    private long orderLineDetailId = -1;
+    private long orderLineId = -1;
+    private long menuItemDetailId = -1;
     private String placement;
     private double price;
     private Timestamp createDate;
