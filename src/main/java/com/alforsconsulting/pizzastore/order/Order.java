@@ -22,12 +22,12 @@ import java.util.List;
 @Entity
 @Table( name = "STORE_ORDER" )
 public class Order {
-    private long storeId;
+    private long storeId = -1;
 
-    private long orderId;
+    private long orderId = -1;
     private String status = OrderStatus.NEW.name();
     private List<OrderLine> orderLines = new ArrayList<OrderLine>();
-    private long customerId;
+    private long customerId = -1;
     private double price;
     private Timestamp createDate;
     private Timestamp lastModifiedDate;

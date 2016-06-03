@@ -74,6 +74,18 @@ public class OrderUtil {
         session.close();
     }
 
+    public static void merge(Order order) {
+        logger.info("Merging (in transaction) order [{}]", order);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        session.merge(order);
+
+        session.getTransaction().commit();
+        session.close();
+    }
+
     public static Order getOrder(long orderId) {
         logger.debug("Retrieving (in transaction) order [{}]", orderId);
         Session session = sessionFactory.openSession();
@@ -211,6 +223,19 @@ public class OrderUtil {
         session.close();
     }
 
+    public static void delete(long orderId) {
+        logger.info("Deleting (in transaction) order [{}]", orderId);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        Order order = getOrder(session, orderId);
+        delete(session, order);
+
+        session.getTransaction().commit();
+        session.close();
+    }
+
 
     public static void deleteCustomerOrders(long customerId) {
         logger.debug("Deleting customer [{}] orders (in transaction)", customerId);
@@ -253,5 +278,6 @@ public class OrderUtil {
             delete(session, order);
         }
     }
+
 
 }

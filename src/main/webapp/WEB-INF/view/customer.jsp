@@ -23,6 +23,7 @@
 <spring:url value="/saveCustomer" var="saveURL" />
 <spring:url value="/" var="homeURL" />
 <spring:url value="/deleteCustomer/?customerId=${customer.getCustomerId()}" var="deleteURL" />
+<spring:url value="/createOrder/?customerId=${customer.getCustomerId()}" var="orderURL" />
 
 <form:form method="post" modelAttribute="customer" action="${saveURL}">
 
@@ -39,7 +40,14 @@
         </div>
     </spring:bind>
 
-    <button type="submit">Save</button> <a href="${homeURL}">Home</a> <a href="${deleteURL}">Delete</a>
+    <span>
+        <button type="submit">Save</button>
+        <a href="${homeURL}">Home</a>
+        <a href="${deleteURL}">Delete</a>
+        <c:if test="${customer.getCustomerId() >= 0}">
+            <a href="${orderURL}">Place Order</a>
+        </c:if>
+    </span>
 </form:form>
 
 <c:if test="${orders.size() > 0}">

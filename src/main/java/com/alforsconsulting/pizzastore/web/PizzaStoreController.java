@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -29,6 +30,7 @@ public class PizzaStoreController {
 
     @RequestMapping("/")
     public String home(Model model) {
+        logger.info("Going Home");
 
         List<PizzaStore> stores = StoreUtil.getStores();
         model.addAttribute("stores", stores);
@@ -42,6 +44,7 @@ public class PizzaStoreController {
 
     @RequestMapping("/getStore")
     public String getStore(@RequestParam(value="storeId", required=true) long storeId, Model model) {
+        logger.info("Retrieving store [{}]", storeId);
 
         PizzaStore store = StoreUtil.getStore(storeId);
         model.addAttribute("store", store);
@@ -55,6 +58,7 @@ public class PizzaStoreController {
 
     @RequestMapping("/createStore")
     public String createStore(Model model) {
+        logger.info("Creating store");
 
         model.addAttribute("store", new PizzaStore());
 
@@ -88,6 +92,7 @@ public class PizzaStoreController {
 
     @RequestMapping("/deleteStore")
     public String deleteStore(@RequestParam(value="storeId", required=true) long storeId, Model model) {
+        logger.info("Deleting store [{}]", storeId);
 
         StoreUtil.delete(storeId);
 
@@ -96,6 +101,8 @@ public class PizzaStoreController {
 
     @RequestMapping("/getCustomer")
     public String getCustomer(@RequestParam(value="customerId", required=true) long customerId, Model model) {
+        logger.info("Retrieving customer [{}]", customerId);
+
         model.addAttribute("customerId", customerId);
 
         Customer customer = CustomerUtil.getCustomer(customerId);
@@ -110,6 +117,7 @@ public class PizzaStoreController {
 
     @RequestMapping("/createCustomer")
     public String createCustomer(Model model) {
+        logger.info("Creating customer");
 
         model.addAttribute("customer", new Customer());
 
@@ -143,6 +151,7 @@ public class PizzaStoreController {
 
     @RequestMapping("/deleteCustomer")
     public String deleteCustomer(@RequestParam(value="customerId", required=true) long customerId, Model model) {
+        logger.info("Deleting customer [{}]", customerId);
 
         CustomerUtil.delete(customerId);
 
@@ -151,6 +160,7 @@ public class PizzaStoreController {
 
     @RequestMapping("/getOrder")
     public String getOrder(@RequestParam(value="orderId", required=true) long orderId, Model model) {
+        logger.info("Retrieving order [{}]", orderId);
 
         Order order = OrderUtil.getOrder(orderId);
         model.addAttribute("order", order);
@@ -158,8 +168,90 @@ public class PizzaStoreController {
         List<OrderLine> lines = OrderLineUtil.getOrderLines(orderId);
         model.addAttribute("orderLines", lines);
 
+        PizzaStore store = StoreUtil.getStore(order.getStoreId());
+        model.addAttribute("store", store);
+
+        Customer customer = CustomerUtil.getCustomer(order.getCustomerId());
+        model.addAttribute("customer", customer);
+
         // return the view name
         return "order";
     }
 
+    @RequestMapping("/createOrder")
+    public String createOrder(@RequestParam(value="storeId", required=false, defaultValue="-1") long storeId,
+                              @RequestParam(value="customerId", required=false, defaultValue="-1") long customerId,
+                              Model model) {
+        logger.info("Creating order");
+
+        Order order = new Order();
+
+        if (storeId >= 0) {
+            order.setStoreId(storeId);
+            PizzaStore store = StoreUtil.getStore(storeId);
+            model.addAttribute("store", store);
+        } else {
+            List<PizzaStore> stores = StoreUtil.getStores();
+            HashMap<Long, String> storeMap = new HashMap<>();
+            for (PizzaStore store : stores) {
+                storeMap.put(store.getStoreId(), store.getName());
+            }
+            model.addAttribute("stores", storeMap);
+        }
+
+        if (customerId >= 0) {
+            order.setCustomerId(customerId);
+            Customer customer = CustomerUtil.getCustomer(customerId);
+            model.addAttribute("customer", customer);
+        } else {
+            List<Customer> customers = CustomerUtil.getCustomers();
+            HashMap<Long,String> customerMap = new HashMap<>();
+            for (Customer customer : customers) {
+                customerMap.put(customer.getCustomerId(), customer.getName());
+            }
+            model.addAttribute("customers", customerMap);
+        }
+
+        model.addAttribute("order", order);
+
+        // show the order page
+        return "order";
+    }
+
+    @RequestMapping("/saveOrder")
+    public String saveOrder(@ModelAttribute("order") Order order_attr,
+                               BindingResult result, Model model) {
+        logger.info("Saving order_attr [{}]", order_attr);
+
+        Order order = null;
+        if (order_attr.getOrderId() >= 0) {
+            // updating customer
+            order = OrderUtil.getOrder(order_attr.getOrderId());
+            // merge changes
+            order.setStoreId(order_attr.getStoreId());
+            order.setCustomerId(order_attr.getCustomerId());
+            order.setPrice(order_attr.getPrice());
+            logger.info("Updating existing order [{}]", order);
+            OrderUtil.merge(order);
+        } else {
+            // new order
+            order = OrderUtil.newOrder();
+            order.setStoreId(order_attr.getStoreId());
+            order.setCustomerId(order_attr.getCustomerId());
+            order.setPrice(order_attr.getPrice());
+            OrderUtil.save(order);
+        }
+
+        // reload the order
+        return "redirect:/getOrder/?orderId=" + order.getOrderId();
+    }
+
+    @RequestMapping("/deleteOrder")
+    public String deleteOrder(@RequestParam(value="orderId", required=true) long orderId, Model model) {
+        logger.info("Deleting order_attr [{}]", orderId);
+
+        OrderUtil.delete(orderId);
+
+        return "redirect:/";
+    }
 }

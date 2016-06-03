@@ -3,6 +3,11 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page isELIgnored="false"%>
+<%@ page session="false"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <html>
 
@@ -12,39 +17,103 @@
 </head>
 
 <body>
+
+<spring:url value="/saveOrder" var="saveURL" />
+<spring:url value="/" var="homeURL" />
+<spring:url value="/deleteOrder/?orderId=${order.getOrderId()}" var="deleteURL" />
+
 <h1>Order</h1>
-<ul>
-    <li>Order ID: <a href="<c:url value="/getOrder/?orderId=${order.getOrderId()}"/>">${order.getOrderId()}</a></li>
-    <li>Store ID: <a href="<c:url value="/getStore/?storeId=${order.getStoreId()}"/>">${order.getStoreId()}</a></li>
-    <li>Customer ID: <a href="<c:url value="/getCustomer/?customerId=${order.getCustomerId()}"/>">${order.getCustomerId()}</a></li>
-    <li>Price: ${order.getPrice()}</li>
-    <li>Create Date: ${order.getCreateDate()}</li>
-    <li>Modifed Date: ${order.getLastModifiedDate()}</li>
-</ul>
+<form:form method="post" modelAttribute="order" action="${saveURL}">
+
+    <span>
+        <button type="submit">Save</button>
+        <a href="${homeURL}">Home</a>
+        <a href="${deleteURL}">Delete</a>
+    </span>
+
+    <form:hidden path="orderId"/>
+    <form:hidden path="createDate"/>
+    <form:hidden path="lastModifiedDate"/>
+
+    <div>
+        <label>ID</label>: ${order.getOrderId()}
+    </div>
+    <spring:bind path="storeId">
+        <div>
+            <span>
+                <label>Store: </label>
+                <c:choose>
+                    <c:when test="${order.getStoreId() >= 0}">
+                        <form:hidden path="storeId"/>
+                        <c:out value="${store.getName()}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <form:select path="storeId">
+                            <form:option value="-1" label="--- Select ---" />
+                            <form:options items="${stores}" />
+                        </form:select>
+                    </c:otherwise>
+                </c:choose>
+            </span>
+        </div>
+    </spring:bind>
+    <spring:bind path="customerId">
+        <div>
+            <span>
+                <label>Customer: </label>
+                <c:choose>
+                    <c:when test="${order.getCustomerId() >= 0}">
+                        <form:hidden path="customerId"/>
+                        <c:out value="${customer.getName()}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <form:select path="customerId">
+                            <form:option value="-1" label="--- Select ---" />
+                            <form:options items="${customers}" />
+                        </form:select>
+                    </c:otherwise>
+                </c:choose>
+            </span>
+        </div>
+    </spring:bind>
+    <spring:bind path="price">
+        <div>
+            <span>
+                <label>Price: </label>
+                <form:input path="price" type="text" id="price" placeholder="Price" />
+            </span>
+        </div>
+    </spring:bind>
+
+</form:form>
+
 <br>
-<h1>Lines:</h1>
-<table border="1">
-      <tr>
-        <th>OrderLine ID</th>
-        <th>Order ID</th>
-        <th>MenuItem ID</th>
-        <th>Quantity</th>
-        <th>Price</th>
-        <th>Create Date</th>
-        <th>Last Modified Date</th>
-      </tr>
-    <c:forEach items="${orderLines}" var="line">
-      <tr>
-        <td>${line.getOrderLineId()}</td>
-        <td>${line.getOrderId()}</td>
-        <td>${line.getMenuItemId()}</td>
-        <td>${line.getQuantity()}</td>
-        <td>${line.getPrice()}</td>
-        <td>${line.getCreateDate()}</td>
-        <td>${line.getLastModifiedDate()}</td>
-      </tr>
-    </c:forEach>
-</table>
+
+<c:if test="${orders.size() > 0}">
+    <h1>Lines:</h1>
+    <table border="1">
+          <tr>
+            <th>OrderLine ID</th>
+            <th>Order ID</th>
+            <th>MenuItem ID</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Create Date</th>
+            <th>Last Modified Date</th>
+          </tr>
+        <c:forEach items="${orderLines}" var="line">
+          <tr>
+            <td>${line.getOrderLineId()}</td>
+            <td>${line.getOrderId()}</td>
+            <td>${line.getMenuItemId()}</td>
+            <td>${line.getQuantity()}</td>
+            <td>${line.getPrice()}</td>
+            <td>${line.getCreateDate()}</td>
+            <td>${line.getLastModifiedDate()}</td>
+          </tr>
+        </c:forEach>
+    </table>
+</c:if>
 </body>
 
 </html>

@@ -38,7 +38,11 @@
         </div>
     </spring:bind>
 
-    <button type="submit">Save</button> <a href="${homeURL}">Home</a> <a href="${deleteURL}">Delete</a>
+    <span>
+        <button type="submit">Save</button>
+        <a href="${homeURL}">Home</a>
+        <a href="${deleteURL}">Delete</a>
+    </span>
 </form:form>
 
 <br>
