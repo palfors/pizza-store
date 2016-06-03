@@ -6,6 +6,9 @@ import com.alforsconsulting.pizzastore.customer.Customer;
 import com.alforsconsulting.pizzastore.customer.CustomerUtil;
 import com.alforsconsulting.pizzastore.menu.MenuItem;
 import com.alforsconsulting.pizzastore.menu.MenuItemUtil;
+import com.alforsconsulting.pizzastore.menu.detail.MenuItemDetail;
+import com.alforsconsulting.pizzastore.menu.detail.MenuItemDetailUtil;
+import com.alforsconsulting.pizzastore.menu.pizza.ToppingPlacement;
 import com.alforsconsulting.pizzastore.order.Order;
 import com.alforsconsulting.pizzastore.order.OrderUtil;
 import com.alforsconsulting.pizzastore.order.line.OrderLine;
@@ -333,4 +336,93 @@ public class PizzaStoreController {
 
         return "redirect:/";
     }
+
+    @RequestMapping("/getOrderLineDetail")
+    public String getOrderLineDetail(@RequestParam(value="orderLineDetailId", required=true) long orderLineDetailId, Model model) {
+        logger.info("Retrieving orderLineDetail [{}]", orderLineDetailId);
+
+        OrderLineDetail orderLineDetail = OrderLineDetailUtil.getOrderLineDetail(orderLineDetailId);
+        model.addAttribute("orderLineDetail", orderLineDetail);
+
+        MenuItemDetail menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(orderLineDetail.getMenuItemDetailId());
+        model.addAttribute("menuItemDetail", menuItemDetail);
+
+        MenuItem menuItem = MenuItemUtil.getMenuItem(menuItemDetail.getMenuItemId());
+        model.addAttribute("menuItem", menuItem);
+
+        HashMap<String, String> placementMap = new HashMap<>();
+        for (ToppingPlacement toppingPlacement : ToppingPlacement.values()) {
+            placementMap.put(toppingPlacement.name(), toppingPlacement.name());
+        }
+        model.addAttribute("placementOptions", placementMap);
+
+        // return the view name
+        return "orderLineDetail";
+    }
+
+    @RequestMapping("/createOrderLineDetail")
+    public String createOrderLineDetail(@RequestParam(value="orderLineId", required=true) long orderLineId, Model model) {
+        logger.info("Creating orderLineDetail");
+
+        OrderLineDetail orderLineDetail = new OrderLineDetail();
+        orderLineDetail.setOrderLineId(orderLineId);
+
+        model.addAttribute("orderLineDetail", orderLineDetail);
+
+        List<MenuItemDetail> menuItemDetails = MenuItemDetailUtil.getMenuItemDetails();
+        HashMap<Long, String> menuItemDetailMap = new HashMap<>();
+        for (MenuItemDetail menuItemDetail : menuItemDetails) {
+            menuItemDetailMap.put(menuItemDetail.getMenuItemDetailId(), menuItemDetail.getName());
+        }
+        model.addAttribute("menuItemDetails", menuItemDetailMap);
+
+        HashMap<String, String> placementMap = new HashMap<>();
+        for (ToppingPlacement toppingPlacement : ToppingPlacement.values()) {
+            placementMap.put(toppingPlacement.name(), toppingPlacement.name());
+        }
+        model.addAttribute("placementOptions", placementMap);
+
+        // show the detail page
+        return "orderLineDetail";
+    }
+
+    @RequestMapping("/saveOrderLineDetail")
+    public String saveOrderLineDetail(@ModelAttribute("orderLineDetail") OrderLineDetail orderLineDetail_attr,
+                                BindingResult result, Model model) {
+        logger.info("Saving orderLineDetail_attr [{}]", orderLineDetail_attr);
+
+        OrderLineDetail orderLineDetail = null;
+        if (orderLineDetail_attr.getOrderLineDetailId() >= 0) {
+            // updating orderLineDetail
+            orderLineDetail = OrderLineDetailUtil.getOrderLineDetail(orderLineDetail_attr.getOrderLineDetailId());
+            // merge changes
+            orderLineDetail.setPlacement(orderLineDetail_attr.getPlacement());
+            orderLineDetail.setPrice(orderLineDetail_attr.getPrice());
+            logger.info("Updating existing orderLineDetail [{}]", orderLineDetail);
+            OrderLineDetailUtil.merge(orderLineDetail);
+        } else {
+            // new orderLine
+            orderLineDetail = OrderLineDetailUtil.newOrderLineDetail();
+            orderLineDetail.setOrderLineId(orderLineDetail_attr.getOrderLineId());
+            orderLineDetail.setMenuItemDetailId(orderLineDetail_attr.getMenuItemDetailId());
+            orderLineDetail.setPlacement(orderLineDetail_attr.getPlacement());
+            orderLineDetail.setPrice(orderLineDetail_attr.getPrice());
+            OrderLineDetailUtil.save(orderLineDetail);
+        }
+
+        // reload the orderLineDetail
+        return "redirect:/getOrderLineDetail/?orderLineDetailId=" + orderLineDetail.getOrderLineDetailId();
+    }
+
+    @RequestMapping("/deleteOrderLineDetail")
+    public String deleteOrderLineDetail(@RequestParam(value="orderLineDetailId", required=true) long orderLineDetailId, Model model) {
+        logger.info("Deleting orderLineDetail [{}]", orderLineDetailId);
+
+        OrderLineDetail orderLineDetail = OrderLineDetailUtil.getOrderLineDetail(orderLineDetailId);
+
+        OrderLineDetailUtil.delete(orderLineDetail);
+
+        return "redirect:/getOrderLine/?orderLineId=" + orderLineDetail.getOrderLineId();
+    }
+
 }

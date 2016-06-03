@@ -482,6 +482,36 @@ public class OrderHibernateTest extends AbstractHibernateTest {
         orderLine = OrderLineUtil.getOrderLine(orderLine.getOrderLineId());
         assertEquals(orderLine.getQuantity(), 2);
 
+        // get a menuItemDetail to use
+        MenuItemDetail menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(
+                menuItem.getMenuItemId(), MenuItemDetailType.TOPPING, "Onion");
+        assertNotNull(menuItemDetail);
+
+        // add a line detail
+        OrderLineDetail orderLineDetail = OrderLineDetailUtil.create(
+                orderLine.getOrderLineId(),
+                menuItemDetail.getMenuItemDetailId(),
+                ToppingPlacement.WHOLE, 23.45);
+        OrderLineDetailUtil.save(orderLineDetail);
+        assertNotNull(orderLineDetail);
+        orderLineDetail = OrderLineDetailUtil.getOrderLineDetail(
+                orderLineDetail.getOrderLineDetailId());
+        assertNotNull(orderLineDetail);
+
+        // merge an updated detached order line
+        OrderLineDetail updatedOrderLineDetail = OrderLineDetailUtil.newOrderLineDetail();
+        updatedOrderLineDetail.setOrderLineDetailId(orderLineDetail.getOrderLineDetailId());
+        updatedOrderLineDetail.setOrderLineId(orderLineDetail.getOrderLineId());
+        updatedOrderLineDetail.setMenuItemDetailId(orderLineDetail.getMenuItemDetailId());
+        updatedOrderLine.setPrice(orderLine.getPrice());
+        // updated placement
+        updatedOrderLineDetail.setPlacement(ToppingPlacement.LEFT.name());
+        OrderLineDetailUtil.merge(updatedOrderLineDetail);
+
+        // verify change
+        orderLineDetail = OrderLineDetailUtil.getOrderLineDetail(orderLineDetail.getOrderLineDetailId());
+        assertEquals(orderLineDetail.getPlacement(), ToppingPlacement.LEFT.name());
+
         // delete the order
         OrderUtil.delete(order);
 

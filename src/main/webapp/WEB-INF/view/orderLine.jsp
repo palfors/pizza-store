@@ -22,6 +22,7 @@
 <spring:url value="/" var="homeURL" />
 <spring:url value="/deleteOrderLine/?orderLineId=${orderLine.getOrderLineId()}" var="deleteURL" />
 <spring:url value="/getOrder/?orderId=${orderLine.getOrderId()}" var="orderURL" />
+<spring:url value="/createOrderLineDetail/?orderLineId=${orderLine.getOrderLineId()}" var="addLineDetailURL" />
 
 <h1>Order Line</h1>
 <form:form method="post" modelAttribute="orderLine" action="${saveURL}">
@@ -31,6 +32,7 @@
         <a href="${deleteURL}">Delete</a>
         <a href="${homeURL}">Home</a>
         <a href="${orderURL}">Return to Order</a>
+        <a href="${addLineDetailURL}">Add Line Detail</a>
     </span>
 
     <form:hidden path="orderLineId"/>
@@ -82,7 +84,7 @@
 <br>
 
 <c:if test="${orderLineDetails.size() > 0}">
-    <h1>Lines:</h1>
+    <h1>Line Details:</h1>
     <table border="1">
           <tr>
             <th>OrderLineDetail ID</th>
@@ -95,7 +97,7 @@
           </tr>
         <c:forEach items="${orderLineDetails}" var="detail">
           <tr>
-            <td>${detail.getOrderLineDetailId()}</td>
+            <td><a href="<c:url value="/getOrderLineDetail/?orderLineDetailId=${detail.getOrderLineDetailId()}"/>">${detail.getOrderLineDetailId()}</a></td>
             <td>${detail.getOrderLineId()}</td>
             <td>${detail.getMenuItemDetailId()}</td>
             <td>${detail.getPlacement()}</td>

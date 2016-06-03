@@ -73,6 +73,18 @@ public class OrderLineDetailUtil {
         session.close();
     }
 
+    public static void merge(OrderLineDetail orderLineDetail) {
+        logger.info("Merging (in transaction) orderLineDetail [{}]", orderLineDetail);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        session.merge(orderLineDetail);
+
+        session.getTransaction().commit();
+        session.close();
+    }
+
     public static OrderLineDetail getOrderLineDetail(long orderLineDetailId) {
         logger.debug("Retrieving (in transaction) orderLineDetail [{}]", orderLineDetailId);
         Session session = sessionFactory.openSession();
@@ -180,4 +192,18 @@ public class OrderLineDetailUtil {
         session.getTransaction().commit();
         session.close();
     }
+
+    public static void delete(long orderLineDetailId) {
+        logger.info("Deleting (in transaction) orderLineDetail [{}]", orderLineDetailId);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        OrderLineDetail orderLineDetail = getOrderLineDetail(session, orderLineDetailId);
+        delete(session, orderLineDetail);
+
+        session.getTransaction().commit();
+        session.close();
+    }
+
 }
