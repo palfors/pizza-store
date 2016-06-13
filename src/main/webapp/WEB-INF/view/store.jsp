@@ -54,7 +54,6 @@
             <th>Order ID</th>
             <th>Store ID</th>
             <th>Customer ID</th>
-            <th>Price</th>
             <th>Create Date</th>
             <th>Last Modified Date</th>
           </tr>
@@ -63,7 +62,6 @@
             <td><a href="<c:url value="/getOrder/?orderId=${order.getOrderId()}"/>">${order.getOrderId()}</a></td>
             <td>${order.getStoreId()}</td>
             <td><a href="<c:url value="/getCustomer/?customerId=${order.getCustomerId()}"/>">${order.getCustomerId()}</a></td>
-            <td>${order.getPrice()}</td>
             <td>${order.getCreateDate()}</td>
             <td>${order.getLastModifiedDate()}</td>
           </tr>

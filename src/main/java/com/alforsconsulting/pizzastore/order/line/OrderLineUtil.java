@@ -174,6 +174,18 @@ public class OrderLineUtil {
         return orderLines;
     }
 
+    public static List<OrderLine> loadOrderLines(Session session, long orderId) {
+        logger.debug("Loading orderLine details for order [{}]", orderId);
+
+        List<OrderLine> lines = getOrderLines(session, orderId);
+        for (OrderLine line : lines) {
+            List<OrderLineDetail> details = OrderLineDetailUtil.getOrderLineDetails(session, line.getOrderLineId());
+            line.addOrderLineDetails(details);
+        }
+
+        return lines;
+    }
+
     public static void delete(Session session, OrderLine orderLine) {
         logger.debug("Deleting orderLine [{}]", orderLine);
 

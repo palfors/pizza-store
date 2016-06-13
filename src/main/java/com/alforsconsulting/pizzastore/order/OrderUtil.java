@@ -3,6 +3,7 @@ package com.alforsconsulting.pizzastore.order;
 import com.alforsconsulting.pizzastore.AppContext;
 import com.alforsconsulting.pizzastore.order.line.OrderLine;
 import com.alforsconsulting.pizzastore.order.line.OrderLineUtil;
+import com.alforsconsulting.pizzastore.order.line.detail.OrderLineDetail;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
@@ -115,6 +116,46 @@ public class OrderUtil {
 
         } else if (orders.size() == 1) {
             order = orders.get(0);
+            logger.debug("Found order [{}]", order);
+        } else {
+            logger.debug("Found [{}] orders. Expecting only one", orders.size());
+            // TODO handle more gracefully
+            // for now, return null
+        }
+
+        return order;
+    }
+
+    public static Order loadOrder(long orderId) {
+        logger.debug("Loading (in transaction) order [{}]", orderId);
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        Order order = loadOrder(session, orderId);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return order;
+    }
+
+    public static Order loadOrder(Session session, long orderId) {
+        logger.debug("Loading order [{}]", orderId);
+        Order order = null;
+
+        StringBuilder builder = new StringBuilder("from ").append(OBJECT_MAPPING)
+                .append(" where orderId = :orderId");
+
+        Query query =  session.createQuery(builder.toString());
+        query.setParameter("orderId", orderId);
+
+        List<Order> orders = (List<Order>) query.list();
+        if (orders.size() == 0) {
+            logger.debug("Unable to find order [{}]", orderId);
+        } else if (orders.size() == 1) {
+            order = orders.get(0);
+            List<OrderLine> lines = OrderLineUtil.loadOrderLines(session, orderId);
+            order.addLines(lines);
             logger.debug("Found order [{}]", order);
         } else {
             logger.debug("Found [{}] orders. Expecting only one", orders.size());
@@ -278,4 +319,56 @@ public class OrderUtil {
         }
     }
 
+    public static Order updateSubtotal(long orderId) {
+        logger.debug("Updating order [{}] subtotal (in transaction)", orderId);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        Order order = updateSubtotal(orderId, session);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return order;
+    }
+
+    public static Order updateSubtotal(long orderId, Session session) {
+        logger.debug("Updating order [{}] subtotal", orderId);
+
+        // load order and its lines
+        Order order = loadOrder(session, orderId);
+
+        // rollup the price
+        double subtotal = 0;
+        for (OrderLine line : order.getOrderLines()) {
+            for (OrderLineDetail detail : line.getOrderLineDetails()) {
+                subtotal = subtotal + detail.getPrice();
+            }
+            subtotal = subtotal + line.getPrice();
+        }
+
+        order.setSubtotal(subtotal);
+        save(session, order);
+
+        return order;
+    }
+
+    public static Order addOrderLine(OrderLine line, Session session) {
+        logger.debug("Adding order line [{}]", line);
+
+        OrderLineUtil.save(line);
+        updateSubtotal(line.getOrderId(), session);
+
+        return getOrder(session, line.getOrderId());
+    }
+
+    public static Order removeOrderLine(OrderLine line, Session session) {
+        logger.debug("Deleting order line [{}]", line);
+
+        OrderLineUtil.delete(session, line);
+        updateSubtotal(line.getOrderId(), session);
+
+        return getOrder(session, line.getOrderId());
+    }
 }

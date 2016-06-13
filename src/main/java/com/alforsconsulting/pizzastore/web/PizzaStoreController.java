@@ -169,11 +169,10 @@ public class PizzaStoreController {
     public String getOrder(@RequestParam(value="orderId", required=true) long orderId, Model model) {
         logger.info("Retrieving order [{}]", orderId);
 
-        Order order = OrderUtil.getOrder(orderId);
+        Order order = OrderUtil.loadOrder(orderId);
         model.addAttribute("order", order);
 
-        List<OrderLine> lines = OrderLineUtil.getOrderLines(orderId);
-        model.addAttribute("orderLines", lines);
+        model.addAttribute("orderLines", order.getOrderLines());
 
         PizzaStore store = StoreUtil.getStore(order.getStoreId());
         model.addAttribute("store", store);

@@ -78,6 +78,14 @@
             </span>
         </div>
     </spring:bind>
+    <spring:bind path="subtotal">
+        <div>
+            <span>
+                <label>Subtotal: </label>
+                <c:out value="${orderLine.getSubtotal()}"/>
+            </span>
+        </div>
+    </spring:bind>
 
 </form:form>
 

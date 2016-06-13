@@ -491,7 +491,7 @@ public class OrderHibernateTest extends AbstractHibernateTest {
         OrderLineDetail orderLineDetail = OrderLineDetailUtil.create(
                 orderLine.getOrderLineId(),
                 menuItemDetail.getMenuItemDetailId(),
-                ToppingPlacement.WHOLE, 23.45);
+                ToppingPlacement.WHOLE, menuItemDetail.getPrice());
         OrderLineDetailUtil.save(orderLineDetail);
         assertNotNull(orderLineDetail);
         orderLineDetail = OrderLineDetailUtil.getOrderLineDetail(
@@ -528,4 +528,97 @@ public class OrderHibernateTest extends AbstractHibernateTest {
         assertNull(store);
     }
 
+    @Test
+    public void validateSubtotal() {
+        logger.debug("Validating the order subtotal");
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        // create/save order with a line and detail
+        PizzaStore store = createTestStore(session);
+        Customer customer = createTestCustomer(session);
+        double orderPrice = 0.00;
+        Order order = createAndSaveOrder(session, store.getStoreId(), customer.getCustomerId(), orderPrice);
+
+        // add line and detail
+
+        // get a menuItem to use for the order
+        MenuItem menuItem = MenuItemUtil.getMenuItem(MenuItemType.PIZZA);
+        assertNotNull(menuItem);
+
+        // add a line
+        double linePrice = 1.75;
+        OrderLine orderLine = OrderLineUtil.create(order.getOrderId(), menuItem.getMenuItemId(), 1, linePrice);
+        OrderLineUtil.save(session, orderLine);
+
+        // get a menuItemDetail to use
+        MenuItemDetail menuItemDetail = MenuItemDetailUtil.getMenuItemDetail(
+                menuItem.getMenuItemId(), MenuItemDetailType.TOPPING, "Onion");
+        assertNotNull(menuItemDetail);
+
+        // add a line detail
+        OrderLineDetail orderLineDetail = OrderLineDetailUtil.create(
+                orderLine.getOrderLineId(),
+                menuItemDetail.getMenuItemDetailId(),
+                ToppingPlacement.WHOLE, menuItemDetail.getPrice());
+        OrderLineDetailUtil.save(session, orderLineDetail);
+
+        // load the order with details
+        order = OrderUtil.loadOrder(session, order.getOrderId());
+
+        // validate subtotal
+        double subTotal = order.getSubtotal();
+        assertEquals(subTotal, (orderPrice + linePrice + menuItemDetail.getPrice()), 0);
+
+        // change line price and recalculate
+//        linePrice = 2.00;
+//        orderLine.setPrice(linePrice);
+//        OrderLineUtil.save(session, orderLine);
+//        order = OrderUtil.updateSubtotal(order.getOrderId(), session);
+//        subTotal = order.getSubtotal();
+//        assertEquals((orderPrice + linePrice + menuItemDetail.getPrice()), subTotal, 0);
+
+        // delete order
+        OrderUtil.delete(session, order);
+
+        // delete store & customer
+        CustomerUtil.delete(session, customer);
+        customer = CustomerUtil.getCustomer(customer.getCustomerId());
+        assertNull(customer);
+
+        StoreUtil.delete(session, store);
+        store = StoreUtil.getStore(session, store.getStoreId());
+        assertNull(store);
+
+        session.getTransaction().commit();
+        session.close();
+    }
+
+    private PizzaStore createTestStore(Session session) {
+        int num = new Double(Math.random()*1000).intValue();
+        PizzaStore store = StoreUtil.create("TEST_STORE_" + num);
+        StoreUtil.save(session, store);
+        assertNotNull(store);
+
+        return store;
+    }
+
+    private Customer createTestCustomer(Session session) {
+        int num = new Double(Math.random()*1000).intValue();
+        Customer customer = CustomerUtil.create("TEST_CUSTOMER_" + num);
+        CustomerUtil.save(session, customer);
+        assertNotNull(customer);
+
+        return customer;
+    }
+
+    private Order createAndSaveOrder(Session session, long storeId, long customerId, double price) {
+        // create an order
+        Order order = OrderUtil.create(storeId, customerId, price);
+        OrderUtil.save(session, order);
+        assertNotNull(order);
+
+        return order;
+    }
 }

@@ -24,6 +24,7 @@ public class OrderLine {
     private long menuItemId = -1;
     private int quantity;
     private double price;
+    private double subtotal;
     private Timestamp createDate;
     private Timestamp lastModifiedDate;
 
@@ -79,6 +80,16 @@ public class OrderLine {
         this.price = price;
     }
 
+    @Transient
+    public double getSubtotal() {
+        return subtotal;
+    }
+
+    @Transient
+    public void setSubtotal(double subtotal) {
+        this.subtotal = subtotal;
+    }
+
     public Timestamp getCreateDate() {
         return createDate;
     }
@@ -96,16 +107,38 @@ public class OrderLine {
     }
 
     public void addOrderLineDetail(OrderLineDetail orderLineDetail) {
+
         orderLineDetails.add(orderLineDetail);
+        setSubtotal(calculateSubtotal());
     }
 
     public void removeOrderLineDetail(OrderLineDetail orderLineDetail) {
+
         orderLineDetails.remove(orderLineDetail);
+        setSubtotal(calculateSubtotal());
+    }
+
+    public void addOrderLineDetails(List<OrderLineDetail> details) {
+        if (details != null) {
+            for (OrderLineDetail detail : details) {
+                orderLineDetails.add(detail);
+            }
+            setSubtotal(calculateSubtotal());
+        }
     }
 
     @Transient
     public List<OrderLineDetail> getOrderLineDetails() {
         return orderLineDetails;
+    }
+
+    public double calculateSubtotal() {
+        double subtotal = getPrice();
+        for (OrderLineDetail detail : getOrderLineDetails()) {
+            subtotal = subtotal + detail.getPrice();
+        }
+
+        return subtotal * getQuantity();
     }
 
     public void generateId() {
@@ -119,6 +152,7 @@ public class OrderLine {
             .append("[menuItemId: ").append(this.getMenuItemId()).append("]")
             .append("[quantity: ").append(this.getQuantity()).append("]")
             .append("[price: ").append(this.getPrice()).append("]")
+            .append("[subtotal: ").append(this.getSubtotal()).append("]")
             .append("[createDate: ").append(this.getCreateDate()).append("]")
             .append("[lastModifedDate: ").append(this.getLastModifiedDate()).append("]");
 

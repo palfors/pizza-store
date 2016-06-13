@@ -29,6 +29,7 @@ public class Order {
     private List<OrderLine> orderLines = new ArrayList<OrderLine>();
     private long customerId = -1;
     private double price;
+    private double subtotal;
     private Timestamp createDate;
     private Timestamp lastModifiedDate;
 
@@ -82,6 +83,16 @@ public class Order {
         this.price = price;
     }
 
+    @Transient
+    public double getSubtotal() {
+        return subtotal;
+    }
+
+    @Transient
+    public void setSubtotal(double subtotal) {
+        this.subtotal = subtotal;
+    }
+
     public Timestamp getCreateDate() {
         return createDate;
     }
@@ -108,7 +119,9 @@ public class Order {
     }
 
     public void removeOrderLine(OrderLine line) {
+
         orderLines.remove(line);
+        setSubtotal(calculateSubtotal());
     }
 
     public void placeOrder() {
@@ -120,11 +133,34 @@ public class Order {
     }
 
     public void addLine(OrderLine line) {
-        orderLines.add(line);
+        if (line != null) {
+            orderLines.add(line);
+            setSubtotal(calculateSubtotal());
+        }
+    }
+
+    public void addLines(List<OrderLine> lines) {
+        if (lines != null) {
+            for (OrderLine line : lines) {
+                orderLines.add(line);
+            }
+            setSubtotal(calculateSubtotal());
+        }
     }
 
     protected void updateStatus(OrderStatus orderStatus) {
         status = orderStatus.name();
+    }
+
+    private double calculateSubtotal() {
+        // TODO: subtotal is replacing the concept of an order price as the order lines define the total price for the order
+        // need to remove price from the order
+        double subtotal = getPrice();
+        for (OrderLine line : getOrderLines()) {
+            subtotal = subtotal + line.getSubtotal();
+        }
+
+        return subtotal;
     }
 
     public String toString() {
@@ -135,6 +171,7 @@ public class Order {
             .append("[customer: ").append(this.getCustomerId()).append("]")
             .append("[status: ").append(this.getStatus()).append("]")
             .append("[price: ").append(this.getPrice()).append("]")
+            .append("[subtotal: ").append(this.getSubtotal()).append("]")
             .append("[createDate: ").append(this.getCreateDate()).append("]")
             .append("[lastModifedDate: ").append(this.getLastModifiedDate()).append("]");
 

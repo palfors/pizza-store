@@ -86,6 +86,14 @@
             </span>
         </div>
     </spring:bind>
+    <spring:bind path="subtotal">
+        <div>
+            <span>
+                <label>Subtotal: </label>
+                <c:out value="${order.getSubtotal()}"/>
+            </span>
+        </div>
+    </spring:bind>
 
 </form:form>
 
@@ -100,6 +108,7 @@
             <th>MenuItem ID</th>
             <th>Quantity</th>
             <th>Price</th>
+            <th>Subtotal</th>
             <th>Create Date</th>
             <th>Last Modified Date</th>
           </tr>
@@ -110,6 +119,7 @@
             <td>${line.getMenuItemId()}</td>
             <td>${line.getQuantity()}</td>
             <td>${line.getPrice()}</td>
+            <td>${line.getSubtotal()}</td>
             <td>${line.getCreateDate()}</td>
             <td>${line.getLastModifiedDate()}</td>
           </tr>
