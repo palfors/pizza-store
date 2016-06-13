@@ -56,7 +56,7 @@ public class PizzaStoreRestController {
     public Order getOrder(@PathVariable long orderId) {
         logger.info("Retrieving order [{}]", orderId);
 
-        Order order = OrderUtil.getOrder(orderId);
+        Order order = OrderUtil.loadOrder(orderId);
         return order;
     }
 
