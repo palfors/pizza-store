@@ -2,10 +2,12 @@
 <html ng-app="store">
     <head>
         <link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="pizza-store.css"/>
     </head>
     <body ng-controller="StoreController as store">
         <script type="text/javascript" src="angular.min.js"></script>
         <script type="text/javascript" src="pizzastore-app.js"></script>
+        <script type="text/javascript" src="order/order.js"></script>
 
         <H1>Welcome to the Pizza Store!</H1>
 
@@ -13,70 +15,9 @@
             <li class="list-group-item"
                 ng-repeat="order in store.orders | limitTo:5 | orderBy: '-price'"
                 ng-hide="order.closed">
-                <h3>
-                    Order: {{order.orderId | uppercase}}
-                </h3>
+                <h3 order-id></h3>
                 <button ng-show="order.editable">Add Line</button>
-                <section ng-controller="TabController as tabctrl">
-                    <ul class="nav nav-pills">
-                        <li ng-class="{ active: tabctrl.isSelected(1) }">
-                            <a href ng-click="tabctrl.setTab(1)">Details</a></li>
-                        <li ng-class="{ active: tabctrl.isSelected(2) }">
-                            <a href ng-click="tabctrl.setTab(2)">Customer</a></li>
-                        <li ng-class="{ active: tabctrl.isSelected(3) }">
-                            <a href ng-click="tabctrl.setTab(3)">Store</a></li>
-                        <li ng-class="{ active: tabctrl.isSelected(4) }">
-                            <a href ng-click="tabctrl.setTab(4)">Comments</a></li>
-                    </ul>
-                    <div class="tab" ng-show="tabctrl.isSelected(1)">
-                        <h4>Details</h4>
-                        Order ID: {{order.orderId | uppercase}}
-                        Price: {{order.price | currency}}
-                        Create Date: {{order.createDate | date: 'MM/dd/yyyy @ h:mma'}}
-                    </div>
-                    <div class="tab" ng-show="tabctrl.isSelected(2)">
-                        <h4>Customer</h4>
-                        {{order.customer}}
-                        <img ng-src="{{order.images[0].c1}}"/>
-                    </div>
-                    <div class="tab" ng-show="tabctrl.isSelected(3)">
-                        <h4>Store</h4>
-                        {{order.store}}
-                    </div>
-                    <div class="tab" ng-show="tabctrl.isSelected(4)">
-                        <h4>Comments</h4>
-                        <blockquote ng-repeat="review in order.reviews">
-                            <b>Stars: {{review.stars}} </b>
-                            {{review.body}}
-                            <cite>-- by: {{review.author}}</cite>
-                        </blockquote>
-                        <form name="reviewForm">
-                            <blockquote>(New)
-                                <b>Stars: {{review.stars}}</b>
-                                {{review.body}}
-                                <cite>-- by: {{review.author}}</cite>
-                            </blockquote>
-                            <h4>Submit a Review</h4>
-                            <fieldset class="form-group">
-                                <select class="form-control" ng-model="review.stars" placeholder="Rating">
-                                    <option>1 Star</option>
-                                    <option>2 Stars</option>
-                                    <option>3 Stars</option>
-                                    <option>4 Stars</option>
-                                    <option>5 Stars</option>
-                                </select>
-                            </fieldset>
-                            <fieldset class="form-group">
-                                <textarea ng-model="review.body" class="form-control" placeholder="Write a short review..." title="Review"></textarea>
-                            </fieldset>
-                            <fieldset class="form-group">
-                                <label>by:</label>
-                                <input type="email" ng-model="review.author" title="Email"/>
-                                <input type="submit" value="Submit" class="btn btn-primary pull-right"/>
-                            </fieldset>
-                        </form>
-                    </div>
-                </section>
+                <order-tabs></order-tabs>
             </li>
         </ul>
     </body>

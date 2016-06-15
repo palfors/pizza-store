@@ -1,20 +1,8 @@
 (function() {
-    var app = angular.module('store', []);
+    var app = angular.module('store', ['orders']);
 
     app.controller('StoreController', function() {
         this.orders = orders;
-    });
-
-    app.controller('TabController', function() {
-        this.tab = 1;
-
-        this.setTab = function(tabValue){
-            this.tab = tabValue;
-        };
-
-        this.isSelected = function(tabValue){
-            return this.tab === tabValue;
-        };
     });
 
     var orders = [
@@ -75,5 +63,4 @@
                 c4: '../../../resources/images/customer/customer4.jpg'
                 } ]
         }];
-
 })();
