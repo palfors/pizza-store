@@ -4,6 +4,7 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
                             http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <display-name>Archetype Created Web Application</display-name>
+
     <servlet>
         <servlet-name>pizzastore</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -13,11 +14,24 @@
         <servlet-name>pizzastore</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>pizzastore-angular</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>pizzastore-angular</servlet-name>
+        <url-pattern>/angular/</url-pattern>
+    </servlet-mapping>
+
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>/WEB-INF/pizzastore-servlet.xml</param-value>
+        <param-value>/WEB-INF/pizzastore-angular-servlet.xml</param-value>
     </context-param>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
 </web-app>

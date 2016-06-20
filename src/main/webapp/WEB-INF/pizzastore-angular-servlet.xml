@@ -8,13 +8,16 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="com.alforsconsulting.pizzastore" />
+    <mvc:annotation-driven/>
 
-    <bean id="viewResolver"
+    <mvc:default-servlet-handler/>
+
+    <bean id="angularViewResolver"
           class="org.springframework.web.servlet.view.UrlBasedViewResolver">
         <property name="viewClass"
                   value="org.springframework.web.servlet.view.JstlView" />
-        <property name="prefix" value="/WEB-INF/view/" />
-        <property name="suffix" value=".jsp" />
+        <property name="prefix" value="/WEB-INF/angular/" />
+        <property name="suffix" value=".html" />
     </bean>
 
 </beans>

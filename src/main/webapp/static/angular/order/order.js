@@ -25,21 +25,21 @@
     app.directive('orderDetail', function() {
         return {
             restrict: 'E',
-            templateUrl: 'order/order-detail.html'
+            templateUrl: '/pizzastore/static/angular/order/order-detail.html'
         };
     });
 
     app.directive('orderId', function() {
         return {
             restrict: 'A',
-            templateUrl: 'order/order-id.html'
+            templateUrl: '/pizzastore/static/angular/order/order-id.html'
         };
     });
 
     app.directive('orderTabs', function() {
         return {
             restrict: 'E',
-            templateUrl: 'order/order-tabs.html',
+            templateUrl: '/pizzastore/static/angular/order/order-tabs.html',
             controller:function(){
                 this.tab = 1;
 

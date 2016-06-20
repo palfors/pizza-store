@@ -1,11 +1,21 @@
 (function() {
     var app = angular.module('store', ['orders']);
 
+//    app.controller('StoreController', ['$http', '$log', function($http, $log) {
+//        var the_store = this;
+//        this.orders = test_orders;
+//
+//        $http.get('/REST/getOrder/11').success(function(data){
+//        $http.get('http://localhost:7080/pizzastore/REST/getOrder/1').success(function(data){
+//            the_store.orders = data;
+//        });
+//    }]);
+//
     app.controller('StoreController', function() {
-        this.orders = orders;
+        this.orders = test_orders;
     });
 
-    var orders = [
+    var test_orders = [
         {
             orderId: 'ps1',
             customer: 'Bob',

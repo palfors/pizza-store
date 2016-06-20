@@ -31,6 +31,7 @@ import java.util.List;
 /**
  * Created by palfors on 5/28/16.
  */
+@RequestMapping("/")
 @Controller
 public class PizzaStoreController {
     private static final Logger logger = LogManager.getLogger();
