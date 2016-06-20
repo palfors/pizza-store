@@ -1,19 +1,41 @@
 (function() {
-    var app = angular.module('store', ['orders']);
+    var app = angular.module('pizzastore', ['store', 'customer', 'order']);
 
-//    app.controller('StoreController', ['$http', '$log', function($http, $log) {
-//        var the_store = this;
-//        this.orders = test_orders;
-//
-//        $http.get('/REST/getOrder/11').success(function(data){
-//        $http.get('http://localhost:7080/pizzastore/REST/getOrder/1').success(function(data){
-//            the_store.orders = data;
-//        });
-//    }]);
-//
-    app.controller('StoreController', function() {
-        this.orders = test_orders;
+    app.controller('PizzaStoreController', function($scope, storeService, customerService, orderService) {
+        $scope.stores = null;
+        var the_store = this;
+
+        storeService.getStores(function(dataResponse) {
+            $scope.stores = dataResponse;
+            the_store.stores = dataResponse;
+        });
+
+        customerService.getCustomers(function(dataResponse) {
+            $scope.customers = dataResponse;
+            the_store.customers = dataResponse;
+        });
+
+        orderService.getOrders(function(dataResponse) {
+            $scope.orders = dataResponse;
+            the_store.orders = dataResponse;
+        });
     });
+
+    app.controller('HomeTabController', function() {
+        this.tab = 1;
+
+        this.setTab = function(tabValue){
+            this.tab = tabValue;
+        };
+
+        this.isSelected = function(tabValue){
+            return this.tab === tabValue;
+        };
+    });
+
+//    app.controller('StoreController', function() {
+//        this.orders = test_orders;
+//    });
 
     var test_orders = [
         {

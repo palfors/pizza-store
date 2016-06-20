@@ -39,12 +39,6 @@ public class PizzaStoreAngularController {
     public String home(Model model) {
         logger.info("Angular-Home");
 
-//        List<PizzaStore> stores = StoreUtil.getStores();
-//        model.addAttribute("stores", stores);
-//
-//        List<Customer> customers = CustomerUtil.getCustomers();
-//        model.addAttribute("customers", customers);
-
         // return the view name
         return "home";
     }

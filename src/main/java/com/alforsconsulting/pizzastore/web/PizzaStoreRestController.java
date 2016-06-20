@@ -30,9 +30,11 @@ public class PizzaStoreRestController {
 
     @RequestMapping(value = "/getStores", method = RequestMethod.GET)
     public List<PizzaStore> getStores() {
-        logger.info("Retrieving stores");
+        logger.info("REST - Retrieving stores");
 
         List<PizzaStore> stores = StoreUtil.getStores();
+
+        logger.debug("REST - Found [{}] stores", stores.size());
         return stores;
     }
 
@@ -46,7 +48,7 @@ public class PizzaStoreRestController {
 
     @RequestMapping(value = "/getOrders", method = RequestMethod.GET)
     public List<Order> getOrders() {
-        logger.info("Retrieving orders");
+        logger.info("REST - Retrieving orders");
 
         List<Order> orders = OrderUtil.getOrders();
         return orders;
@@ -62,9 +64,11 @@ public class PizzaStoreRestController {
 
     @RequestMapping(value = "/getCustomers", method = RequestMethod.GET)
     public List<Customer> getCustomers() {
-        logger.info("Retrieving customers");
+        logger.info("REST - Retrieving customers");
 
         List<Customer> customers = CustomerUtil.getCustomers();
+
+        logger.debug("REST - Found [{}] customers", customers.size());
         return customers;
     }
 

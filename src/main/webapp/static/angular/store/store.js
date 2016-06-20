@@ -1,33 +1,36 @@
 (function() {
-    var app = angular.module('order', []);
+    var app = angular.module('store', []);
 
-    app.controller('ReviewController', function() {
-        this.review = {};
+    app.controller('StoreTabController', function() {
+        this.tab = 1;
 
-        this.addReview = function(order) {
-            order.reviews.push(this.review);
-            this.review = {};
+        this.setTab = function(tabValue){
+            this.tab = tabValue;
+        };
+
+        this.isSelected = function(tabValue){
+            return this.tab === tabValue;
         };
     });
 
-    app.directive('orderDetail', function() {
+    app.directive('storeDetail', function() {
         return {
             restrict: 'E',
-            templateUrl: '/pizzastore/static/angular/order/order-detail.html'
+            templateUrl: '/pizzastore/static/angular/store/store-detail.html'
         };
     });
 
-    app.directive('orderId', function() {
+    app.directive('storeId', function() {
         return {
             restrict: 'A',
-            templateUrl: '/pizzastore/static/angular/order/order-id.html'
+            templateUrl: '/pizzastore/static/angular/store/store-id.html'
         };
     });
 
-    app.directive('orderTabs', function() {
+    app.directive('storeTabs', function() {
         return {
             restrict: 'E',
-            templateUrl: '/pizzastore/static/angular/order/order-tabs.html',
+            templateUrl: '/pizzastore/static/angular/store/store-tabs.html',
             controller:function(){
                 this.tab = 1;
 
@@ -39,16 +42,16 @@
                     return this.tab === tabValue;
                 };
             },
-            controllerAs: 'orderTabCtrl'
+            controllerAs: 'storeTabCtrl'
         };
     });
 
-    app.service('orderService', function($http) {
+    app.service('storeService', function($http) {
         delete $http.defaults.headers.common['X-Requested-With'];
-        this.getOrders = function(callbackFunc) {
+        this.getStores = function(callbackFunc) {
             $http({
                 method: 'GET',
-                url: 'http://localhost:7080/pizzastore/REST/getOrders'
+                url: 'http://localhost:7080/pizzastore/REST/getStores'
             }).success(function(data){
                     console.log(data);
                     // With the data succesfully returned, call our callback

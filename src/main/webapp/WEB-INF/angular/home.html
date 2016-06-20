@@ -1,23 +1,59 @@
 <!DOCTYPE html>
-<html ng-app="store">
+<html ng-app="pizzastore">
     <head>
         <link rel="stylesheet" type="text/css" href="/pizzastore/static/angular/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="/pizzastore/static/angular/pizza-store.css"/>
         <script type="text/javascript" src="/pizzastore/static/angular/angular.min.js"></script>
         <script type="text/javascript" src="/pizzastore/static/angular/pizzastore-app.js"></script>
+        <script type="text/javascript" src="/pizzastore/static/angular/store/store.js"></script>
+        <script type="text/javascript" src="/pizzastore/static/angular/customer/customer.js"></script>
         <script type="text/javascript" src="/pizzastore/static/angular/order/order.js"></script>
     </head>
-    <body ng-controller="StoreController as store">
+    <body ng-controller="PizzaStoreController as psc">
         <H1>Welcome to the Pizza Store!!!</H1>
 
-        <ul class="list-group">
-            <li class="list-group-item"
-                ng-repeat="order in store.orders | limitTo:5 | orderBy: '-price'"
-                ng-hide="order.closed">
-                <h3 order-id></h3>
-                <button ng-show="order.editable">Add Line</button>
-                <order-tabs></order-tabs>
-            </li>
-        </ul>
+        <section ng-controller="HomeTabController as tabCtrl">
+            <ul class="nav nav-pills">
+                <li ng-class="{ active: tabCtrl.isSelected(1) }">
+                    <a href ng-click="tabCtrl.setTab(1)">Stores</a></li>
+                <li ng-class="{ active: tabCtrl.isSelected(2) }">
+                    <a href ng-click="tabCtrl.setTab(2)">Customers</a></li>
+                <li ng-class="{ active: tabCtrl.isSelected(3) }">
+                    <a href ng-click="tabCtrl.setTab(3)">Orders</a></li>
+            </ul>
+            <div class="tab" ng-show="tabCtrl.isSelected(1)">
+                <h4>Stores</h4>
+
+                <ul class="list-group">
+                    <li class="list-group-item"
+                        ng-repeat="store in psc.stores">
+                        <h3 store-id></h3>
+                        <store-tabs></store-tabs>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab" ng-show="tabCtrl.isSelected(2)">
+                <h4>Customers</h4>
+
+                <ul class="list-group">
+                    <li class="list-group-item"
+                        ng-repeat="customer in psc.customers">
+                        <h3 customer-id></h3>
+                        <customer-tabs></customer-tabs>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab" ng-show="tabCtrl.isSelected(3)">
+                <h4>Orders</h4>
+
+                <ul class="list-group">
+                    <li class="list-group-item"
+                        ng-repeat="order in psc.orders">
+                        <h3 order-id></h3>
+                        <order-tabs></order-tabs>
+                    </li>
+                </ul>
+            </div>
+        </section>
     </body>
 </html>
